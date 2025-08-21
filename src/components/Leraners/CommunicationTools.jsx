@@ -37,14 +37,14 @@ const CommunicationTools = () => {
         </h3>
         <div className="space-y-3">
           <div className="p-3 bg-teal-50 rounded-lg hover:bg-teal-100 transition-colors duration-300 cursor-pointer">
-            <div className="flex justify-between">
+            <div className="flex justify-between flex-wrap gap-1">
               <h4 className="font-medium text-gray-900">Dr. Smith</h4>
               <span className="text-xs text-gray-500">10:30 AM</span>
             </div>
             <p className="text-sm text-gray-600 truncate">Regarding your assignment submission...</p>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-300 cursor-pointer">
-            <div className="flex justify-between">
+            <div className="flex justify-between flex-wrap gap-1">
               <h4 className="font-medium text-gray-900">Study Group</h4>
               <span className="text-xs text-gray-500">Yesterday</span>
             </div>
