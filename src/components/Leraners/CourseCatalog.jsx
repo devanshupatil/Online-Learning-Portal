@@ -56,7 +56,7 @@ const CourseCatalog = () => {
         <div className="space-y-4">
           {courses.map((course, index) => (
             <div key={index} className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors duration-300">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
                 <div>
                   <h4 className="font-bold text-gray-900">{course.title}</h4>
                   <p className="text-sm text-gray-600">{course.instructor}</p>
@@ -65,15 +65,15 @@ const CourseCatalog = () => {
                     <span className="text-sm text-gray-600 ml-1">{course.rating} ({course.students} students)</span>
                   </div>
                 </div>
-                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full self-start">
                   {course.level}
                 </span>
               </div>
-              <div className="flex justify-between items-center mt-3">
-                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-800 rounded-full">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-3 gap-2">
+                <span className="text-xs px-2 py-1 bg-gray-100 text-gray-800 rounded-full self-start">
                   {course.category}
                 </span>
-                <CTAButton variant="primary" className="px-3 py-1 text-sm min-w-0 min-h-0">
+                <CTAButton variant="primary" className="px-3 py-1 text-sm min-w-0 min-h-0 self-start">
                   Enroll
                 </CTAButton>
               </div>
