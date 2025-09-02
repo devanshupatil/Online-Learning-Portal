@@ -2,6 +2,7 @@ import React from 'react';
 
 import LearnersNavigation from './LearnersNavigation';
 import NewLearnerDashboard from './NewLearnerDashboard';
+import Footer from '../Footer';
 
 const LearnersPage = () => {
   return (
@@ -10,10 +11,11 @@ const LearnersPage = () => {
       <div className="bg-white">
         {/* Learners Navigation */}
         {/* <LearnersNavigation /> */}
-        
+
         {/* New Learner Dashboard */}
         <NewLearnerDashboard />
       </div>
+      <Footer />
     </div>
   );
 };
