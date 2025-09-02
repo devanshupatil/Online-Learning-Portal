@@ -1,0 +1,247 @@
+@import "tailwindcss";
+
+/* Tailwind CSS 4 Configuration */
+@theme {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+}
+
+/* MaterialViewer CSS Animations */
+
+/* Enhanced CTA Button Animations */
+.cta-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  will-change: transform, box-shadow;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.cta-button:active {
+  transform: translateY(0) scale(0.95);
+  transition-duration: 0.1s;
+}
+
+/* Primary CTA Button Specific */
+.cta-primary:hover {
+  background: linear-gradient(135deg, #1e40af, #3730a3);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
+}
+
+/* Secondary CTA Button Specific */
+.cta-secondary:hover {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Loading state animations */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Modal animations */
+.modal-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.modal-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.modal-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.modal-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* PDF page transition animations */
+.pdf-page-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.pdf-page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.pdf-page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pdf-page-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+  will-change: transform, box-shadow;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Link hover animations */
+.link-hover {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: currentColor;
+  transition: width 0.3s ease;
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* Form input focus animations */
+.input-focus {
+  transition: all 0.3s ease;
+  will-change: border-color, box-shadow;
+}
+
+.input-focus:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 639px) {
+  .mobile-stack {
+    flex-direction: column;
+  }
+
+  .mobile-center {
+    text-align: center;
+  }
+
+  .mobile-full-width {
+    width: 100%;
+  }
+}
+
+/* Respect user's prefers-reduced-motion setting */
+@media (prefers-reduced-motion: reduce) {
+  .cta-button,
+  .card-hover,
+  .link-hover,
+  .input-focus {
+    transition: none;
+    animation: none;
+  }
+
+  .cta-button:hover,
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
+/* Performance optimizations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.will-change-auto {
+  will-change: auto;
+}
+
+/* Optimize font loading */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2') format('woff2');
+}
+
+/* Optimize image loading */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optimize scrolling on mobile */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile sidebar enhancements */
+.mobile-sidebar-backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.mobile-sidebar-content {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Reduce paint on mobile */
+@media (max-width: 768px) {
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
