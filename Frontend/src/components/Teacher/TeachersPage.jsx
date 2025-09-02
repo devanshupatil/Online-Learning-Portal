@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TeacherDashboard from './TeacherDashboard';
+import Footer from '../Footer';
 
 const TeachersPage = () => {
   return (
@@ -10,6 +11,7 @@ const TeachersPage = () => {
         {/* Teacher Dashboard */}
         <TeacherDashboard />
       </div>
+      <Footer />
     </div>
   );
 };
