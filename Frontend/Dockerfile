@@ -1,5 +1,5 @@
-# Use Node.js official image
-FROM node:18-alpine as build
+# Use Node.js 20 Alpine as base image
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -8,25 +8,22 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy source code
 COPY . .
 
+# Declare build arg and set as env var for Vite build
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
 # Build the application
 RUN npm run build
 
-# Production stage
-FROM nginx:alpine
+# Expose port 80
 
-# Copy built assets from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Install serve to serve the built app
+RUN npm install -g serve
 
-# Copy custom nginx config (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 80 by default TCP
-EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start the application
+CMD ["serve", "-s", "dist", "-l", "80"]
