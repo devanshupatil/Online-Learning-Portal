@@ -9,9 +9,11 @@ const leranerRoutes = require('./routes/leraner-routes');
 
 app.use(cors({
   origin: [
-   'http://localhost:5173',  // Your Vite dev server
+    'http://localhost:5173',  // Your Vite dev server
     'http://localhost:3000',  // Your backend (if needed) 
-    
+    'http://localhost:8080',  // Your Vite dev server
+    'http://backend:3000',  // Your backend (if needed) 
+
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
