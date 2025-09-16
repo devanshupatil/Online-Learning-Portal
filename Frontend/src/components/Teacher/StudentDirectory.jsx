@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Users, Mail, Phone, Eye, Filter } from 'lucide-react';
 
 const StudentDirectory = ({ onViewProfile }) => {
@@ -6,78 +6,60 @@ const StudentDirectory = ({ onViewProfile }) => {
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedGrade, setSelectedGrade] = useState('');
   const [viewMode, setViewMode] = useState('cards'); // cards or table
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock student data
-  const students = [
-    {
-      id: 1,
-      name: 'Alice Johnson',
-      rollNo: '001',
-      class: 'Class A',
-      grade: '10th',
-      email: 'alice.johnson@example.com',
-      phone: '+1 (555) 123-4567',
-      attendance: 85,
-      averageGrade: 88,
-      profilePic: null
-    },
-    {
-      id: 2,
-      name: 'Bob Smith',
-      rollNo: '002',
-      class: 'Class B',
-      grade: '9th',
-      email: 'bob.smith@example.com',
-      phone: '+1 (555) 234-5678',
-      attendance: 92,
-      averageGrade: 91,
-      profilePic: null
-    },
-    {
-      id: 3,
-      name: 'Charlie Brown',
-      rollNo: '003',
-      class: 'Class A',
-      grade: '10th',
-      email: 'charlie.brown@example.com',
-      phone: '+1 (555) 345-6789',
-      attendance: 78,
-      averageGrade: 82,
-      profilePic: null
-    },
-    {
-      id: 4,
-      name: 'Diana Prince',
-      rollNo: '004',
-      class: 'Class C',
-      grade: '11th',
-      email: 'diana.prince@example.com',
-      phone: '+1 (555) 456-7890',
-      attendance: 95,
-      averageGrade: 94,
-      profilePic: null
-    },
-    {
-      id: 5,
-      name: 'Edward Norton',
-      rollNo: '005',
-      class: 'Class B',
-      grade: '9th',
-      email: 'edward.norton@example.com',
-      phone: '+1 (555) 567-8901',
-      attendance: 88,
-      averageGrade: 86,
-      profilePic: null
-    }
-  ];
+  const URL = import.meta.env.VITE_BACKEND_URL;
+
+  // Fetch students data from API
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${URL}/api/students`);
+        const data = await response.json();
+
+        if (response.ok) {
+          // Transform API data to match component structure
+          const transformedStudents = data.data.map(student => ({
+            id: student.student_id,
+            name: student.name,
+            class: student.class,
+            grade: student.grade,
+            email: student.email,
+            phone: student.phone,
+            parent_phone: student.parent_phone,
+            parent_name: student.parent_name,
+            parent_email: student.parent_email,
+            address: student.address,
+            // Calculate attendance percentage from last attendance status
+            attendance: student.last_attendance_status === 'present' ? 100 :
+                       student.last_attendance_status === 'absent' ? 0 : 50,
+            averageGrade: 85, // Placeholder - would need grades table
+            profilePic: null
+          }));
+          setStudents(transformedStudents);
+        } else {
+          setError(data.message || 'Failed to fetch students');
+        }
+      } catch (err) {
+        setError('Error fetching students: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, [URL]);
 
   const classes = ['All', 'Class A', 'Class B', 'Class C', 'Class D'];
   const grades = ['All', '9th', '10th', '11th', '12th'];
 
   const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         student.rollNo.includes(searchTerm) ||
-                         student.email.toLowerCase().includes(searchTerm.toLowerCase());
+                          student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          student.phone?.includes(searchTerm);
     const matchesClass = selectedClass === '' || selectedClass === 'All' || student.class === selectedClass;
     const matchesGrade = selectedGrade === '' || selectedGrade === 'All' || student.grade === selectedGrade;
     return matchesSearch && matchesClass && matchesGrade;
@@ -112,7 +94,7 @@ const StudentDirectory = ({ onViewProfile }) => {
               <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name, roll number, or email..."
+                placeholder="Search by name, email, or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -161,8 +143,28 @@ const StudentDirectory = ({ onViewProfile }) => {
         </div>
       </div>
 
+      {/* Loading and Error States */}
+      {loading && (
+        <div className="bg-white rounded-2xl shadow-lg p-12 border border-gray-200 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading students...</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 rounded-2xl shadow-lg p-6 border border-red-200 text-center">
+          <p className="text-red-600 font-medium">Error: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* Students Display */}
-      {viewMode === 'cards' ? (
+      {!loading && !error && viewMode === 'cards' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredStudents.map((student) => (
             <div key={student.id} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300">
@@ -172,7 +174,7 @@ const StudentDirectory = ({ onViewProfile }) => {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{student.name}</h3>
-                  <p className="text-sm text-gray-600">Roll: {student.rollNo}</p>
+                  <p className="text-sm text-gray-600">ID: {student.id}</p>
                 </div>
               </div>
 
@@ -216,7 +218,7 @@ const StudentDirectory = ({ onViewProfile }) => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : !loading && !error && (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -240,7 +242,7 @@ const StudentDirectory = ({ onViewProfile }) => {
                         </div>
                         <div>
                           <div className="text-sm font-medium text-gray-900">{student.name}</div>
-                          <div className="text-sm text-gray-500">Roll: {student.rollNo}</div>
+                          <div className="text-sm text-gray-500">ID: {student.id}</div>
                         </div>
                       </div>
                     </td>
@@ -278,7 +280,7 @@ const StudentDirectory = ({ onViewProfile }) => {
         </div>
       )}
 
-      {filteredStudents.length === 0 && (
+      {!loading && !error && filteredStudents.length === 0 && (
         <div className="bg-white rounded-2xl shadow-lg p-12 border border-gray-200 text-center">
           <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No students found</h3>
