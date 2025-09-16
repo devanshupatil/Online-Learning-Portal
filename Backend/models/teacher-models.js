@@ -122,8 +122,13 @@ const deleteStudyMaterial = async (fileName) => {
   }
 };
 
+
+
+
+
 module.exports = {
   UploadStudyMaterial,
   getStudyMaterials,
-  deleteStudyMaterial
+  deleteStudyMaterial,
+  
 };
