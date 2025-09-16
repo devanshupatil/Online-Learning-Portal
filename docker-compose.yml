@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: online-learning-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: devanshu
+      POSTGRES_DB: some-postgres
+    ports:
+      - "5431:5432"   # Host:Container
+    volumes:
+      - online-learing-portal-db-volume:/var/lib/postgresql/data
+    networks:
+      - online-learning-network
+    restart: unless-stopped
+
+  # Backend Service
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: online-learning-backend
+    env_file:
+      - ./Backend/.env   # 👈 mount your .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - online-learning-network
+    restart: unless-stopped
+    volumes:
+      - ./Backend/uploads:/app/uploads
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+      - VITE_BACKEND_URL=http://localhost:3000
+    container_name: online-learning-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - online-learning-network
+    restart: unless-stopped
+
+volumes:
+  online-learing-portal-db-volume:   # 👈 fixed typo
+    driver: local
+
+networks:
+  online-learning-network:
+    driver: bridge
+
