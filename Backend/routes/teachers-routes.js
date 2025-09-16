@@ -14,5 +14,7 @@ router.get('/getStudyMaterials', getStudyMaterials);
 
 router.delete('/deleteStudyMaterial', deleteStudyMaterial);
 
+
+
 module.exports = router;
 
