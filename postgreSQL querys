@@ -1,0 +1,88 @@
+CREATE TABLE teachers (
+    id SERIAL PRIMARY KEY,          -- unique identifier for each teacher
+    name VARCHAR(100) NOT NULL,     -- teacher's full name
+    email VARCHAR(100) UNIQUE NOT NULL,  -- must be unique for login/identification
+    phone VARCHAR(20),              -- phone number (with +country code)
+    subject VARCHAR(50),            -- subject taught
+    address VARCHAR(255),           -- home or school address
+    password_hash VARCHAR(255) NOT NULL -- hashed password using bcrypt
+);
+
+INSERT INTO teachers (name, email, phone, subject, address, password_hash) VALUES
+('John Smith', 'john.smith@school.com', '+1234567890', 'Mathematics', '123 Main St', '$2b$10$hashedpassword'),
+('Sarah Johnson', 'sarah.j@school.com', '+1234567891', 'Science', '456 Oak Ave', '$2b$10$hashedpassword2');
+
+
+CREATE TABLE students (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    class VARCHAR(50) NOT NULL,
+    grade VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(20),
+    parent_phone VARCHAR(20),
+    address TEXT,  -- Kept for completeness (from StudentProfileView.jsx)
+    parent_name VARCHAR(255),  -- Kept for completeness
+    parent_email VARCHAR(255),  -- Kept for completeness
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO students (name, class, grade, email, phone, parent_phone, parent_name, parent_email, address) VALUES
+('Alice Johnson', 'Class A', '10th', 'alice.johnson@example.com', '+1 (555) 123-4567', '+1 (555) 987-6543', 'John Johnson', 'john.johnson@example.com', '123 Main St, Springfield, IL 62701'),
+('Bob Smith', 'Class B', '9th', 'bob.smith@example.com', '+1 (555) 234-5678', '+1 (555) 876-5432', 'Jane Smith', 'jane.smith@example.com', '456 Elm St, Springfield, IL 62702'),
+('Charlie Brown', 'Class A', '10th', 'charlie.brown@example.com', '+1 (555) 345-6789', '+1 (555) 765-4321', 'Mary Brown', 'mary.brown@example.com', '789 Oak St, Springfield, IL 62703');
+
+
+-- Create the attendance table (unchanged)
+CREATE TABLE attendance (
+    id SERIAL PRIMARY KEY,
+    student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('present', 'absent', 'late')),
+    class VARCHAR(50),
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(student_id, date)
+);
+
+-- Indexes (unchanged)
+CREATE INDEX idx_attendance_student_date ON attendance(student_id, date);
+CREATE INDEX idx_attendance_class_date ON attendance(class, date);
+
+
+
+-- Attendance insertion (unchanged)
+INSERT INTO attendance (student_id, date, status, class) VALUES
+(1, '2024-08-01', 'present', 'Class A'),
+(1, '2024-08-02', 'present', 'Class A'),
+(1, '2024-08-03', 'absent', 'Class A'),
+(1, '2024-08-04', 'present', 'Class A'),
+(1, '2024-08-05', 'present', 'Class A'),
+(2, '2024-08-01', 'present', 'Class B'),
+(2, '2024-08-02', 'present', 'Class B'),
+(2, '2024-08-03', 'present', 'Class B'),
+(2, '2024-08-04', 'present', 'Class B'),
+(2, '2024-08-05', 'present', 'Class B'),
+(3, '2024-08-01', 'absent', 'Class A'),
+(3, '2024-08-02', 'present', 'Class A'),
+(3, '2024-08-03', 'present', 'Class A'),
+(3, '2024-08-04', 'absent', 'Class A'),
+(3, '2024-08-05', 'present', 'Class A');
+
+
+ALTER TABLE attendance
+ADD COLUMN teacher_id INTEGER REFERENCES teachers(id) ON DELETE SET NULL;
+
+UPDATE attendance SET teacher_id = 1 WHERE class = 'Class A';  -- Assign teacher_id 1 (John Smith) to Class A
+UPDATE attendance SET teacher_id = 2 WHERE class = 'Class B';  -- Assign teacher_id 2 (Sarah Johnson) to Class B
+
+
+ALTER TABLE attendance ALTER COLUMN teacher_id SET NOT NULL;
+
+INSERT INTO students (name, class, grade, email, phone, parent_phone, parent_name, parent_email, address) VALUES
+('Diana Wilson', 'Class A', '10th', 'diana.wilson@example.com', '+1 (555) 456-7890', '+1 (555) 012-3456', 'Robert Wilson', 'robert.wilson@example.com', '101 Pine St, Springfield, IL 62704'),
+('Eve Davis', 'Class A', '9th', 'eve.davis@example.com', '+1 (555) 567-8901', '+1 (555) 123-4567', 'Lisa Davis', 'lisa.davis@example.com', '202 Maple Ave, Springfield, IL 62705'),
+('Frank Miller', 'Class A', '10th', 'frank.miller@example.com', '+1 (555) 678-9012', '+1 (555) 234-5678', 'Susan Miller', 'susan.miller@example.com', '303 Birch Rd, Springfield, IL 62706'),
+('Grace Lee', 'Class B', '9th', 'grace.lee@example.com', '+1 (555) 789-0123', '+1 (555) 345-6789', 'David Lee', 'david.lee@example.com', '404 Cedar Ln, Springfield, IL 62707'),
+('Henry Garcia', 'Class B', '10th', 'henry.garcia@example.com', '+1 (555) 890-1234', '+1 (555) 456-7890', 'Maria Garcia', 'maria.garcia@example.com', '505 Walnut St, Springfield, IL 62708');
