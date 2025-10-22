@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Backend Service
+  backend:
+    image: asia-south1-docker.pkg.dev/gentle-scene-466610-a2/demo/backend:latest
+    container_name: online-learning-backend
+    env_file:
+      - .env  # Uses transferred Backend/.env with Cloud SQL details
+    environment:
+  - INSTANCE_CONNECTION_NAME=gentle-scene-466610-a2:asia-south1:online-learning-portal-postgres-db
+  - DB_USER=postgres
+  - DB_PASSWORD=Devanshu@2005
+  - DB_NAME=postgres
+  - DB_HOST=34.180.0.12
+
+  # Other vars like JWT_SECRET from .env
+    ports:
+      - "3000:3000"
+    networks:
+      - online-learning-network
+    restart: unless-stopped
+    volumes:
+      - uploads:/app/uploads  # For file persistence
+
+  # Frontend Service
+  frontend:
+    image: asia-south1-docker.pkg.dev/gentle-scene-466610-a2/demo/frontend:latest
+    container_name: online-learning-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - online-learning-network
+    restart: unless-stopped
+    environment:
+      VITE_BACKEND_URL: http://backend:3000  # Internal; change to http://34.29.247.206:3000 if frontend needs external access
+
+volumes:
+  uploads:
+    driver: local
+
+networks:
+  online-learning-network:
+    driver: bridge
