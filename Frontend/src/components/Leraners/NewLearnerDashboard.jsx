@@ -10,11 +10,15 @@ import EditProfileModal from './EditProfileModal';
 import WeeklyStreakIndicator from './WeeklyStreakIndicator';
 import TestResults from './TestResults';
 import ProgressTracking from './ProgressTracking';
+import BackNavigation from '../BackNavigation';
+import ResponsiveSidebar from '../ResponsiveSidebar';
+import { useSidebar } from '../SidebarProvider';
 
 const NewLearnerDashboard = () => {
   const [activeSection, setActiveSection] = useState('syllabus');
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+  const { isMobile, isTablet } = useSidebar();
   const [profileData, setProfileData] = useState({
     name: 'Alex Johnson',
     email: 'alex.johnson@example.com',
@@ -49,17 +53,32 @@ const NewLearnerDashboard = () => {
   return (
     <div>
       <Header />
+      
+      {/* Mobile Slide-out Sidebar */}
+      {(isMobile || isTablet) && (
+        <ResponsiveSidebar>
+          <Sidebar 
+            activeSection={activeSection} 
+            onSectionChange={setActiveSection}
+            isMobile={isMobile || isTablet}
+          />
+        </ResponsiveSidebar>
+      )}
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Dashboard Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Learner Dashboard</h1>
+            <div className="flex items-center mb-2">
+              <BackNavigation className='cursor-pointer'/>
+              <h1 className="text-3xl font-bold text-gray-900">Learner Dashboard</h1>
+            </div>
             <p className="text-gray-600">Welcome back, {profileData.name}! Here's your personalized learning overview.</p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar Navigation */}
-            <div className="lg:w-1/4 sticky top-25 self-start">
+            {/* Sidebar Navigation - Desktop Only */}
+            <div className="lg:w-1/4 sticky top-25 self-start hidden lg:block">
               <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
             </div>
 
@@ -67,7 +86,6 @@ const NewLearnerDashboard = () => {
             <div className="lg:w-3/4">
               {activeSection === 'syllabus' && (
                 <div className="space-y-6">
-                  {/* <UserProfileCard onEditProfile={handleEditProfile} /> */}
                   <CoursesList
                     onAddCourse={() => setIsAddCourseModalOpen(true)}
                     onEditCourses={handleEditCourses}
@@ -94,18 +112,6 @@ const NewLearnerDashboard = () => {
                 </div>
               )}
 
-              {/* {activeSection === 'teachers' && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                <div className="flex items-center mb-6">
-                  <Users className="w-6 h-6 text-purple-600 mr-2" />
-                  <h2 className="text-xl font-bold text-gray-900">My Teachers</h2>
-                </div>
-                <div className="text-center py-12">
-                  <p className="text-gray-600">Teacher connections coming soon!</p>
-                </div>
-              </div>
-            )} */}
-
               {activeSection === 'test' && (
                 <div className="space-y-6">
                   <TestResults />
@@ -114,21 +120,21 @@ const NewLearnerDashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Modals */}
-        <AddCourseModal
-          isOpen={isAddCourseModalOpen}
-          onClose={() => setIsAddCourseModalOpen(false)}
-          onAddCourse={handleAddCourse}
-        />
-
-        <EditProfileModal
-          isOpen={isEditProfileModalOpen}
-          onClose={() => setIsEditProfileModalOpen(false)}
-          profileData={profileData}
-          onSave={handleSaveProfile}
-        />
       </div>
+
+      {/* Modals */}
+      <AddCourseModal
+        isOpen={isAddCourseModalOpen}
+        onClose={() => setIsAddCourseModalOpen(false)}
+        onAddCourse={handleAddCourse}
+      />
+
+      <EditProfileModal
+        isOpen={isEditProfileModalOpen}
+        onClose={() => setIsEditProfileModalOpen(false)}
+        profileData={profileData}
+        onSave={handleSaveProfile}
+      />
     </div>
   );
 };
