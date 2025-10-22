@@ -7,6 +7,7 @@ import TeachersPage from './components/Teacher/TeachersPage'
 import ParentsPage from './components/Parents/ParentsPage'
 import AuthPage from './components/Auth/AuthPage'
 import { Toaster } from 'sonner';
+import { SidebarProvider } from './components/SidebarProvider';
 
 function App() {
 
@@ -14,18 +15,20 @@ function App() {
   return (
     <>
     <Toaster position="top-right" richColors/>
-      <Router>
-        <Routes>
-          {/* Define your routes here */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<AuthPage />} />
-          <Route path="/signup" element={<AuthPage />} />
-          <Route path="/learners" element={<LearnersPage />} />
-          <Route path="/teachers" element={<TeachersPage />} />
-          <Route path="/parents" element={<ParentsPage />} />
+      <SidebarProvider>
+        <Router>
+          <Routes>
+            {/* Define your routes here */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<AuthPage />} />
+            <Route path="/signup" element={<AuthPage />} />
+            <Route path="/learners" element={<LearnersPage />} />
+            <Route path="/teachers" element={<TeachersPage />} />
+            <Route path="/parents" element={<ParentsPage />} />
 
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </SidebarProvider>
     </>
   )
 }
