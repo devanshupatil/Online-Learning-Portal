@@ -14,7 +14,7 @@ const MyAccountSection = () => {
       </div>
       
       <div className="p-6 space-y-6">
-        <Progress />
+        <Progress className='cursor-pointer'/>
         <StudentProfile />
       </div>
     </div>
