@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Users, BookOpen, FileText, Calendar, TrendingUp, Upload, Settings, Plus, BarChart3, CheckCircle, PieChart, User } from 'lucide-react';
 import Header from '../Header';
 import TeacherSidebar from './TeacherSidebar';
+import BackNavigation from '../BackNavigation';
 import MaterialUpload from './MaterialUpload';
 import MaterialManager from './MaterialManager';
 import TestCreator from './TestCreator';
@@ -10,6 +11,11 @@ import AttendanceTracker from './AttendanceTracker';
 import AttendanceReports from './AttendanceReports';
 import StudentDirectory from './StudentDirectory';
 import StudentProfileView from './StudentProfileView';
+import ResponsiveSidebar from '../ResponsiveSidebar';
+import { useSidebar } from '../SidebarProvider';
+import { useEffect } from 'react';
+
+
 
 const TeacherDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -18,6 +24,10 @@ const TeacherDashboard = () => {
   const [attendanceTab, setAttendanceTab] = useState('tracker');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [uploadedMaterials, setUploadedMaterials] = useState(0);
+  const { isMobile, isTablet } = useSidebar();
+  const URL = import.meta.env.VITE_BACKEND_URL;
 
   const handleViewStudentProfile = (student) => {
     setSelectedStudent(student);
@@ -29,14 +39,65 @@ const TeacherDashboard = () => {
     setShowProfileModal(false);
   };
 
-  // Mock data for teacher overview
-  const overviewData = {
-    totalStudents: 45,
-    activeClasses: 3,
-    uploadedMaterials: 12,
-    pendingTests: 2,
-    attendanceRate: 92
+   // Mock data for teacher overview
+     const overviewData = {
+     totalStudents,
+     activeClasses: 3,
+     uploadedMaterials,
+     pendingTests: 2,
+     attendanceRate: 92
+   };
+
+
+  const getAllStudentsCount = async () => {
+    try {
+      const response = await fetch(`${URL}/api/getAllStudentcount`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch students count');
+      }
+
+      const data = await response.json();
+      setTotalStudents(data.students);
+    } catch (error) {
+      console.error('Error fetching students count:', error);
+      setTotalStudents(0);
+    }
   };
+
+  const getAllUploadedMaterialscount = async () => {
+    try {
+      const response = await fetch(`${URL}/api/getStudyMaterials/teacher123`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch uploaded materials count');
+      }
+
+      const data = await response.json();
+      setUploadedMaterials(data.materials.length);
+      // Handle the retrieved materials count as needed
+    } catch (error) {
+      console.error('Error fetching uploaded materials count:', error);
+      setUploadedMaterials(0);
+    }
+  };
+  useEffect(() => {
+    // Fetch any required data on component mount
+
+    getAllStudentsCount();
+    getAllUploadedMaterialscount();
+  }, []);
+
 
   const overviewCards = [
     {
@@ -74,17 +135,32 @@ const TeacherDashboard = () => {
   return (
     <div>
       <Header />
+
+      {/* Mobile Slide-out Sidebar */}
+      {(isMobile || isTablet) && (
+        <ResponsiveSidebar>
+          <TeacherSidebar
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            isMobile={isMobile || isTablet}
+          />
+        </ResponsiveSidebar>
+      )}
+
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Dashboard Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Teacher Dashboard</h1>
+            <div className="flex items-center mb-2">
+              <BackNavigation className='cursor-pointer' />
+              <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+            </div>
             <p className="text-gray-600">Welcome back! Manage your classes and students effectively.</p>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar Navigation */}
-            <div className="lg:w-1/4 sticky top-25 self-start">
+            {/* Sidebar Navigation - Desktop Only */}
+            <div className="lg:w-1/4 sticky top-25 self-start hidden lg:block">
               <TeacherSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
             </div>
 
@@ -147,22 +223,20 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setMaterialTab('upload')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            materialTab === 'upload'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'upload'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <Upload className="w-4 h-4 mr-2" />
                           Upload
                         </button>
                         <button
                           onClick={() => setMaterialTab('manage')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            materialTab === 'manage'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'manage'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <Settings className="w-4 h-4 mr-2" />
                           Manage
@@ -185,22 +259,20 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setTestTab('create')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            testTab === 'create'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'create'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <Plus className="w-4 h-4 mr-2" />
                           Create
                         </button>
                         <button
                           onClick={() => setTestTab('manage')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            testTab === 'manage'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'manage'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <BarChart3 className="w-4 h-4 mr-2" />
                           Manage
@@ -223,22 +295,20 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setAttendanceTab('tracker')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            attendanceTab === 'tracker'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'tracker'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <CheckCircle className="w-4 h-4 mr-2" />
                           Mark Attendance
                         </button>
                         <button
                           onClick={() => setAttendanceTab('reports')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                            attendanceTab === 'reports'
+                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'reports'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           <PieChart className="w-4 h-4 mr-2" />
                           Reports
