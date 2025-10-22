@@ -44,6 +44,7 @@ app.use(cors({
     'http://localhost:5173',
     'http://localhost:3000',
     'https://edu.onthegoalways.com/api', // backend url
+    'https://online-learning-portal.onrender.com', // Backend deployed url
     // process.env.FRONTEND_PRODUCTION_URL,
     // process.env.BACKEND__PRODUCTION_URL,
     // process.env.FRONTEND_LOCALHOST_URL,
