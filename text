@@ -1,0 +1,70 @@
+gcloud auth login
+
+gcloud auth configure-docker asia-south1-docker.pkg.dev
+
+# from project root
+docker build --platform linux/amd64 -t \
+  asia-south1-docker.pkg.dev/gentle-scene-466610-a2/online-learning-portal/backend:latest \
+  ./Backend
+
+docker push asia-south1-docker.pkg.dev/gentle-scene-466610-a2/online-learning-portal/backend:latest
+
+docker build --platform linux/amd64 \
+  --build-arg VITE_BACKEND_URL=https://edu.onthegoalways.com \
+  -t asia-south1-docker.pkg.dev/gentle-scene-466610-a2/online-learning-portal/frontend:latest \
+  ./Frontend
+
+docker push asia-south1-docker.pkg.dev/gentle-scene-466610-a2/online-learning-portal/frontend:latest
+
+docker compose pull / docker compose -f cloud-docker-compose.yml pull 
+docker compose up -d / docker compose -f cloud-docker-compose.yml up -d
+
+docker compose logs -f backend / docker compose -f cloud-docker-compose.yml logs -f backend
+docker compose logs -f cloudsql-proxy
+docker compose logs -f frontend / docker compose -f cloud-docker-compose.yml logs -f frontend
+
+# Delete all images
+docker rmi $(docker images -a -q) 
+
+
+gcloud compute instance-groups unmanaged create edu-instance-group \
+    --zone=asia-south1-a
+
+gcloud compute instance-groups unmanaged add-instances edu-instance-group \
+    --instances=online-learning-portal-vm \
+    --zone=asia-south1-a
+34.54.53.252
+
+gcloud compute instance-groups unmanaged set-named-ports edu-instance-group \
+    --named-ports=http:80 \
+    --zone=asia-south1-a
+
+
+
+
+Unused Files in Frontend:
+
+  1. Frontend/src/components/SidebarToggle.jsx
+  2. Frontend/src/components/MobileNavigationLayout.jsx
+  3. Frontend/src/components/ResponsiveNavigationDemo.jsx
+  4. Frontend/src/components/examples/LearnerDashboardExample.jsx
+  5. Frontend/src/components/examples/TeacherDashboardExample.jsx
+  6. Frontend/src/components/ResponsiveSidebarLayout.jsx
+  7. Frontend/src/components/Leraners/CTAButton.jsx
+  8. Frontend/src/components/Leraners/MyAccountSection.jsx
+  9. Frontend/src/components/Leraners/InteractiveResources.jsx
+  10. Frontend/src/components/Leraners/PersonalizedDashboard.jsx
+  11. Frontend/src/components/Leraners/LearnersHeroSection.jsx
+  12. Frontend/src/components/Leraners/LiveRecordedClasses.jsx
+  13. Frontend/src/components/Leraners/Syllabus.jsx
+  14. Frontend/src/components/Leraners/EnhancedLearnerDashboard.jsx
+  15. Frontend/src/components/Leraners/CommunicationTools.jsx
+  16. Frontend/src/components/Leraners/MyStuffSection.jsx
+  17. Frontend/src/components/Leraners/LearnerDashboard.jsx
+  18. Frontend/src/components/Leraners/LearnersNavigation.jsx
+  19. Frontend/src/components/Leraners/CourseCatalog.jsx
+  20. Frontend/src/components/Leraners/Progress.jsx
+  21. Frontend/src/components/Leraners/GradesFeedback.jsx
+  22. Frontend/src/components/Leraners/StudentProfile.jsx
+  23. Frontend/src/components/Leraners/SupportHelpdesk.jsx
+  24. Frontend/src/components/Leraners/Tests.jsx
