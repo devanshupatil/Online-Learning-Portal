@@ -21,6 +21,7 @@ ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 RUN npm run build
 
 # Expose port 80
+# EXPOSE 80
 
 # Install serve to serve the built app
 RUN npm install -g serve
