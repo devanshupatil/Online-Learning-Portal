@@ -14,21 +14,21 @@ const MaterialManager = () => {
   const getStudyMaterials = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${URL}/api/getStudyMaterials`);
+      const response = await fetch(`${URL}/api/getStudyMaterials/teacher123`); // Placeholder teacherId
       const data = await response.json();
       if (response.ok) {
         console.log('Materials fetched successfully:', data.materials);
         // Transform backend data to match frontend structure
         const transformedMaterials = (data.materials || []).map((material, index) => {
           const pathParts = material.name.split('/');
-          const category = pathParts[0] || 'Unknown';
-          const course = pathParts[1] || 'Unknown';
+          const category = material.category || 'Unknown';
+          const course = material.course || 'Unknown';
           const fileName = pathParts.slice(2).join('/') || material.name;
           const fileType = fileName.split('.').pop()?.toUpperCase() || 'FILE';
 
           // Format the creation date and time
-          const createdDate = material.createdDate ? new Date(material.createdDate).toLocaleDateString() : 'N/A';
-          const createdTime = material.createdDate ? new Date(material.createdDate).toLocaleTimeString() : 'N/A';
+          const createdDate = material.uploaded_at ? new Date(material.uploaded_at).toLocaleDateString() : 'N/A';
+          const createdTime = material.uploaded_at ? new Date(material.uploaded_at).toLocaleTimeString() : 'N/A';
 
           // Format file size
           const formatSize = (bytes) => {
