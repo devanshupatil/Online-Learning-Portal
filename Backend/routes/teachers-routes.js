@@ -14,7 +14,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/getStudyMaterials/:teacherId', getStudyMaterials);
 
-// router.delete('/deleteStudyMaterial', deleteStudyMaterial);
+router.delete('/deleteStudyMaterial', deleteStudyMaterial);
 
 router.get('/getAllStudentcount', getAllStudentsCount);
 
@@ -27,7 +27,7 @@ router.get('/getFile/:id', async (req, res) => {
         const { id } = req.params;
         const { data, error } = await supabase
             .from('study_materials')
-            .select('file_data, mime_type, file_name')
+            .select('file_name')
             .eq('id', id)
             .single();
 
@@ -35,17 +35,12 @@ router.get('/getFile/:id', async (req, res) => {
             return res.status(404).json({ message: 'File not found' });
         }
 
-        // Prevent caching
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', '0');
+        // Generate public URL from bucket and redirect
+        const { data: publicUrlData } = supabase.storage
+            .from('study-materials')
+            .getPublicUrl(data.file_name);
 
-        // Set content headers
-        res.setHeader('Content-Type', data.mime_type || 'application/octet-stream');
-        res.setHeader('Content-Disposition', `inline; filename="${data.file_name}"`);
-
-        // Send binary data
-        res.send(data.file_data);
+        res.redirect(publicUrlData.publicUrl);
     } catch (err) {
         console.error('Error serving file:', err);
         res.status(500).json({ message: 'Internal server error' });
