@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react(),tailwindcss(),],
   server: {
     proxy: {
-      // '/api': 'https://localhost:3000',
-      '/api': 'https://online-learning-portal.onrender.com',
+      '/api': 'https://localhost:3000',
+      // '/api': 'https://online-learning-portal.onrender.com',
     },
   },
 })
