@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { FileText, Video, Eye } from 'lucide-react';
+import { FileText, Video, Eye, CloudCog } from 'lucide-react';
 import { MaterialViewer, detectFileType, getFileTypeInfo } from './MaterialViewer';
 
 const Material = () => {
@@ -25,6 +25,7 @@ const Material = () => {
       }
 
       const data = await response.json();
+      // console.log('Fetched study materials:', data);
       if (data.studyMaterials) {
         setMaterials(data.studyMaterials);
       }
@@ -41,12 +42,9 @@ const Material = () => {
 
   const handleViewMaterial = (material) => {
     if (material.url) {
-      const link = document.createElement('a');
-      link.href = material.url;
-      link.download = material.title;
-      link.click();
+      window.open(material.url, '_blank');
     } else {
-      toast.error(`Download link not available for ${material.title}`);
+      console.error(`URL not available for ${material.name}`);
     }
   };
 
@@ -142,7 +140,7 @@ const Material = () => {
               <div className="ml-4 flex-1">
                 <p className="font-medium text-gray-900">{item.name}</p>
                 <p className="text-sm text-gray-600 mt-1">Size: {formatFileSize(item.size)}</p>
-                <p className="text-xs text-gray-500 mt-1">Created: {new Date(item.created).toLocaleDateString()}</p>
+                <p className="text-xs text-gray-500 mt-1">Uploaded: {new Date(item.uploaded_at).toLocaleDateString()}</p>
               </div>
               <div className="flex space-x-2">
                 <button
