@@ -55,7 +55,7 @@ const Header = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style jsx="true">{`
         /* CTA Button Enhancements */
         .cta-button {
           position: relative;

@@ -15,7 +15,7 @@ const HamburgerIcon = ({ isOpen = false, onClick, className = "" }) => {
         <span className="hamburger-line line-3"></span>
       </div>
       
-      <style jsx>{`
+      <style jsx="true">{`
         .hamburger-button {
           padding: 0.5rem;
           border-radius: 0.5rem;

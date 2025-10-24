@@ -2,12 +2,12 @@ import React from 'react';
 
 // Prop types can be defined using PropTypes below if needed
 
-const ActionButton = () => ({ 
-  children, 
-  variant = 'primary', 
+const ActionButton = ({
+  children,
+  variant = 'primary',
   color = 'bg-blue-600 hover:bg-blue-700',
   className = '',
-  onClick 
+  onClick
 }) => {
   const baseClasses = "relative overflow-hidden px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg group";
   

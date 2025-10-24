@@ -154,7 +154,7 @@ const ResponsiveSidebar = ({
           })}
         </div>
 
-        <style jsx>{`
+        <style jsx="true">{`
           .sidebar-mobile {
             will-change: transform;
             contain: layout style paint;

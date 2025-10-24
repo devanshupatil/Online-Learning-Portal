@@ -103,7 +103,7 @@ const Sidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = fals
         </ul>
       </div>
 
-      <style jsx>{`
+      <style jsx= "true">{`
         .sidebar-nav-button {
           position: relative;
           will-change: transform;
