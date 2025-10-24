@@ -215,13 +215,35 @@
 //     getAttendanceByDateAndClass
 // };
 
-// const supabase = require('../config/database')
+const supabase = require('../config/supabaseDB');
 
-// const supabase = {};
+const student = {
+  getStudyMaterials: async () => {
+    const { data, error } = await supabase
+      .from('study_materials')
+      .select('id, teacher_id, category, course, file_name, file_size, mime_type, uploaded_at')
+      .order('uploaded_at', { ascending: false });
 
-// module.exports =  supabase;
-// const supabase = require('../config/database')
+    if (error) throw error;
 
-// const supabase = {};
+    // Generate public URLs from bucket
+    return data.map(material => {
+      const { data: publicUrlData } = supabase.storage
+        .from('study-materials')
+        .getPublicUrl(material.file_name);
 
-// module.exports =  supabase;
+      return {
+        id: material.id,
+        name: material.file_name,
+        url: publicUrlData.publicUrl,
+        category: material.category,
+        course: material.course,
+        size: material.file_size,
+        mime_type: material.mime_type,
+        uploaded_at: material.uploaded_at
+      };
+    });
+  }
+};
+
+module.exports = student;
