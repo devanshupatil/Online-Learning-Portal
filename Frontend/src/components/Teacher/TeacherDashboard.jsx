@@ -223,7 +223,7 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setMaterialTab('upload')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'upload'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'upload'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
@@ -233,7 +233,7 @@ const TeacherDashboard = () => {
                         </button>
                         <button
                           onClick={() => setMaterialTab('manage')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'manage'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${materialTab === 'manage'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
@@ -259,7 +259,7 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setTestTab('create')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'create'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'create'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
@@ -269,7 +269,7 @@ const TeacherDashboard = () => {
                         </button>
                         <button
                           onClick={() => setTestTab('manage')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'manage'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${testTab === 'manage'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
@@ -295,7 +295,7 @@ const TeacherDashboard = () => {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setAttendanceTab('tracker')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'tracker'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'tracker'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
@@ -305,7 +305,7 @@ const TeacherDashboard = () => {
                         </button>
                         <button
                           onClick={() => setAttendanceTab('reports')}
-                          className={`flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'reports'
+                          className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${attendanceTab === 'reports'
                               ? 'bg-blue-100 text-blue-700'
                               : 'text-gray-600 hover:bg-gray-100'
                             }`}
