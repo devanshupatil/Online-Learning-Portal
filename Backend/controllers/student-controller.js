@@ -1,94 +1,112 @@
 const studentModels = require('../models/student-models');
 
-const getAttendanceByDateAndClass = async (req, res) => {
-    try {
-        const { date, class: className } = req.query;
+// const getAttendanceByDateAndClass = async (req, res) => {
 
-        if (!date || !className) {
-            return res.status(400).json({ message: 'Date and class are required.' });
-        }
+//     try {
+//         const { date, class: className } = req.query;
 
-        const attendanceRecords = await studentModels.getAttendanceByDateAndClass(date, className);
+//         if (!date || !className) {
+//             return res.status(400).json({ message: 'Date and class are required.' });
+//         }
 
-        res.status(200).json({
-            message: 'Attendance records retrieved successfully.',
-            data: attendanceRecords
-        });
-    } catch (error) {
-        console.error('Error retrieving attendance records:', error);
-        res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
-};
+//         const attendanceRecords = await studentModels.getAttendanceByDateAndClass(date, className);
 
-const saveAttendance = async (req, res) => {
-    try {
-        const attendanceData = req.body;
+//         res.status(200).json({
+//             message: 'Attendance records retrieved successfully.',
+//             data: attendanceRecords
+//         });
+//     } catch (error) {
+//         console.error('Error retrieving attendance records:', error);
+//         res.status(500).json({ message: 'Internal server error: ' + error.message });
+//     }
+// };
 
-        // Validate required fields
-        if (!attendanceData.date || !attendanceData.records) {
-            return res.status(400).json({ message: 'Date and attendance records are required.' });
-        }
+// const saveAttendance = async (req, res) => {
+//     try {
+//         const attendanceData = req.body;
 
-        const result = await studentModels.saveAttendance(attendanceData);
+//         // Validate required fields
+//         if (!attendanceData.date || !attendanceData.records) {
+//             return res.status(400).json({ message: 'Date and attendance records are required.' });
+//         }
 
-        res.status(200).json({
-            message: result.message,
-            data: result
-        });
-    } catch (error) {
-        console.error('Error saving attendance:', error);
-        res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
-};
+//         const result = await studentModels.saveAttendance(attendanceData);
 
-const getStudentInfo = async (req, res) => {
-    try {
-        const { studentId } = req.params;
+//         res.status(200).json({
+//             message: result.message,
+//             data: result
+//         });
+//     } catch (error) {
+//         console.error('Error saving attendance:', error);
+//         res.status(500).json({ message: 'Internal server error: ' + error.message });
+//     }
+// };
 
-        // Validate studentId if provided
-        if (studentId && isNaN(studentId)) {
-            return res.status(400).json({ message: 'Invalid student ID. Must be a number.' });
-        }
+// const getStudentInfo = async (req, res) => {
+//     try {
+//         const { studentId } = req.params;
 
-        const studentInfo = await studentModels.getStudentInfo(studentId);
+//         // Validate studentId if provided
+//         if (studentId && isNaN(studentId)) {
+//             return res.status(400).json({ message: 'Invalid student ID. Must be a number.' });
+//         }
 
-        if (!studentInfo || studentInfo.length === 0) {
-            return res.status(404).json({ message: 'No student information found.' });
-        }
+//         const studentInfo = await studentModels.getStudentInfo(studentId);
 
-        res.status(200).json({
-            message: 'Student information retrieved successfully.',
-            data: studentInfo
-        });
-    } catch (error) {
-        console.error('Error retrieving student information:', error);
-        res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
-};
+//         if (!studentInfo || studentInfo.length === 0) {
+//             return res.status(404).json({ message: 'No student information found.' });
+//         }
 
-const getStudentAttendanceSummary = async (req, res) => {
-    try {
-        const { studentId } = req.params;
+//         res.status(200).json({
+//             message: 'Student information retrieved successfully.',
+//             data: studentInfo
+//         });
+//     } catch (error) {
+//         console.error('Error retrieving student information:', error);
+//         res.status(500).json({ message: 'Internal server error: ' + error.message });
+//     }
+// };
 
-        if (!studentId || isNaN(studentId)) {
-            return res.status(400).json({ message: 'Valid student ID is required.' });
-        }
+// const getStudentAttendanceSummary = async (req, res) => {
+//     try {
+//         const { studentId } = req.params;
 
-        const summary = await studentModels.getStudentAttendanceSummary(studentId);
+//         if (!studentId || isNaN(studentId)) {
+//             return res.status(400).json({ message: 'Valid student ID is required.' });
+//         }
 
-        res.status(200).json({
-            message: 'Student attendance summary retrieved successfully.',
-            data: summary
-        });
-    } catch (error) {
-        console.error('Error retrieving student attendance summary:', error);
-        res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
+//         const summary = await studentModels.getStudentAttendanceSummary(studentId);
+
+//         res.status(200).json({
+//             message: 'Student attendance summary retrieved successfully.',
+//             data: summary
+//         });
+//     } catch (error) {
+//         console.error('Error retrieving student attendance summary:', error);
+//         res.status(500).json({ message: 'Internal server error: ' + error.message });
+//     }
+// };
+
+// module.exports = {
+//     getAttendanceByDateAndClass,
+//     saveAttendance,
+//     getStudentInfo,
+//     getStudentAttendanceSummary
+// };
+
+const getStudyMaterials = async (req, res) => {
+  try {
+    const materials = await studentModels.getStudyMaterials();
+    res.status(200).json({
+      message: 'Study materials retrieved successfully.',
+      studyMaterials: materials
+    });
+  } catch (error) {
+    console.error('Error retrieving study materials:', error);
+    res.status(500).json({ message: 'Internal server error: ' + error.message });
+  }
 };
 
 module.exports = {
-    getAttendanceByDateAndClass,
-    saveAttendance,
-    getStudentInfo,
-    getStudentAttendanceSummary
+  getStudyMaterials
 };
