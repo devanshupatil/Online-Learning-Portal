@@ -60,22 +60,22 @@ const teacherModels = require('../models/teacher-models');
 //     }
 // };
 
-// const deleteStudyMaterial = async (req, res) => {
-//   try {
-//     const { fileName } = req.body;
+const deleteStudyMaterial = async (req, res) => {
+  try {
+    const { fileName } = req.body;
 
-//     if (!fileName) {
-//       return res.status(400).json({ message: 'File name is required for deletion.' });
-//     }
+    if (!fileName) {
+      return res.status(400).json({ message: 'File name is required for deletion.' });
+    }
 
-//     await teacherModels.deleteStudyMaterial(fileName);
+    await teacherModels.deleteStudyMaterial(fileName);
 
-//     res.status(200).json({ message: 'Study material deleted successfully.' });
-//   } catch (error) {
-//     console.error('Error deleting study material:', error);
-//     res.status(500).json({ message: 'Internal server error: ' + error.message });
-//   }
-// };
+    res.status(200).json({ message: 'Study material deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting study material:', error);
+    res.status(500).json({ message: 'Internal server error: ' + error.message });
+  }
+};
 
 // const getAllStudentsCount = async (req, res) => {
 //     try {
@@ -90,12 +90,13 @@ const teacherModels = require('../models/teacher-models');
 //     }
 // };
 
-// module.exports = {
-//     UploadStudyMaterial,
-//     getStudyMaterials,
-//     deleteStudyMaterial,
-//     getAllStudentsCount
-// };
+module.exports = {
+    // UploadStudyMaterial,
+    // getStudyMaterials,
+    deleteStudyMaterial,
+    // getAllStudentsCount,
+    // getAllUploadedMaterialscount
+};
 
 
 const teacher_controller = {
@@ -174,6 +175,23 @@ const teacher_controller = {
             const materials = await teacherModels.getAllStudyMaterials(teacherId);
             res.status(200).json({ message: 'Study materials retrieved successfully.', materials });
         } catch (error) {
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    deleteStudyMaterial: async (req, res) => {
+        try {
+            const { fileName } = req.body;
+
+            if (!fileName) {
+                return res.status(400).json({ message: 'File name is required for deletion.' });
+            }
+
+            await teacherModels.deleteStudyMaterial(fileName);
+
+            res.status(200).json({ message: 'Study material deleted successfully.' });
+        } catch (error) {
+            console.error('Error deleting study material:', error);
             res.status(500).json({ message: 'Internal server error: ' + error.message });
         }
     },
