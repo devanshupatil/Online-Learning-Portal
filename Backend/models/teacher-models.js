@@ -167,59 +167,45 @@ const teacher = {
 
   UploadStudyMaterial: async (category, course, files, teacherId) => {
     const uploadPromises = files.map(async (file) => {
-      // Insert binary data directly into the study_materials table
-      const { data, error } = await supabase
+      const filePath = `${category}/${course}/${file.originalname}`;
+
+      // Upload to Supabase storage bucket 'study-materials'
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('study-materials')
+        .upload(filePath, file.buffer, {
+          contentType: file.mimetype,
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Insert metadata into the study_materials table
+      const { data: insertData, error: insertError } = await supabase
         .from('study_materials')
         .insert({
           teacher_id: teacherId,
           category,
           course,
-          file_name: `${category}/${course}/${file.originalname}`,
-          file_data: file.buffer,  // Use file.buffer for binary data from memory storage
+          file_name: filePath,
           file_size: file.size,
           mime_type: file.mimetype
         })
-        .select('id')  // Get the inserted row ID for URL generation
+        .select('id')
         .single();
 
-      if (error) throw error;
+      if (insertError) throw insertError;
 
-      // Generate a "public URL" pointing to your API endpoint
-      const fileUrl = `${process.env.BACKEND__LOCALHOST_URL || 'http://localhost:3000'}/api/getFile/${data.id}`;
+      // Generate public URL from bucket
+      const { data: publicUrlData } = supabase.storage
+        .from('study-materials')
+        .getPublicUrl(filePath);
 
-      return { id: data.id, url: fileUrl };
+      return { id: insertData.id, url: publicUrlData.publicUrl };
     });
 
     const results = await Promise.all(uploadPromises);
     return { success: true, files: results };
   },
-
-
-  // getAllStudyMaterials: async (teacherId) => {
-  //   // Query the study_materials table for the teacher's files
-  //   const { data, error } = await supabase
-  //     .from('study_materials')
-  //     .select('*')
-  //     .eq('teacher_id', teacherId)
-  //     .order('uploaded_at', { ascending: false });  // Most recent first
-
-  //   if (error) {
-  //     console.error('Error fetching study materials:', error);
-  //     throw error;
-  //   }
-
-  //   // Return the metadata (including URLs)
-  //   return data.map(material => ({
-  //     id: material.id,
-  //     name: material.file_name,
-  //     url: material.file_url,
-  //     category: material.category,
-  //     course: material.course,
-  //     size: material.file_size,
-  //     mime_type: material.mime_type,
-  //     uploaded_at: material.uploaded_at
-  //   }));
-  // },
 
   getAllStudyMaterials: async (teacherId) => {
     const { data, error } = await supabase
@@ -230,32 +216,49 @@ const teacher = {
 
     if (error) throw error;
 
-    // Generate URLs pointing to the API endpoint
-    const backendUrl = process.env.BACKEND__LOCALHOST_URL || 'http://localhost:3000';
-    return data.map(material => ({
-      id: material.id,
-      name: material.file_name,
-      url: `${backendUrl}/api/getFile/${material.id}`,  // API URL for viewing/downloading
-      category: material.category,
-      course: material.course,
-      size: material.file_size,
-      mime_type: material.mime_type,
-      uploaded_at: material.uploaded_at
-    }));
+    // Generate public URLs from bucket
+    return data.map(material => {
+      const { data: publicUrlData } = supabase.storage
+        .from('study-materials')
+        .getPublicUrl(material.file_name);
+
+      return {
+        id: material.id,
+        name: material.file_name,
+        url: publicUrlData.publicUrl,
+        category: material.category,
+        course: material.course,
+        size: material.file_size,
+        mime_type: material.mime_type,
+        uploaded_at: material.uploaded_at
+      };
+    });
   },
 
 
   deleteStudyMaterial: async (fileName) => {
-    const { data, error } = await supabase.storage
+    // Delete from storage bucket
+    const { data: storageData, error: storageError } = await supabase.storage
       .from('study-materials')
       .remove([fileName]);
 
-    if (error) {
-      console.error('Error deleting study material:', error);
-      throw error;
+    if (storageError) {
+      console.error('Error deleting from storage:', storageError);
+      throw storageError;
     }
 
-    return data;
+    // Delete from database table
+    const { data: dbData, error: dbError } = await supabase
+      .from('study_materials')
+      .delete()
+      .eq('file_name', fileName);
+
+    if (dbError) {
+      console.error('Error deleting from database:', dbError);
+      throw dbError;
+    }
+
+    return { storageData, dbData };
   },
 }
 
