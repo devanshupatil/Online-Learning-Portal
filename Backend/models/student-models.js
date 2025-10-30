@@ -243,7 +243,7 @@ const student = {
         uploaded_at: material.uploaded_at
       };
     });
-  }
+  },
 };
 
 module.exports = student;

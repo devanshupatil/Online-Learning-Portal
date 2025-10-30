@@ -1,4 +1,5 @@
 const teacherModels = require('../models/teacher-models');
+const { get } = require('../routes/teachers-routes');
 
 // const UploadStudyMaterial = async (req, res) => {
 //     try {
@@ -195,6 +196,84 @@ const teacher_controller = {
             res.status(500).json({ message: 'Internal server error: ' + error.message });
         }
     },
+
+    getAllstudentInfo: async (req, res) => {
+        try {
+            const students = await teacherModels.getAllstudentInfo();
+            res.status(200).json({
+                message: 'Students retrieved successfully.',
+                data: students
+            });
+        } catch (error) {
+            console.error('Error retrieving students:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+  getAttendanceByDateAndClass: async (req, res) => {
+    try {
+      const { date, class: className } = req.query;
+      const attendanceData = await teacherModels.getAttendanceByDateAndClass(date, className);
+      res.status(200).json({
+        message: 'Attendance data retrieved successfully.',
+        data: attendanceData
+      });
+    } catch (error) {
+      console.error('Error retrieving attendance data:', error);
+      res.status(500).json({ message: 'Internal server error: ' + error.message });
+    }
+  },
+
+  saveAttendance: async (req, res) => {
+    try {
+      const { date, class: className, teacherId, records } = req.body;
+
+      // Validate required fields
+      if (!date || !className || !teacherId || !records) {
+        return res.status(400).json({ message: 'Date, class, teacherId, and records are required.' });
+      }
+
+      // Transform records to match database schema
+      const attendanceRecords = records.map(record => ({
+        date,
+        class: className,
+        teacher_id: teacherId,
+        student_id: record.studentId,
+        status: record.status
+      }));
+
+      const result = await teacherModels.saveAttendance(attendanceRecords);
+
+      res.status(201).json({
+        message: 'Attendance saved successfully.',
+        data: result
+      });
+    } catch (error) {
+      console.error('Error saving attendance:', error);
+      res.status(500).json({ message: 'Internal server error: ' + error.message });
+    }
+  },
+
+  getAttendanceRecords: async (req, res) => {
+    try {
+      const { teacherId } = req.params;
+      const { startDate, endDate } = req.query;
+
+      if (!teacherId) {
+        return res.status(400).json({ message: 'teacherId is required.' });
+      }
+
+      const attendanceRecords = await teacherModels.getAttendanceRecords(teacherId, startDate, endDate);
+
+      res.status(200).json({
+        message: 'Attendance records retrieved successfully.',
+        data: attendanceRecords
+      });
+    } catch (error) {
+      console.error('Error retrieving attendance records:', error);
+      res.status(500).json({ message: 'Internal server error: ' + error.message });
+    }
+  }
 };
 
 module.exports = teacher_controller;
