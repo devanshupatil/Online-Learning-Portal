@@ -3,7 +3,7 @@ import { Calendar, Users, CheckCircle, XCircle, Save, UserCheck, UserX } from 'l
 
 const AttendanceTracker = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedClass, setSelectedClass] = useState('Class A');
+  const [selectedClass, setSelectedClass] = useState('JEE');
   const [attendance, setAttendance] = useState({});
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const AttendanceTracker = () => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${URL}/api/students`);
+        const response = await fetch(`${URL}/api/getAllStudentInfo`);
         const data = await response.json();
 
         if (response.ok) {
@@ -46,13 +46,14 @@ const AttendanceTracker = () => {
   }, [selectedClass, URL]);
 
   // Fetch today's attendance when date or class changes
+  // Fetch today's attendance when date, class changes, or students are loaded
   useEffect(() => {
-    if (selectedDate && selectedClass) {
+    if (selectedDate && selectedClass && students.length > 0) {
       fetchTodaysAttendance();
     }
-  }, [selectedDate, selectedClass, URL]);
+  }, [selectedDate, selectedClass, students, URL]);
 
-  const classes = ['Class A', 'Class B', 'Class C', 'Class D'];
+  const classes = ['JEE', 'NEET', 'CET (PCM)', 'CET (PCB)'];
 
   const handleAttendanceChange = (studentId, status) => {
     setAttendance(prev => ({
@@ -139,16 +140,22 @@ const AttendanceTracker = () => {
       const response = await fetch(`${URL}/api/attendance?date=${selectedDate}&class=${selectedClass}`);
       const data = await response.json();
 
+
       if (response.ok) {
         // Transform the data to match our display format
-        const attendanceRecords = data.data.map(record => ({
-          student_id: record.student_id,
-          name: record.name,
-          status: record.status || 'Not marked',
-          date: record.date || selectedDate,
-          teacher_id: record.teacher_id,
-          teacher_name: record.teacher_name
-        }));
+        const attendanceRecords = data.data.map(record => {
+          // Try multiple ID fields for lookup
+          const student = students.find(s => s.id === record.student_id );
+          
+          return {
+            student_id: record.student_id,
+            name: student ? student.name : (record.name || record.student_name || 'Unknown Student'),
+            status: record.status || 'Not marked',
+            date: record.date || selectedDate,
+            teacher_id: record.teacher_id,
+            teacher_name: record.teacher_name
+          };
+        });
 
         setTodaysAttendance(attendanceRecords);
       } else {
@@ -164,6 +171,9 @@ const AttendanceTracker = () => {
   };
 
   const stats = getAttendanceStats();
+
+
+
 
   return (
     <div className="space-y-6">
@@ -259,22 +269,20 @@ const AttendanceTracker = () => {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleAttendanceChange(studentId, 'present')}
-                        className={`p-2 rounded-lg transition-colors duration-200 ${
-                          attendance[studentId] === 'present'
-                            ? 'bg-green-100 text-green-700'
-                            : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
-                        }`}
+                        className={`p-2 rounded-lg transition-colors duration-200 ${attendance[studentId] === 'present'
+                          ? 'bg-green-100 text-green-700'
+                          : 'text-gray-600 hover:bg-green-50 hover:text-green-600'
+                          }`}
                         title="Mark Present"
                       >
                         <CheckCircle className="w-5 h-5" />
                       </button>
                       <button
                         onClick={() => handleAttendanceChange(studentId, 'absent')}
-                        className={`p-2 rounded-lg transition-colors duration-200 ${
-                          attendance[studentId] === 'absent'
-                            ? 'bg-red-100 text-red-700'
-                            : 'text-gray-600 hover:bg-red-50 hover:text-red-600'
-                        }`}
+                        className={`p-2 rounded-lg transition-colors duration-200 ${attendance[studentId] === 'absent'
+                          ? 'bg-red-100 text-red-700'
+                          : 'text-gray-600 hover:bg-red-50 hover:text-red-600'
+                          }`}
                         title="Mark Absent"
                       >
                         <XCircle className="w-5 h-5" />
@@ -349,15 +357,14 @@ const AttendanceTracker = () => {
                       <td className="px-4 py-3 text-sm text-gray-900">{record.student_id}</td>
                       <td className="px-4 py-3 text-sm text-gray-900">{record.name}</td>
                       <td className="px-4 py-3 text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          record.status === 'present'
-                            ? 'bg-green-100 text-green-800'
-                            : record.status === 'absent'
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${record.status === 'present'
+                          ? 'bg-green-100 text-green-800'
+                          : record.status === 'absent'
                             ? 'bg-red-100 text-red-800'
                             : record.status === 'late'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
                           {record.status}
                         </span>
                       </td>
