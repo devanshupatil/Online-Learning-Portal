@@ -235,7 +235,6 @@ const teacher = {
     });
   },
 
-
   deleteStudyMaterial: async (fileName) => {
     // Delete from storage bucket
     const { data: storageData, error: storageError } = await supabase.storage
@@ -259,6 +258,70 @@ const teacher = {
     }
 
     return { storageData, dbData };
+  },
+
+  getAllstudentInfo: async () => {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  },
+
+  getAttendanceByDateAndClass: async (date, className) => {
+    try {
+      const { data, error } = await supabase
+        .from('attendance')
+        .select('*')
+        .eq('date', date)
+        .eq('class', className);
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error in getAttendanceByDateAndClass:', error);
+      throw error;
+    }
+  },
+
+  saveAttendance: async (attendanceData) => {
+    try {
+      const { data, error } = await supabase
+        .from('attendance')
+        .insert(attendanceData);
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error in saveAttendance:', error);
+      throw error;
+    }
+  },
+
+  getAttendanceRecords: async (teacherId, startDate, endDate) => {
+    try {
+      let query = supabase
+        .from('attendance')
+        .select('*')
+        .eq('teacher_id', teacherId);
+
+      if (startDate) {
+        query = query.gte('date', startDate);
+      }
+      if (endDate) {
+        query = query.lte('date', endDate);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error in getAttendanceRecords:', error);
+      throw error;
+    }
   },
 }
 
