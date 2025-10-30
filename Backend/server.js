@@ -20,20 +20,8 @@ const leranerRoutes = require('./routes/leraner-routes');
   }
 })();
 
-// (async () => {
-//   try {
-//     const { data, error } = await supabase
-//       .from('students')
-//       .select('*');
-//     if (error) throw error;
-//     console.log('Students data:', data);
-//   } catch (error) {
-//     console.error('Error fetching students data:', error.message);
-//   }
-// })();
 
 // CORS configuration
-
 app.use(cors({
   origin: [
     'https://34.47.136.4:3000',
