@@ -4,7 +4,7 @@ const multer = require('multer');
 const supabase = require('../config/supabaseDB')
 
 const { UploadStudyMaterial, getStudyMaterials, deleteStudyMaterial, getAllStudentsCount
-, getAllUploadedMaterialscount
+, getAllUploadedMaterialscount, getAllstudentInfo, getAttendanceByDateAndClass, saveAttendance, getAttendanceRecords
  } = require('../controllers/teachers-controller');
 
 
@@ -47,7 +47,13 @@ router.get('/getFile/:id', async (req, res) => {
     }
 });
 
+router.get('/getAllStudentInfo', getAllstudentInfo);
 
+router.get('/attendance', getAttendanceByDateAndClass);
+
+router.post('/attendance', saveAttendance);
+
+router.get('/attendanceRecords/:teacherId', getAttendanceRecords);
 
 
 
