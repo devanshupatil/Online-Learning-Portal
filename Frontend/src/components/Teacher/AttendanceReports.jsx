@@ -1,52 +1,182 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Users, TrendingUp, TrendingDown, BarChart3, PieChart } from 'lucide-react';
 
 const AttendanceReports = () => {
-  const [selectedClass, setSelectedClass] = useState('Class A');
+  const [selectedClass, setSelectedClass] = useState('JEE');
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const currentDate = today.toISOString().split('T')[0];
+  const URL = import.meta.env.VITE_BACKEND_URL;
+  const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const teacherId = {
+    id: 1,
+    name: 'John Smith'
+  };
+
   const [dateRange, setDateRange] = useState({
-    start: '2024-08-01',
-    end: '2024-08-31'
+    start: firstDayOfMonth.toISOString().split('T')[0],
+    end: currentDate
   });
 
-  const classes = ['Class A', 'Class B', 'Class C', 'Class D'];
+  const fetchStudents = async () => {
+    try {
+      const response = await fetch(`${URL}/api/getAllStudentInfo`);
+      const data = await response.json();
 
-  // Mock attendance data
-  const attendanceData = {
-    'Class A': {
-      students: [
-        { id: 1, name: 'Alice Johnson', rollNo: '001', attendance: 85, records: [
-          { date: '2024-08-01', status: 'present' },
-          { date: '2024-08-02', status: 'present' },
-          { date: '2024-08-03', status: 'absent' },
-          { date: '2024-08-04', status: 'present' },
-          { date: '2024-08-05', status: 'present' }
-        ]},
-        { id: 2, name: 'Bob Smith', rollNo: '002', attendance: 92, records: [
-          { date: '2024-08-01', status: 'present' },
-          { date: '2024-08-02', status: 'present' },
-          { date: '2024-08-03', status: 'present' },
-          { date: '2024-08-04', status: 'present' },
-          { date: '2024-08-05', status: 'present' }
-        ]},
-        { id: 3, name: 'Charlie Brown', rollNo: '003', attendance: 78, records: [
-          { date: '2024-08-01', status: 'absent' },
-          { date: '2024-08-02', status: 'present' },
-          { date: '2024-08-03', status: 'present' },
-          { date: '2024-08-04', status: 'absent' },
-          { date: '2024-08-05', status: 'present' }
-        ]}
-      ],
-      summary: {
-        totalStudents: 25,
-        averageAttendance: 82,
-        totalPresent: 20,
-        totalAbsent: 5,
-        trend: 'up' // up, down, stable
+
+
+      if (response.ok) {
+        // Filter students by selected class
+        const classStudents = data.data.filter(student => student.class === selectedClass);
+        setStudents(classStudents);
       }
+    } catch (error) {
+      console.error('Error fetching students:', error);
     }
   };
 
-  const currentClassData = attendanceData[selectedClass] || attendanceData['Class A'];
+
+  const getAttendanceRecords = async () => {
+    try {
+      const queryParams = new URLSearchParams({
+        class: selectedClass,
+        startDate: dateRange.start,
+        endDate: dateRange.end
+      });
+      const response = await fetch(`${URL}/api/attendanceRecords/${teacherId.id}?${queryParams}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch attendance records');
+      }
+
+      const data = await response.json();
+      console.log('Fetched attendance records:', data);
+      setAttendanceRecords(data.data || []);
+
+    } catch (error) {
+      console.error('Error fetching attendance records:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    // Fetch any required data on component mount
+    fetchStudents();
+    getAttendanceRecords();
+  }, [selectedClass, dateRange.start, dateRange.end]);
+
+  const classes = ['JEE', 'NEET', 'CET (PCM)', 'CET (PCB)'];
+
+  // Calculate attendance statistics dynamically
+  const calculateAttendanceStats = (className) => {
+    const classRecords = attendanceRecords?.filter(record => record.class === className) || [];
+    const totalPresent = classRecords.filter(record => record.status === 'present').length;
+    const totalAbsent = classRecords.filter(record => record.status === 'absent').length;
+    const totalRecords = totalPresent + totalAbsent;
+
+    // Calculate average attendance percentage
+    const averageAttendance = totalRecords > 0 ? Math.round((totalPresent / totalRecords) * 100) : 0;
+
+    // Calculate trend based on recent vs older records
+    const trend = calculateTrend(classRecords);
+
+    return {
+      totalStudents: students?.length || 0,
+      averageAttendance,
+      totalPresent,
+      totalAbsent,
+      trend
+    };
+  };
+
+  // Calculate attendance trend
+  const calculateTrend = (records) => {
+    if (!records || records.length === 0) return 'stable';
+
+    // Sort records by date
+    const sortedRecords = records.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Split into two halves (recent vs older)
+    const midPoint = Math.floor(sortedRecords.length / 2);
+    const recentRecords = sortedRecords.slice(midPoint);
+    const olderRecords = sortedRecords.slice(0, midPoint);
+
+    // Calculate attendance percentages for each period
+    const recentPresent = recentRecords.filter(r => r.status === 'present').length;
+    const recentTotal = recentRecords.length;
+    const recentPercentage = recentTotal > 0 ? (recentPresent / recentTotal) * 100 : 0;
+
+    const olderPresent = olderRecords.filter(r => r.status === 'present').length;
+    const olderTotal = olderRecords.length;
+    const olderPercentage = olderTotal > 0 ? (olderPresent / olderTotal) * 100 : 0;
+
+    const difference = recentPercentage - olderPercentage;
+
+    if (difference > 5) return 'up';
+    if (difference < -5) return 'down';
+    return 'stable';
+  };
+
+  // Calculate weekly attendance trends for the chart
+  const calculateWeeklyTrends = () => {
+    // if (!attendanceRecords || attendanceRecords.length === 0) {
+    //   return [65, 70, 75, 80, 78, 82, 85]; // Default mock data
+    // }
+
+    const classRecords = attendanceRecords.filter(record => record.class === selectedClass);
+    const sortedRecords = classRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Group by weeks (last 7 weeks)
+    const weeks = [];
+    const now = new Date();
+
+    for (let i = 6; i >= 0; i--) {
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - (i * 7) - 6);
+      const weekEnd = new Date(now);
+      weekEnd.setDate(now.getDate() - (i * 7));
+
+      const weekRecords = sortedRecords.filter(record => {
+        const recordDate = new Date(record.date);
+        return recordDate >= weekStart && recordDate <= weekEnd;
+      });
+
+      const present = weekRecords.filter(r => r.status === 'present').length;
+      const total = weekRecords.length;
+
+      // If around 7 days and attendance is zero, show 0
+      let percentage;
+      if (total === 0) {
+        // Check if this week should have around 7 days of potential attendance
+        const daysInWeek = Math.ceil((weekEnd - weekStart) / (1000 * 60 * 60 * 24));
+        percentage = daysInWeek >= 5 ? 0 : 50; // If week has 5+ days, assume should have attendance, show 0
+      } else {
+        percentage = Math.round((present / total) * 100);
+      }
+
+      weeks.push(percentage);
+    }
+
+    return weeks;
+  };
+
+  // Mock attendance data - now using dynamic calculations
+  const attendanceData = {
+    'JEE': { summary: calculateAttendanceStats('JEE') },
+    'NEET': { summary: calculateAttendanceStats('NEET') },
+    'CET (PCM)': { summary: calculateAttendanceStats('CET (PCM)') },
+    'CET (PCB)': { summary: calculateAttendanceStats('CET (PCB)') }
+  };
+
+  const currentClassData = attendanceData[selectedClass] || attendanceData['JEE'];
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -163,44 +293,50 @@ const AttendanceReports = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {currentClassData.students.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50">
+              {students.length > 0 ? students.map((student) => (
+                <tr key={student.student_id || student.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{student.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{student.rollNo}</div>
+                    <div className="text-sm text-gray-500">{student.rollNo || student.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{student.attendance}%</div>
+                    <div className="text-sm text-gray-900">85%</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-1">
-                      {student.records.slice(-5).map((record, index) => (
+                      {/* Mock recent records - replace with actual data */}
+                      {['present', 'present', 'absent', 'present', 'present'].slice(-5).map((status, index) => (
                         <span
                           key={index}
-                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${
-                            record.status === 'present' ? 'bg-green-500' : 'bg-red-500'
-                          }`}
-                          title={`${record.date}: ${record.status}`}
+                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${status === 'present' ? 'bg-green-500' : 'bg-red-500'
+                            }`}
+                          title={`Day ${index + 1}: ${status}`}
                         >
-                          {record.status === 'present' ? 'P' : 'A'}
+                          {status === 'present' ? 'P' : 'A'}
                         </span>
                       ))}
                     </div>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
+                    No students found for {selectedClass}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Attendance Trends Chart (Mock) */}
+      {/* Attendance Trends Chart */}
       <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
         <h4 className="font-semibold text-gray-900 mb-4">Attendance Trends</h4>
         <div className="h-64 flex items-end justify-between gap-2">
-          {[65, 70, 75, 80, 78, 82, 85].map((value, index) => (
+          {calculateWeeklyTrends().map((value, index) => (
             <div key={index} className="flex-1 flex flex-col items-center">
               <div
                 className="w-full bg-blue-500 rounded-t transition-all duration-300 hover:bg-blue-600"
@@ -211,7 +347,7 @@ const AttendanceReports = () => {
           ))}
         </div>
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">Weekly attendance percentage over the last 7 weeks</p>
+          <p className="text-sm text-gray-600">Weekly attendance percentage over the last 7 weeks for {selectedClass}</p>
         </div>
       </div>
     </div>
