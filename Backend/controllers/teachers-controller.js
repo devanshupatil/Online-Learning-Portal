@@ -1,5 +1,8 @@
 const teacherModels = require('../models/teacher-models');
 const { get } = require('../routes/teachers-routes');
+const OpenAI = require('openai');
+const fs = require('fs');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // const UploadStudyMaterial = async (req, res) => {
 //     try {
@@ -62,34 +65,21 @@ const { get } = require('../routes/teachers-routes');
 // };
 
 const deleteStudyMaterial = async (req, res) => {
-  try {
-    const { fileName } = req.body;
+    try {
+        const { fileName } = req.body;
 
-    if (!fileName) {
-      return res.status(400).json({ message: 'File name is required for deletion.' });
+        if (!fileName) {
+            return res.status(400).json({ message: 'File name is required for deletion.' });
+        }
+
+        await teacherModels.deleteStudyMaterial(fileName);
+
+        res.status(200).json({ message: 'Study material deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting study material:', error);
+        res.status(500).json({ message: 'Internal server error: ' + error.message });
     }
-
-    await teacherModels.deleteStudyMaterial(fileName);
-
-    res.status(200).json({ message: 'Study material deleted successfully.' });
-  } catch (error) {
-    console.error('Error deleting study material:', error);
-    res.status(500).json({ message: 'Internal server error: ' + error.message });
-  }
 };
-
-// const getAllStudentsCount = async (req, res) => {
-//     try {
-//         const students = await teacherModels.getAllStudentsCount();
-//         res.status(200).json({
-//             message: 'Students retrieved successfully.',
-//             students
-//         });
-//     } catch (error) {
-//         console.error('Error retrieving students:', error);
-//         res.status(500).json({ message: 'Internal server error: ' + error.message });
-//     }
-// };
 
 module.exports = {
     // UploadStudyMaterial,
@@ -170,12 +160,94 @@ const teacher_controller = {
         }
     },
 
+    UploadTestsMaterial: async (req, res) => {
+        try {
+            const { course } = req.body;
+            const { teacherId } = req.params;
+            const files = req.files; // Files are in req.files with multer
+
+            // Validate input
+            if (!course || !teacherId) {
+                return res.status(400).json({ message: 'Category, course, and teacherId are required.' });
+            }
+
+            if (!files || files.length === 0) {
+                return res.status(400).json({ message: 'At least one file is required.' });
+            }
+
+            // Upload to Google Cloud Storage
+            const result = await teacherModels.UploadTestsMaterial(course, files, teacherId);
+
+            // Check if upload was successful
+            if (result && result.success) {
+                res.status(201).json({
+                    message: `Test material uploaded successfully. ${files.length} file(s) uploaded.`,
+                    success: true,
+                    filesUploaded: files.length
+                });
+            } else {
+                return res.status(500).json({
+                    message: 'Failed to upload test materials.',
+                    success: false
+                });
+            }
+        } catch (error) {
+            console.error('Error uploading test material:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
     getStudyMaterials: async (req, res) => {
         try {
             const { teacherId } = req.params;;  // Get teacherId from query params
             const materials = await teacherModels.getAllStudyMaterials(teacherId);
             res.status(200).json({ message: 'Study materials retrieved successfully.', materials });
         } catch (error) {
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    getTestsMaterials: async (req, res) => {
+        try {
+            const { teacherId } = req.params;;  // Get teacherId from query params
+            const materials = await teacherModels.getTestsMaterials(teacherId);
+            res.status(200).json({ message: 'Test materials retrieved successfully.', materials });
+        } catch (error) {
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    deleteTestsMaterials: async (req, res) => {
+        try {
+            const { fileName } = req.body;
+
+            if (!fileName) {
+                return res.status(400).json({ message: 'File name is required for deletion.' });
+            }
+
+            await teacherModels.deleteTestsMaterials(fileName);
+
+            res.status(200).json({ message: 'Test material deleted successfully.' });
+        } catch (error) {
+            console.error('Error deleting test material:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    updateTestMaterial: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { fileName, course } = req.body;
+
+            if (!id) {
+                return res.status(400).json({ message: 'Material ID is required for update.' });
+            }
+
+            await teacherModels.updateTestMaterial(id, fileName, course);
+
+            res.status(200).json({ message: 'Test material updated successfully.' });
+        } catch (error) {
+            console.error('Error updating test material:', error);
             res.status(500).json({ message: 'Internal server error: ' + error.message });
         }
     },
@@ -210,70 +282,101 @@ const teacher_controller = {
         }
     },
 
-  getAttendanceByDateAndClass: async (req, res) => {
-    try {
-      const { date, class: className } = req.query;
-      const attendanceData = await teacherModels.getAttendanceByDateAndClass(date, className);
-      res.status(200).json({
-        message: 'Attendance data retrieved successfully.',
-        data: attendanceData
-      });
-    } catch (error) {
-      console.error('Error retrieving attendance data:', error);
-      res.status(500).json({ message: 'Internal server error: ' + error.message });
+    getAttendanceByDateAndClass: async (req, res) => {
+        try {
+            const { date, class: className } = req.query;
+            const attendanceData = await teacherModels.getAttendanceByDateAndClass(date, className);
+            res.status(200).json({
+                message: 'Attendance data retrieved successfully.',
+                data: attendanceData
+            });
+        } catch (error) {
+            console.error('Error retrieving attendance data:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    saveAttendance: async (req, res) => {
+        try {
+            const { date, class: className, teacherId, records } = req.body;
+
+            // Validate required fields
+            if (!date || !className || !teacherId || !records) {
+                return res.status(400).json({ message: 'Date, class, teacherId, and records are required.' });
+            }
+
+            // Transform records to match database schema
+            const attendanceRecords = records.map(record => ({
+                date,
+                class: className,
+                teacher_id: teacherId,
+                student_id: record.studentId,
+                status: record.status
+            }));
+
+            const result = await teacherModels.saveAttendance(attendanceRecords);
+
+            res.status(201).json({
+                message: 'Attendance saved successfully.',
+                data: result
+            });
+        } catch (error) {
+            console.error('Error saving attendance:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    getAttendanceRecords: async (req, res) => {
+        try {
+            const { teacherId } = req.params;
+            const { startDate, endDate } = req.query;
+
+            if (!teacherId) {
+                return res.status(400).json({ message: 'teacherId is required.' });
+            }
+
+            const attendanceRecords = await teacherModels.getAttendanceRecords(teacherId, startDate, endDate);
+
+            res.status(200).json({
+                message: 'Attendance records retrieved successfully.',
+                data: attendanceRecords
+            });
+        } catch (error) {
+            console.error('Error retrieving attendance records:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    analyzeImage: async (req, res) => {
+        try {
+
+            const { imageURL } = req.query;
+
+            //   if (!req.file) {
+            //     return res.status(400).json({ message: 'Image file is required.' });
+            //   }
+
+            //   const imageBuffer = req.file.buffer;
+            //   const base64Image = imageBuffer.toString('base64');
+            //   const mimeType = req.file.mimetype;
+
+            if (!imageURL) {
+                return res.status(400).json({ message: 'Image URL is required.' });
+            }
+
+            const analysis = await teacherModels.analyzeImage(imageURL);
+
+            //   const analysis = response.choices[0].message.content;
+
+            res.status(200).json({
+                message: 'Image analyzed successfully.',
+                analysis: analysis
+            });
+        } catch (error) {
+            console.error('Error analyzing image:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
     }
-  },
-
-  saveAttendance: async (req, res) => {
-    try {
-      const { date, class: className, teacherId, records } = req.body;
-
-      // Validate required fields
-      if (!date || !className || !teacherId || !records) {
-        return res.status(400).json({ message: 'Date, class, teacherId, and records are required.' });
-      }
-
-      // Transform records to match database schema
-      const attendanceRecords = records.map(record => ({
-        date,
-        class: className,
-        teacher_id: teacherId,
-        student_id: record.studentId,
-        status: record.status
-      }));
-
-      const result = await teacherModels.saveAttendance(attendanceRecords);
-
-      res.status(201).json({
-        message: 'Attendance saved successfully.',
-        data: result
-      });
-    } catch (error) {
-      console.error('Error saving attendance:', error);
-      res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
-  },
-
-  getAttendanceRecords: async (req, res) => {
-    try {
-      const { teacherId } = req.params;
-      const { startDate, endDate } = req.query;
-
-      if (!teacherId) {
-        return res.status(400).json({ message: 'teacherId is required.' });
-      }
-
-      const attendanceRecords = await teacherModels.getAttendanceRecords(teacherId, startDate, endDate);
-
-      res.status(200).json({
-        message: 'Attendance records retrieved successfully.',
-        data: attendanceRecords
-      });
-    } catch (error) {
-      console.error('Error retrieving attendance records:', error);
-      res.status(500).json({ message: 'Internal server error: ' + error.message });
-    }
-  }
 };
 
 module.exports = teacher_controller;
