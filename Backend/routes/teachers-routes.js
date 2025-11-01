@@ -4,7 +4,9 @@ const multer = require('multer');
 const supabase = require('../config/supabaseDB')
 
 const { UploadStudyMaterial, getStudyMaterials, deleteStudyMaterial, getAllStudentsCount
-, getAllUploadedMaterialscount, getAllstudentInfo, getAttendanceByDateAndClass, saveAttendance, getAttendanceRecords
+, getAllUploadedMaterialscount, getAllstudentInfo, getAttendanceByDateAndClass, saveAttendance,
+ getAttendanceRecords, UploadTestsMaterial, getTestsMaterials, deleteTestsMaterials, updateTestMaterial,
+ analyzeImage
  } = require('../controllers/teachers-controller');
 
 
@@ -47,6 +49,39 @@ router.get('/getFile/:id', async (req, res) => {
     }
 });
 
+router.post('/UploadTestsMaterial/:teacherId', upload.array('files'), UploadTestsMaterial);
+
+router.get('/getTestsMaterials/:teacherId', getTestsMaterials);
+
+router.delete('/deleteTestsMaterials', deleteTestsMaterials);
+
+router.put('/updateTestMaterial/:id', updateTestMaterial);
+
+router.get('/downloadTestMaterial/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { data, error } = await supabase
+            .from('tests_materials')
+            .select('file_name')
+            .eq('id', id)
+            .single();
+
+        if (error || !data) {
+            return res.status(404).json({ message: 'File not found' });
+        }
+
+        // Generate public URL from bucket and redirect
+        const { data: publicUrlData } = supabase.storage
+            .from('study-materials')
+            .getPublicUrl(data.file_name);
+
+        res.redirect(publicUrlData.publicUrl);
+    } catch (err) {
+        console.error('Error serving file:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 router.get('/getAllStudentInfo', getAllstudentInfo);
 
 router.get('/attendance', getAttendanceByDateAndClass);
@@ -55,7 +90,7 @@ router.post('/attendance', saveAttendance);
 
 router.get('/attendanceRecords/:teacherId', getAttendanceRecords);
 
-
+router.post('/analyzeImage', analyzeImage);
 
 module.exports = router;
 
