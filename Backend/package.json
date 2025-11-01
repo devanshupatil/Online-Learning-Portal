@@ -15,10 +15,12 @@
     "@google-cloud/cloud-sql-connector": "^1.8.3",
     "@google-cloud/storage": "^7.17.0",
     "@supabase/supabase-js": "^2.75.1",
+    "axios": "^1.13.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "multer": "^2.0.2",
+    "openai": "^6.7.0",
     "pg": "^8.16.3"
   }
 }
