@@ -207,50 +207,50 @@ const TestManager = () => {
       // Show loading state
       toast.loading('Analyzing image...', { id: 'analyze' });
 
-      try {
-        const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
-        if (cached) {
-          let parsed = null;
-          try {
-            parsed = JSON.parse(cached);
-          } catch (parseErr) {
-            // Attempt to recover JSON if there's a non-JSON prefix (e.g. "json\n{...}")
-            const firstBrace = cached.indexOf('{');
-            const firstBracket = cached.indexOf('[');
-            let start = -1;
-            if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
-            else if (firstBracket !== -1) start = firstBracket;
-            if (start !== -1) {
-              try {
-                parsed = JSON.parse(cached.slice(start));
-              } catch (parseErr2) {
-                console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
-              }
-            } else {
-              console.warn('Cached analysis does not contain JSON:', parseErr);
-            }
-          }
+      // try {
+      //   const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
+      //   if (cached) {
+      //     let parsed = null;
+      //     try {
+      //       parsed = JSON.parse(cached);
+      //     } catch (parseErr) {
+      //       // Attempt to recover JSON if there's a non-JSON prefix (e.g. "json\n{...}")
+      //       const firstBrace = cached.indexOf('{');
+      //       const firstBracket = cached.indexOf('[');
+      //       let start = -1;
+      //       if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
+      //       else if (firstBracket !== -1) start = firstBracket;
+      //       if (start !== -1) {
+      //         try {
+      //           parsed = JSON.parse(cached.slice(start));
+      //         } catch (parseErr2) {
+      //           console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
+      //         }
+      //       } else {
+      //         console.warn('Cached analysis does not contain JSON:', parseErr);
+      //       }
+      //     }
 
-          if (parsed) {
-            // If cached data exists for same id, use it and open modal instead of calling API
-            setAnalysisData(parsed);
-            setEditingAnalysis({ ...parsed });
-            setShowAnalysisModal(true);
-            setCurrentMaterialId(material.id);
-            toast.dismiss('analyze');
+      //     if (parsed) {
+      //       // If cached data exists for same id, use it and open modal instead of calling API
+      //       setAnalysisData(parsed);
+      //       setEditingAnalysis({ ...parsed });
+      //       setShowAnalysisModal(true);
+      //       setCurrentMaterialId(material.id);
+      //       toast.dismiss('analyze');
 
-            toast.success('Loaded cached analysis for this image.');
-            return;
-          } else {
-            // If cached exists but couldn't be parsed, continue to call analyze API
-            console.warn('Cached analysis found but could not be parsed, proceeding with fresh analysis.');
-          }
-        }
-      } catch (err) {
-        // If accessing localStorage fails (e.g., private mode), just continue with analysis
-        console.warn('Failed to read cached analysis:', err);
-        // continue without returning so we attempt fresh analysis
-      }
+      //       toast.success('Loaded cached analysis for this image.');
+      //       return;
+      //     } else {
+      //       // If cached exists but couldn't be parsed, continue to call analyze API
+      //       console.warn('Cached analysis found but could not be parsed, proceeding with fresh analysis.');
+      //     }
+      //   }
+      // } catch (err) {
+      //   // If accessing localStorage fails (e.g., private mode), just continue with analysis
+      //   console.warn('Failed to read cached analysis:', err);
+      //   // continue without returning so we attempt fresh analysis
+      // }
 
 
       // Fetch the image as blob
@@ -262,6 +262,93 @@ const TestManager = () => {
       // const imageBlob = await imageResponse.blob();
 
       // Create FormData and append the image
+     
+     
+    // First try to load cached analysis from localStorage
+    // try {
+    //   const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
+    //   if (cached) {
+    //     let parsed = null;
+    //     try {
+    //       parsed = JSON.parse(cached);
+    //     } catch (parseErr) {
+    //       // Attempt to recover JSON if there's a prefix or corruption
+    //       const firstBrace = cached.indexOf('{');
+    //       const firstBracket = cached.indexOf('[');
+    //       let start = -1;
+    //       if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
+    //       else if (firstBracket !== -1) start = firstBracket;
+    //       if (start !== -1) {
+    //         try {
+    //           parsed = JSON.parse(cached.slice(start));
+    //         } catch (parseErr2) {
+    //           console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
+    //         }
+    //       } else {
+    //         console.warn('Cached analysis does not contain JSON:', parseErr);
+    //       }
+    //     }
+
+    //     if (parsed && Object.keys(parsed).length > 0) {
+    //       setAnalysisData(parsed);
+    //       setEditingAnalysis({ ...parsed });
+    //       setCurrentMaterialId(material.id);
+    //       setShowAnalysisModal(true);
+    //       toast.dismiss('analyze');
+    //       toast.success('Loaded cached analysis for this image.');
+    //       return;
+    //     }
+    //   }
+    // } catch (err) {
+    //   console.warn('Failed to read cached analysis from localStorage:', err);
+    // }
+
+    // If no cached analysis, check backend for existing analysis
+    try {
+      const getImageResponse = await fetch(`${URL}/api/getImageAnalysis/${material.id}`);
+      if (getImageResponse.ok) {
+        // Some endpoints may return empty body (204) — handle that gracefully
+        const text = await getImageResponse.text();
+        if (text) {
+          let existingAnalysis = null;
+          try {
+
+            const analysisStart = text.indexOf('{');
+            if (analysisStart !== -1) {
+              const cleanedText = text.slice(analysisStart);
+              existingAnalysis = JSON.parse(cleanedText);
+            } else {
+              throw new Error('Invalid analysis data format');
+            }
+            existingAnalysis = JSON.parse(text);
+          } catch (parseErr) {
+            console.warn('Failed to parse analysis JSON from server:', parseErr);
+          }
+
+          if (existingAnalysis && Object.keys(existingAnalysis).length > 0) {
+            // Cache server result locally for faster subsequent loads
+            // try {
+            //   localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(existingAnalysis));
+            // } catch (e) {
+            //   console.warn('Failed to cache analysis in localStorage:', e);
+            // }
+
+            setAnalysisData(existingAnalysis);
+            setEditingAnalysis({ ...existingAnalysis });
+            setCurrentMaterialId(material.id);
+            setShowAnalysisModal(true);
+            toast.dismiss('analyze');
+            toast.success('Loaded existing analysis for this image.');
+            return;
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Error fetching existing analysis from server:', err);
+    }
+
+
+
       const formData = new FormData();
       formData.append('id', material.id);
 
