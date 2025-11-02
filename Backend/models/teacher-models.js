@@ -535,6 +535,46 @@ const teacher = {
 
     return response.choices[0].message.content;
   },
+
+  saveImageAnalysis: async (imageId, analysisData) => {
+    try {
+      // First, try to update existing record
+      const { data: updateData, error: updateError } = await supabase
+        .from('image_analysis_results')
+        .update({
+          analysis_data: analysisData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('material_id', imageId)
+        .select('*')
+        .single();
+
+      // If update succeeded (row exists), return the data
+      if (!updateError && updateData) {
+        return updateData;
+      }
+
+      // If update failed because row doesn't exist, insert new record
+      const { data: insertData, error: insertError } = await supabase
+        .from('image_analysis_results')
+        .insert({
+          material_id: imageId,
+          analysis_data: analysisData
+        })
+        .select('*')
+        .single();
+
+      if (insertError) {
+        console.error('Error inserting image analysis:', insertError);
+        throw insertError;
+      }
+
+      return insertData;
+    } catch (error) {
+      console.error('Error in saveImageAnalysis:', error);
+      throw error;
+    }
+  },
 }
 
 module.exports = teacher;
