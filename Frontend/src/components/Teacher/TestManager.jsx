@@ -205,7 +205,7 @@ const TestManager = () => {
       }
 
       // Show loading state
-      // toast.loading('Analyzing image...', { id: 'analyze' });
+      toast.loading('Analyzing image...', { id: 'analyze' });
 
       try {
         const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
@@ -237,6 +237,7 @@ const TestManager = () => {
             setEditingAnalysis({ ...parsed });
             setShowAnalysisModal(true);
             setCurrentMaterialId(material.id);
+            toast.dismiss('analyze');
 
             toast.success('Loaded cached analysis for this image.');
             return;
@@ -264,7 +265,7 @@ const TestManager = () => {
       const formData = new FormData();
       formData.append('id', material.id);
 
-       const queryParams = new URLSearchParams({
+      const queryParams = new URLSearchParams({
         imageURL: material.url,
       });
 
@@ -300,10 +301,10 @@ const TestManager = () => {
   };
 
   const handleSaveAnalysis = async () => {
-    try {
-      console.log('Current materialId in save function:', currentMaterialId);
-      console.log('Analysis data to save:', editingAnalysis);
 
+    toast.loading('Saving analysis image data...', { id: 'saveAnalysis' });
+
+    try {
       if (!currentMaterialId) {
         console.error('currentMaterialId is null/undefined');
         throw new Error('No material ID available. Please try analyzing the image again.');
@@ -313,7 +314,6 @@ const TestManager = () => {
         materialId: currentMaterialId,
         analysis: editingAnalysis, // Changed from analysisData to analysis to match backend expectation
       };
-      console.log('Request body:', requestBody);
 
       const response = await fetch(`${URL}/api/saveImageAnalysis`, {
         method: 'POST',
@@ -326,6 +326,7 @@ const TestManager = () => {
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to save analysis data');
+        toast.error(`Failed to save analysis: ${errorData.message}`, { id: 'saveAnalysis' });
       }
 
       // Update local state and cache
@@ -333,6 +334,7 @@ const TestManager = () => {
       localStorage.setItem(`imageAnalysis_${currentMaterialId}`, JSON.stringify(editingAnalysis));
 
       setShowAnalysisModal(false);
+      toast.dismiss('saveAnalysis');
       toast.success('Analysis data saved successfully!');
     } catch (error) {
       console.error('Error saving analysis data:', error);
@@ -506,17 +508,15 @@ const TestManager = () => {
                       <div className="relative">
                         <button
                           onClick={() => handleDownload(material.id, fileName)}
-                          className={`p-2 rounded-lg transition-all duration-300 ${
-                            downloading && downloadingId === material.id
+                          className={`p-2 rounded-lg transition-all duration-300 ${downloading && downloadingId === material.id
                               ? 'text-green-600 bg-green-50 scale-110 rotate-12'
                               : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50 hover:scale-105'
-                          }`}
+                            }`}
                           title={downloading && downloadingId === material.id ? "Downloading..." : "Download"}
                           disabled={downloading && downloadingId === material.id}
                         >
-                          <Download className={`cursor-pointer w-5 h-5 transition-transform duration-300 ${
-                            downloading && downloadingId === material.id ? 'animate-pulse' : ''
-                          }`} />
+                          <Download className={`cursor-pointer w-5 h-5 transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''
+                            }`} />
                         </button>
                         {downloading && downloadingId === material.id && (
                           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
