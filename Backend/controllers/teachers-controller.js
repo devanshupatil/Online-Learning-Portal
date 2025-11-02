@@ -372,6 +372,23 @@ const teacher_controller = {
             console.error('Error analyzing image:', error);
             res.status(500).json({ message: 'Internal server error: ' + error.message });
         }
+    },
+
+    saveImageAnalysis: async (req, res) => {
+        try {
+            const { materialId, analysis } = req.body;
+
+            if (!materialId || !analysis) {
+                return res.status(400).json({ message: 'materialId and analysis are required.' });
+            }
+
+            await teacherModels.saveImageAnalysis(materialId, analysis);
+
+            res.status(200).json({ message: 'Image analysis saved successfully.' });
+        } catch (error) {
+            console.error('Error saving image analysis:', error);
+            res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
     }
 };
 
