@@ -6,7 +6,7 @@ const supabase = require('../config/supabaseDB')
 const { UploadStudyMaterial, getStudyMaterials, deleteStudyMaterial, getAllStudentsCount
 , getAllUploadedMaterialscount, getAllstudentInfo, getAttendanceByDateAndClass, saveAttendance,
  getAttendanceRecords, UploadTestsMaterial, getTestsMaterials, deleteTestsMaterials, updateTestMaterial,
- analyzeImage, saveImageAnalysis
+ analyzeImage, saveImageAnalysis, getImageAnalysis
  } = require('../controllers/teachers-controller');
 
 
@@ -93,6 +93,8 @@ router.get('/attendanceRecords/:teacherId', getAttendanceRecords);
 router.post('/analyzeImage', analyzeImage);
 
 router.post('/saveImageAnalysis', saveImageAnalysis);
+
+router.get('/getImageAnalysis/:materialId', getImageAnalysis);
 
 module.exports = router;
 
