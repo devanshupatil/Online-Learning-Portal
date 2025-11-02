@@ -575,6 +575,21 @@ const teacher = {
       throw error;
     }
   },
+
+  getImageAnalysis: async (imageId) => {
+    const { data, error } = await supabase
+      .from('image_analysis_results')
+      .select('analysis_data')
+      .eq('material_id', imageId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching image analysis:', error);
+      throw error;
+    }
+
+    return data ? data.analysis_data : null;
+  },
 }
 
 module.exports = teacher;
