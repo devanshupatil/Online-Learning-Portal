@@ -1,8 +1,4 @@
 const teacherModels = require('../models/teacher-models');
-const { get } = require('../routes/teachers-routes');
-const OpenAI = require('openai');
-const fs = require('fs');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // const UploadStudyMaterial = async (req, res) => {
 //     try {
