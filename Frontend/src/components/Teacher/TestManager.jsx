@@ -13,6 +13,10 @@ const TestManager = () => {
   const [downloadingId, setDownloadingId] = useState(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadMessage, setDownloadMessage] = useState('');
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false);
+  const [analysisData, setAnalysisData] = useState({});
+  const [editingAnalysis, setEditingAnalysis] = useState({});
+  const [currentMaterialId, setCurrentMaterialId] = useState(null);
 
   const URL = import.meta.env.VITE_BACKEND_URL;
   const teacherId = 'teacher123'; // Placeholder teacherId
@@ -191,13 +195,62 @@ const TestManager = () => {
       //   toast.error('Only image files can be analyzed.');
       //   return;
       // }
+
+      // Check if there is cached analysis for this material in localStorage
+
+
       if (!material.id) {
         toast.error('Invalid material for analysis.');
         return;
       }
 
       // Show loading state
-      toast.loading('Analyzing image...', { id: 'analyze' });
+      // toast.loading('Analyzing image...', { id: 'analyze' });
+
+      try {
+        const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
+        if (cached) {
+          let parsed = null;
+          try {
+            parsed = JSON.parse(cached);
+          } catch (parseErr) {
+            // Attempt to recover JSON if there's a non-JSON prefix (e.g. "json\n{...}")
+            const firstBrace = cached.indexOf('{');
+            const firstBracket = cached.indexOf('[');
+            let start = -1;
+            if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
+            else if (firstBracket !== -1) start = firstBracket;
+            if (start !== -1) {
+              try {
+                parsed = JSON.parse(cached.slice(start));
+              } catch (parseErr2) {
+                console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
+              }
+            } else {
+              console.warn('Cached analysis does not contain JSON:', parseErr);
+            }
+          }
+
+          if (parsed) {
+            // If cached data exists for same id, use it and open modal instead of calling API
+            setAnalysisData(parsed);
+            setEditingAnalysis({ ...parsed });
+            setShowAnalysisModal(true);
+            setCurrentMaterialId(material.id);
+
+            toast.success('Loaded cached analysis for this image.');
+            return;
+          } else {
+            // If cached exists but couldn't be parsed, continue to call analyze API
+            console.warn('Cached analysis found but could not be parsed, proceeding with fresh analysis.');
+          }
+        }
+      } catch (err) {
+        // If accessing localStorage fails (e.g., private mode), just continue with analysis
+        console.warn('Failed to read cached analysis:', err);
+        // continue without returning so we attempt fresh analysis
+      }
+
 
       // Fetch the image as blob
       // const imageResponse = await fetch(material.url);
@@ -227,15 +280,153 @@ const TestManager = () => {
 
       const result = await analyzeResponse.json();
 
+      // Store the analysis result in browser's local storage
+      localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(result));
+
       // Show success with analysis result
       toast.success('Image analyzed successfully!', { id: 'analyze' });
 
-      // Display the analysis result (you can customize this)
-      alert(`Analysis Result:\n\n${result.analysis}`);
+      // Set analysis data and show modal
+      setAnalysisData(result);
+      setEditingAnalysis({ ...result });
+      setCurrentMaterialId(material.id);
+      console.log('Setting currentMaterialId to:', material.id);
+      setShowAnalysisModal(true);
 
     } catch (error) {
       console.error('Error analyzing image:', error);
       toast.error(`Analysis failed: ${error.message}`, { id: 'analyze' });
+    }
+  };
+
+  const handleSaveAnalysis = async () => {
+    try {
+      console.log('Current materialId in save function:', currentMaterialId);
+      console.log('Analysis data to save:', editingAnalysis);
+
+      if (!currentMaterialId) {
+        console.error('currentMaterialId is null/undefined');
+        throw new Error('No material ID available. Please try analyzing the image again.');
+      }
+
+      const requestBody = {
+        materialId: currentMaterialId,
+        analysis: editingAnalysis, // Changed from analysisData to analysis to match backend expectation
+      };
+      console.log('Request body:', requestBody);
+
+      const response = await fetch(`${URL}/api/saveImageAnalysis`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to save analysis data');
+      }
+
+      // Update local state and cache
+      setAnalysisData({ ...editingAnalysis });
+      localStorage.setItem(`imageAnalysis_${currentMaterialId}`, JSON.stringify(editingAnalysis));
+
+      setShowAnalysisModal(false);
+      toast.success('Analysis data saved successfully!');
+    } catch (error) {
+      console.error('Error saving analysis data:', error);
+      toast.error(`Failed to save analysis: ${error.message}`);
+    }
+  };
+
+  const handleAnalysisChange = (path, value) => {
+    setEditingAnalysis(prev => updateNestedValue(prev, path, value));
+  };
+
+  const updateNestedValue = (obj, path, value) => {
+    const keys = path.split('.');
+    const lastKey = keys.pop();
+    const target = keys.reduce((o, key) => {
+      if (key.includes('[')) {
+        const [arrayKey, index] = key.split(/\[|\]/).filter(Boolean);
+        if (!o[arrayKey]) o[arrayKey] = [];
+        if (!o[arrayKey][index]) o[arrayKey][index] = {};
+        return o[arrayKey][index];
+      }
+      if (!o[key]) o[key] = {};
+      return o[key];
+    }, obj);
+
+    target[lastKey] = value;
+    return { ...obj };
+  };
+
+  const renderJsonValue = (key, value, path = '', level = 0) => {
+    const currentPath = path ? `${path}.${key}` : key;
+    const indent = '  '.repeat(level);
+
+    if (Array.isArray(value)) {
+      return (
+        <div key={currentPath} className="mb-4">
+          <div className="font-medium text-gray-800 mb-2">{indent}{key}:</div>
+          {value.map((item, index) => (
+            <div key={`${currentPath}[${index}]`} className="ml-4 border-l-2 border-gray-200 pl-4 mb-2">
+              <div className="text-sm text-gray-600 mb-1">Item {index + 1}:</div>
+              {typeof item === 'object' ? (
+                Object.entries(item).map(([subKey, subValue]) =>
+                  renderJsonValue(subKey, subValue, `${currentPath}[${index}]`, level + 1)
+                )
+              ) : (
+                renderJsonValue(`item_${index}`, item, `${currentPath}[${index}]`, level + 1)
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    } else if (typeof value === 'object' && value !== null) {
+      return (
+        <div key={currentPath} className="mb-4">
+          <div className="font-medium text-gray-800 mb-2">{indent}{key}:</div>
+          <div className="ml-4 border-l-2 border-gray-200 pl-4">
+            {Object.entries(value).map(([subKey, subValue]) =>
+              renderJsonValue(subKey, subValue, currentPath, level + 1)
+            )}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div key={currentPath} className="mb-3">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {indent}{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+          </label>
+          {typeof value === 'boolean' ? (
+            <select
+              value={value ? 'true' : 'false'}
+              onChange={(e) => handleAnalysisChange(currentPath, e.target.value === 'true')}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          ) : typeof value === 'number' ? (
+            <input
+              type="number"
+              value={value}
+              onChange={(e) => handleAnalysisChange(currentPath, parseFloat(e.target.value) || 0)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          ) : (
+            <textarea
+              value={value || ''}
+              onChange={(e) => handleAnalysisChange(currentPath, e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              rows={value && value.length > 50 ? 3 : 1}
+            />
+          )}
+        </div>
+      );
     }
   };
 
@@ -398,6 +589,38 @@ const TestManager = () => {
               </button>
               <button
                 onClick={saveEdit}
+                className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Analysis Modal */}
+      {showAnalysisModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Image Analysis Results</h3>
+            <div className="mb-6">
+              {Object.entries(editingAnalysis).map(([key, value]) =>
+                renderJsonValue(key, value)
+              )}
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowAnalysisModal(false);
+                  setAnalysisData({});
+                  setEditingAnalysis({});
+                }}
+                className="cursor-pointer px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveAnalysis}
                 className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Save Changes
