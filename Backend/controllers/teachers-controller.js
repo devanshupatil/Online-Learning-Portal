@@ -1,4 +1,5 @@
 const teacherModels = require('../models/teacher-models');
+const { get } = require('../routes/teachers-routes');
 
 // const UploadStudyMaterial = async (req, res) => {
 //     try {
@@ -388,6 +389,20 @@ const teacher_controller = {
         } catch (error) {
             console.error('Error saving image analysis:', error);
             res.status(500).json({ message: 'Internal server error: ' + error.message });
+        }
+    },
+
+    getImageAnalysis: async (req, res) => {
+        const { materialId } = req.params;
+        try {
+            const analysis = await teacherModels.getImageAnalysis(materialId);
+            res.status(200).json({
+                // message: 'Image analysis retrieved successfully.',
+                analysis: analysis
+            }); 
+        } catch (error) {
+            console.error('Error retrieving image analysis:', error);
+            throw new Error('Internal server error: ' + error.message);
         }
     }
 };
