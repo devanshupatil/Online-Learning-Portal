@@ -330,7 +330,7 @@ const teacher = {
     // Fetch the current record to get the old file name
     const { data: currentData, error: fetchError } = await supabase
       .from('tests_materials')
-      .select('file_name')
+      .select('file_name, course')
       .eq('id', id)
       .single();
 
@@ -339,12 +339,19 @@ const teacher = {
       throw fetchError;
     }
 
-    const oldFileName = currentData.file_name;
+    // Construct the old file path in storage (ensure it's course/filename.ext)
+    const oldBaseName = currentData.file_name.includes('/') ? currentData.file_name.split('/').pop() : currentData.file_name;
+    const oldFileName = `${currentData.course}/${oldBaseName}`;
 
-    // Move the file in Supabase storage from old path to new path
-    const { error: moveError } = await supabase.storage
+    // Build destination path: use the basename from the new file_name, prepend newCourse or current course
+    const newBaseName = file_name.includes('/') ? file_name.split('/').pop() : file_name;
+    const destinationCourse = newCourse !== undefined ? newCourse : currentData.course;
+    const destinationPath = `${destinationCourse}/${newBaseName}`;
+
+    // Move the file in Supabase storage
+    const { data: moveData, error: moveError } = await supabase.storage
       .from('tests-materials')
-      .move(oldFileName, file_name);
+      .move(oldFileName, destinationPath);
 
     if (moveError) {
       console.error('Error moving file in storage:', moveError);
@@ -352,9 +359,14 @@ const teacher = {
     }
 
     // Update the database record with new course and file_name
+    const updateData = { file_name: file_name };
+    if (newCourse !== undefined) {
+      updateData.course = newCourse;
+    }
+
     const { data, error } = await supabase
       .from('tests_materials')
-      .update({ course: newCourse, file_name: file_name })
+      .update(updateData)
       .eq('id', id)
       .select('*')
       .single();
