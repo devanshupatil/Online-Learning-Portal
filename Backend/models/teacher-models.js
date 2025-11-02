@@ -524,7 +524,7 @@ const teacher = {
         {
           role: 'user',
           content: [
-            { type: 'text', text: 'Analyze this image and provide a detailed description in JSON format. Include key elements, objects, text if any, and overall context.' },
+            { type: 'text', text: 'Extract questions from this image and convert them to JSON format, ignoring all other content. Structure the output as a JSON object where each step is an object containing "question" and "answer". If the image contains only questions without answers, provide the answers step by step. If answers are present in the image then does not provide' },
             { type: 'image_url', image_url: { url: imageURL } }
             // { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Image}` } }
           ]
