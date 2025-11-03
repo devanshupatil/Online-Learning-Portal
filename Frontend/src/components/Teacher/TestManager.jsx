@@ -334,11 +334,11 @@ const TestManager = () => {
             // }
 
             setAnalysisData(existingAnalysis);
-            setEditingAnalysis({ ...existingAnalysis });
+            setEditingAnalysis(existingAnalysis);
             setCurrentMaterialId(material.id);
             setShowAnalysisModal(true);
             toast.dismiss('analyze');
-            toast.success('Loaded existing analysis for this image.');
+            setTimeout(() => toast.success('Loaded existing analysis for this image.'), 100);
             return;
           }
         }
@@ -371,14 +371,15 @@ const TestManager = () => {
       // Store the analysis result in browser's local storage
       localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(result));
 
+      toast.dismiss('analyze');
+
       // Show success with analysis result
-      toast.success('Image analyzed successfully!', { id: 'analyze' });
+      setTimeout(() => toast.success('Image analyzed successfully!', { id: 'analyze' }), 100);
 
       // Set analysis data and show modal
       setAnalysisData(result);
-      setEditingAnalysis({ ...result });
+      setEditingAnalysis(result);
       setCurrentMaterialId(material.id);
-      console.log('Setting currentMaterialId to:', material.id);
       setShowAnalysisModal(true);
 
     } catch (error) {
@@ -417,12 +418,12 @@ const TestManager = () => {
       }
 
       // Update local state and cache
-      setAnalysisData({ ...editingAnalysis });
+      setAnalysisData(editingAnalysis);
       localStorage.setItem(`imageAnalysis_${currentMaterialId}`, JSON.stringify(editingAnalysis));
 
       setShowAnalysisModal(false);
       toast.dismiss('saveAnalysis');
-      toast.success('Analysis data saved successfully!');
+      setTimeout(() => toast.success('Analysis data saved successfully!'), 100);
     } catch (error) {
       console.error('Error saving analysis data:', error);
       toast.error(`Failed to save analysis: ${error.message}`);
@@ -431,6 +432,13 @@ const TestManager = () => {
 
   const handleAnalysisChange = (path, value) => {
     setEditingAnalysis(prev => updateNestedValue(prev, path, value));
+  };
+
+  const handleDeleteQuestion = (index) => {
+    setEditingAnalysis(prev => ({
+      ...prev,
+      questions: prev.analysis.questions ? prev.analysis.questions.filter((_, i) => i !== index) : []
+    }));
   };
 
   const updateNestedValue = (obj, path, value) => {
@@ -688,12 +696,53 @@ const TestManager = () => {
       {/* Analysis Modal */}
       {showAnalysisModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Image Analysis Results</h3>
+          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto font-serif">
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-6 text-center font-serif">Image Analysis Results</h3>
             <div className="mb-6">
-              {Object.entries(editingAnalysis).map(([key, value]) =>
-                renderJsonValue(key, value)
-              )}
+              <div className="space-y-6">
+                {Array.isArray(editingAnalysis.analysis.questions) && editingAnalysis.analysis.questions.length > 0 ? (
+                  editingAnalysis.analysis.questions.map((item, index) => (
+                    <div key={item.id || index} className="border-b border-gray-200 pb-4 last:border-b-0">
+                      <div className="flex justify-between items-center mb-4">
+                        <h4 className="text-md font-semibold text-gray-800">Question {index + 1}</h4>
+                        <button
+                          onClick={() => handleDeleteQuestion(index)}
+                          className="cursor-pointer p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                          title="Delete Question"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Question
+                        </label>
+                        <textarea
+                          value={item.question || ''}
+                          onChange={(e) => handleAnalysisChange(`questions.${index}.question`, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Answer
+                        </label>
+                        <textarea
+                          value={item.answer || ''}
+                          onChange={(e) => handleAnalysisChange(`questions.${index}.answer`, e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          rows={3}
+                        />
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center text-gray-500 py-8">
+                    No questions and answers found in the analysis data.
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex justify-end gap-3">
               <button
