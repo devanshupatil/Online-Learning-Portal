@@ -2,9 +2,7 @@
 const supabase = require('../config/supabaseDB')
 const { createClient } = require('@supabase/supabase-js');
 const { get } = require('../routes/teachers-routes');
-const OpenAI = require('openai');
 const fs = require('fs');
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 // Initialize Google Cloud Storage
@@ -497,55 +495,48 @@ const teacher = {
   },
 
 
-  analyzeImage: async (imageURL) => {
-
-
-    // const { data, error } = await supabase
-    //   .from('tests_materials')
-    //   .select('*')
-    //   .eq('id', imageId)
-    //   .single();
-
-    //   console.log("Image Data:", data);
-
-    // if (error || !data) {
-
-    //   console.error('Error fetching image data:', error);
-    //   throw new Error('Image not found');
-    // }
-
-    // const imageBuffer = Buffer.from(data.image_data, 'base64');
-    // const mimeType = data.mime_type;
-    // const base64Image = imageBuffer.toString('base64');
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: 'Extract questions from this image and convert them to JSON format, ignoring all other content. Structure the output as a JSON object where each step is an object containing "question" and "answer". If the image contains only questions without answers, provide the answers step by step. If answers are present in the image then does not provide' },
-            { type: 'image_url', image_url: { url: imageURL } }
-            // { type: 'image_url', image_url: { url: `data:${mimeType};base64,${base64Image}` } }
+  analyzeText: async function(imageURL) {
+    try {
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'sonar-pro',
+          messages: [
+            { role: 'user', content: `Extract questions from this text and convert them to JSON format, ignoring all other content. Structure the output as a JSON object where each step is an object containing "question" and "answer". If the text contains only questions without answers, provide the answers step by step. If answers are present in the text then does not provide: ${imageURL}` }
           ]
-        }
-      ],
-      max_tokens: 500
-    });
+        })
+      });
 
-    return response.choices[0].message.content;
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Perplexity API error: ${response.status} ${errorText}`);
+      }
+
+      const data = await response.json();
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        throw new Error('Invalid response structure from Perplexity API');
+      }
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Error analyzing text with Perplexity:', error);
+      throw error;
+    }
   },
 
-  saveImageAnalysis: async (imageId, analysisData) => {
+  saveTextAnalysis: async (textId, analysisData) => {
     try {
       // First, try to update existing record
       const { data: updateData, error: updateError } = await supabase
-        .from('image_analysis_results')
+        .from('text_analysis_results')
         .update({
           analysis_data: analysisData,
           updated_at: new Date().toISOString()
         })
-        .eq('material_id', imageId)
+        .eq('text_id', textId)
         .select('*')
         .single();
 
@@ -556,35 +547,35 @@ const teacher = {
 
       // If update failed because row doesn't exist, insert new record
       const { data: insertData, error: insertError } = await supabase
-        .from('image_analysis_results')
+        .from('text_analysis_results')
         .insert({
-          material_id: imageId,
+          text_id: textId,
           analysis_data: analysisData
         })
         .select('*')
         .single();
 
       if (insertError) {
-        console.error('Error inserting image analysis:', insertError);
+        console.error('Error inserting text analysis:', insertError);
         throw insertError;
       }
 
       return insertData;
     } catch (error) {
-      console.error('Error in saveImageAnalysis:', error);
+      console.error('Error in saveTextAnalysis:', error);
       throw error;
     }
   },
 
-  getImageAnalysis: async (imageId) => {
+  getTextAnalysis: async (materialId) => {
     const { data, error } = await supabase
       .from('image_analysis_results')
       .select('analysis_data')
-      .eq('material_id', imageId)
+      .eq('material_id', materialId)
       .single();
 
     if (error) {
-      console.error('Error fetching image analysis:', error);
+      console.error('Error fetching text analysis:', error);
       throw error;
     }
 
