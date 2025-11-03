@@ -349,28 +349,26 @@ const teacher_controller = {
 
             const { imageURL } = req.query;
 
-            //   if (!req.file) {
-            //     return res.status(400).json({ message: 'Image file is required.' });
-            //   }
-
-            //   const imageBuffer = req.file.buffer;
-            //   const base64Image = imageBuffer.toString('base64');
-            //   const mimeType = req.file.mimetype;
-
             if (!imageURL) {
                 return res.status(400).json({ message: 'Image URL is required.' });
             }
 
-            const analysis = await teacherModels.analyzeImage(imageURL);
+            // Fetch the file content from the URL
+            const fileResponse = await fetch(imageURL);
+            if (!fileResponse.ok) {
+                throw new Error('Failed to fetch file from URL');
+            }
 
-            //   const analysis = response.choices[0].message.content;
+            const text = await fileResponse.text();
+
+            const analysis = await teacherModels.analyzeText(text);
 
             res.status(200).json({
-                message: 'Image analyzed successfully.',
+                message: 'Text analyzed successfully.',
                 analysis: analysis
             });
         } catch (error) {
-            console.error('Error analyzing image:', error);
+            console.error('Error analyzing text:', error);
             res.status(500).json({ message: 'Internal server error: ' + error.message });
         }
     },
@@ -383,7 +381,7 @@ const teacher_controller = {
                 return res.status(400).json({ message: 'materialId and analysis are required.' });
             }
 
-            await teacherModels.saveImageAnalysis(materialId, analysis);
+            await teacherModels.saveTextAnalysis(materialId, analysis);
 
             res.status(200).json({ message: 'Image analysis saved successfully.' });
         } catch (error) {
@@ -395,7 +393,7 @@ const teacher_controller = {
     getImageAnalysis: async (req, res) => {
         const { materialId } = req.params;
         try {
-            const analysis = await teacherModels.getImageAnalysis(materialId);
+            const analysis = await teacherModels.getTextAnalysis(materialId);
             res.status(200).json({
                 // message: 'Image analysis retrieved successfully.',
                 analysis: analysis
