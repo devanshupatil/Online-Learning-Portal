@@ -7,7 +7,7 @@ const { UploadStudyMaterial, getStudyMaterials, deleteStudyMaterial, getAllStude
 , getAllUploadedMaterialscount, getAllstudentInfo, getAttendanceByDateAndClass, saveAttendance,
  getAttendanceRecords, UploadTestsMaterial, getTestsMaterials, deleteTestsMaterials, updateTestMaterial,
  analyzeImage, saveImageAnalysis, getImageAnalysis
- } = require('../controllers/teachers-controller');
+} = require('../controllers/teachers-controller');
 
 
 // Configure multer for file uploads (use memory storage to access file.buffer)
