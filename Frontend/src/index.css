@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+body {
+  font-family: 'serif';
+}
+
 /* Tailwind CSS 4 Configuration */
 @theme {
   --breakpoint-sm: 640px;
