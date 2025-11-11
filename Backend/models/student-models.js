@@ -244,6 +244,19 @@ const student = {
       };
     });
   },
+
+    getAllTextAnalysis: async () => {
+      const { data, error } = await supabase
+        .from('image_analysis_results')
+        .select('*');
+  
+      if (error) {
+        console.error('Error fetching all text analyses:', error);
+        throw error;
+      }
+  
+      return data;
+    },
 };
 
 module.exports = student;
