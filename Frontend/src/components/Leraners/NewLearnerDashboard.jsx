@@ -8,6 +8,7 @@ import Sidebar from './Sidebar';
 import AddCourseModal from './AddCourseModal';
 import EditProfileModal from './EditProfileModal';
 import WeeklyStreakIndicator from './WeeklyStreakIndicator';
+import Test from './Tests';
 import TestResults from './TestResults';
 import ProgressTracking from './ProgressTracking';
 import BackNavigation from '../BackNavigation';
@@ -19,6 +20,8 @@ const NewLearnerDashboard = () => {
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const { isMobile, isTablet } = useSidebar();
+  const [testTab, setTestTab] = useState('Test');
+
   const [profileData, setProfileData] = useState({
     name: 'Alex Johnson',
     email: 'alex.johnson@example.com',
@@ -53,12 +56,12 @@ const NewLearnerDashboard = () => {
   return (
     <div>
       <Header />
-      
+
       {/* Mobile Slide-out Sidebar */}
       {(isMobile || isTablet) && (
         <ResponsiveSidebar>
-          <Sidebar 
-            activeSection={activeSection} 
+          <Sidebar
+            activeSection={activeSection}
             onSectionChange={setActiveSection}
             isMobile={isMobile || isTablet}
           />
@@ -70,7 +73,7 @@ const NewLearnerDashboard = () => {
           {/* Dashboard Header */}
           <div className="mb-8">
             <div className="flex items-center mb-2">
-              <BackNavigation className='cursor-pointer'/>
+              <BackNavigation className='cursor-pointer' />
               <h1 className="text-3xl font-bold text-gray-900">Learner Dashboard</h1>
             </div>
             <p className="text-gray-600">Welcome back, {profileData.name}! Here's your personalized learning overview.</p>
@@ -112,11 +115,41 @@ const NewLearnerDashboard = () => {
                 </div>
               )}
 
+
+
               {activeSection === 'test' && (
                 <div className="space-y-6">
-                  <TestResults />
+                  <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
+                    <div className="p-6 border-b border-gray-200">
+                      <div className="flex justify-center space-x-1">
+                        <button
+                          onClick={() => setTestTab('Test')}
+                          className={`cursor-pointer flex items-center px-5 py-3 rounded-lg transition-colors duration-200 ${testTab === 'Test'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
+                            } text-xl font-bold`}
+                        >
+                          Test
+                        </button>
+                        <button
+                          onClick={() => setTestTab('Test Results')}
+                          className={`cursor-pointer flex items-center px-5 py-3 rounded-lg transition-colors duration-200 ${testTab === 'Test Results'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
+                            } text-xl font-bold`}
+                        >
+                          Test Results
+                        </button>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      {testTab === 'Test' && <Test />}
+                      {testTab === 'Test Results' && <TestResults />}
+                    </div>
+                  </div>
                 </div>
               )}
+
             </div>
           </div>
         </div>
