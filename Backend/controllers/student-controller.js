@@ -107,6 +107,21 @@ const getStudyMaterials = async (req, res) => {
   }
 };
 
+const getAllTextAnalysis = async (req, res) => {
+  
+  try {
+    const analyses = await studentModels.getAllTextAnalysis();
+    res.status(200).json({
+      message: 'Text analyses retrieved successfully.',
+      textAnalyses: analyses
+    });
+  } catch (error) {
+    console.error('Error retrieving text analyses:', error);
+    res.status(500).json({ message: 'Internal server error: ' + error.message });
+  }
+};
+
 module.exports = {
-  getStudyMaterials
+  getStudyMaterials,
+  getAllTextAnalysis
 };
