@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileCheck, Clock, Calendar, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TestResults from './TestResults';
@@ -10,7 +10,7 @@ const Tests = () => {
   const navigate = useNavigate();
   const [analysisData, setAnalysisData] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     geAllImageAnalysis();
   }, []);
 
@@ -63,177 +63,56 @@ const Tests = () => {
 
 
   // Mock data for tests
-  const testsData = [
-    {
-      id: 1,
-      title: 'Algebra Fundamentals Quiz',
-      subject: 'Mathematics',
-      dueDate: '2023-05-25',
-      status: 'pending',
-      timeLimit: '30 min'
-    },
-    {
-      id: 2,
-      title: 'Physics Midterm Exam',
-      subject: 'Physics',
-      dueDate: '2023-06-01',
-      status: 'upcoming',
-      timeLimit: '2 hours'
-    },
-    {
-      id: 3,
-      title: 'Chemistry Lab Report',
-      subject: 'Chemistry',
-      dueDate: '2023-05-30',
-      status: 'in-progress',
-      timeLimit: 'N/A'
-    }
-  ];
+  // const testsData = [
+  //   {
+  //     id: 1,
+  //     title: 'Algebra Fundamentals Quiz',
+  //     subject: 'Mathematics',
+  //     dueDate: '2023-05-25',
+  //     status: 'pending',
+  //     timeLimit: '30 min'
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Physics Midterm Exam',
+  //     subject: 'Physics',
+  //     dueDate: '2023-06-01',
+  //     status: 'upcoming',
+  //     timeLimit: '2 hours'
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Chemistry Lab Report',
+  //     subject: 'Chemistry',
+  //     dueDate: '2023-05-30',
+  //     status: 'in-progress',
+  //     timeLimit: 'N/A'
+  //   }
+  // ];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'in-progress':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'upcoming':
-        return 'bg-blue-100 text-blue-800';
-      case 'pending':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case 'completed':
+  //       return 'bg-green-100 text-green-800';
+  //     case 'in-progress':
+  //       return 'bg-yellow-100 text-yellow-800';
+  //     case 'upcoming':
+  //       return 'bg-blue-100 text-blue-800';
+  //     case 'pending':
+  //       return 'bg-red-100 text-red-800';
+  //     default:
+  //       return 'bg-gray-100 text-gray-800';
+  //   }
+  // };
 
   const [testTab, setTestTab] = useState('Test');
 
   const handleStartTest = (test) => {
     // Mock questions - in real app, fetch from backend
-    const mockQuestions = [
-      {
-        id: 1,
-        question: "What is the average of the first five multiples of 20?",
-        options: ["200", "100", "150", "120", "180"],
-        correctAnswer: "200"
-      },
-      {
-        id: 2,
-        question: "Which planet is known as the Red Planet?",
-        options: ["Venus", "Mars", "Jupiter", "Saturn", "Mercury"],
-        correctAnswer: "Mars"
-      },
-      {
-        id: 3,
-        question: "What is the chemical symbol for water?",
-        options: ["H2O", "CO2", "O2", "NaCl", "CH4"],
-        correctAnswer: "H2O"
-      },
-      {
-        id: 4,
-        question: "Who wrote 'Romeo and Juliet'?",
-        options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain", "George Orwell"],
-        correctAnswer: "William Shakespeare"
-      },
-      {
-        id: 5,
-        question: "What is the square root of 144?",
-        options: ["10", "12", "14", "16", "18"],
-        correctAnswer: "12"
-      },
-      {
-        id: 6,
-        question: "Which gas do plants absorb from the atmosphere?",
-        options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen", "Helium"],
-        correctAnswer: "Carbon Dioxide"
-      },
-      {
-        id: 7,
-        question: "What is the largest ocean on Earth?",
-        options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean", "Southern Ocean"],
-        correctAnswer: "Pacific Ocean"
-      },
-      {
-        id: 8,
-        question: "How many continents are there on Earth?",
-        options: ["5", "6", "7", "8", "9"],
-        correctAnswer: "7"
-      },
-      {
-        id: 9,
-        question: "What is the boiling point of water in Celsius?",
-        options: ["0°C", "50°C", "100°C", "150°C", "200°C"],
-        correctAnswer: "100°C"
-      },
-      {
-        id: 10,
-        question: "Which animal is known as the 'King of the Jungle'?",
-        options: ["Tiger", "Lion", "Elephant", "Giraffe", "Zebra"],
-        correctAnswer: "Lion"
-      },
-      {
-        id: 11,
-        question: "What is 15 × 8?",
-        options: ["120", "110", "100", "130", "140"],
-        correctAnswer: "120"
-      },
-      {
-        id: 12,
-        question: "Which vitamin is produced when skin is exposed to sunlight?",
-        options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D", "Vitamin E"],
-        correctAnswer: "Vitamin D"
-      },
-      {
-        id: 13,
-        question: "What is the capital of Japan?",
-        options: ["Seoul", "Beijing", "Tokyo", "Bangkok", "Singapore"],
-        correctAnswer: "Tokyo"
-      },
-      {
-        id: 14,
-        question: "Which organ pumps blood in the human body?",
-        options: ["Liver", "Kidney", "Heart", "Lung", "Brain"],
-        correctAnswer: "Heart"
-      },
-      {
-        id: 15,
-        question: "What is the longest river in the world?",
-        options: ["Amazon River", "Nile River", "Yangtze River", "Mississippi River", "Danube River"],
-        correctAnswer: "Nile River"
-      },
-      {
-        id: 16,
-        question: "How many sides does a hexagon have?",
-        options: ["4", "5", "6", "7", "8"],
-        correctAnswer: "6"
-      },
-      {
-        id: 17,
-        question: "Which gas makes up the majority of Earth's atmosphere?",
-        options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon", "Hydrogen"],
-        correctAnswer: "Nitrogen"
-      },
-      {
-        id: 18,
-        question: "What is the currency of the United Kingdom?",
-        options: ["Euro", "Dollar", "Pound", "Yen", "Franc"],
-        correctAnswer: "Pound"
-      },
-      {
-        id: 19,
-        question: "Which planet is closest to the Sun?",
-        options: ["Venus", "Earth", "Mars", "Mercury", "Jupiter"],
-        correctAnswer: "Mercury"
-      },
-      {
-        id: 20,
-        question: "What is 25% of 200?",
-        options: ["25", "50", "75", "100", "125"],
-        correctAnswer: "50"
-      }
-    ];
+  
 
     // Navigate to test taking page with test data
-    navigate('/test-taking', { state: { test, questions: mockQuestions } });
+    navigate('/test-taking', { state: { test } });
   };
 
 
