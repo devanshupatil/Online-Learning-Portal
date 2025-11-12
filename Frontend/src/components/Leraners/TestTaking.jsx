@@ -6,11 +6,11 @@ import { toast } from 'sonner';
 const TestTaking = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { test, questions: initialQuestions } = location.state || {};
+  const { test } = location.state || {};
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [testQuestions] = useState(initialQuestions || []);
+  const [testQuestions] = useState(test.analysis_data.questions || []);
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
   const [timerActive, setTimerActive] = useState(true);
 
