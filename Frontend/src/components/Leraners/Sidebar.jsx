@@ -32,7 +32,7 @@ const Sidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = fals
   };
 
   return (
-    <div className={`bg-white shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6'}`}>
+    <div className={`bg-white shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6 rounded-2xl'}`}>
       {/* MY STUFF Section */}
       <div className={`${isMobile ? 'mb-6' : 'mb-8'}`}>
         <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>MY STUFF</h3>
