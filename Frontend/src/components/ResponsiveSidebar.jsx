@@ -85,6 +85,9 @@ const ResponsiveSidebar = ({
     };
   }, [isMobile, isOpen, close, side]);
 
+  // Hide sidebar when scrolling to the right side on mobile/tablet
+ 
+
   // Desktop: Always visible
   if (isDesktop) {
     return (
@@ -288,16 +291,18 @@ const ResponsiveSidebar = ({
 
           .sidebar-content::-webkit-scrollbar-track {
             background: #f1f5f9;
-          }
-
+          } 
+            
           .sidebar-content::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 3px;
           }
-
+ 
           .sidebar-content::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
           }
+          
+
         `}</style>
       </div>
     </>
