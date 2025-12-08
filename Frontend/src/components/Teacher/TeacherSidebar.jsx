@@ -19,7 +19,7 @@ const TeacherSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile
   };
 
   return (
-    <div className={`bg-white rounded-2xl shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6'}`}>
+    <div className={`bg-white shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6'}`}>
       <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>TEACHER TOOLS</h3>
       <ul className={`${isMobile ? 'space-y-2' : 'space-y-1'}`}>
         {menuItems.map((item) => {
