@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Eye, Edit, Trash2, Search, Filter } from 'lucide-react';
+import { FileText, Eye, Download, Edit, Trash2, Search, Filter } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -10,6 +10,13 @@ const MaterialManager = () => {
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(false);
   const URL = import.meta.env.VITE_BACKEND_URL;
+
+  const [downloading, setDownloading] = useState(false);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadMessage, setDownloadMessage] = useState('');
+
+
 
   const getStudyMaterials = async () => {
     setLoading(true);
@@ -119,15 +126,85 @@ const MaterialManager = () => {
     toast(`Edit material with ID: ${id}`);
   };
 
-  const handleDownload = (material) => {
-    if (material.url) {
+  // const handleDownload = (material) => {
+  //   if (material.url) {
+  //     const link = document.createElement('a');
+  //     link.href = material.url;
+  //     link.download = material.title;
+  //     link.click();
+  //   } else {
+  //     toast.error(`Download link not available for ${material.title}`);
+  //   }
+  // };
+
+    const handleDownload = async (materialId, fileName) => {
+    if (downloading) return;
+
+    setDownloading(true);
+    setDownloadingId(materialId);
+    setDownloadProgress(0);
+    setDownloadMessage('Preparing download...');
+
+    try {
+      // Simulate progress for better UX
+      const progressInterval = setInterval(() => {
+        setDownloadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 15;
+        });
+      }, 100);
+
+      // Fetch the file through backend API
+      const response = await fetch(`${URL}/api/downloadTestMaterial/${materialId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Get the blob from response
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+
+      setDownloadProgress(100);
+      setDownloadMessage('Download complete!');
+
+      // Create download link
       const link = document.createElement('a');
-      link.href = material.url;
-      link.download = material.title;
+      link.href = downloadUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
       link.click();
-    } else {
-      toast.error(`Download link not available for ${material.title}`);
+      document.body.removeChild(link);
+
+      // Clean up
+      window.URL.revokeObjectURL(downloadUrl);
+
+      // Reset after success
+      setTimeout(() => {
+        setDownloading(false);
+        setDownloadingId(null);
+        setDownloadProgress(0);
+        setDownloadMessage('');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Download failed:', error);
+      setDownloadMessage('Download failed. Please try again.');
+      setDownloading(false);
+      setDownloadingId(null);
+      setDownloadProgress(0);
+
+      // Reset error message after 3 seconds
+      setTimeout(() => {
+        setDownloadMessage('');
+      }, 3000);
     }
+  };
+
+  const handleView = (url) => {
+    window.open(url, '_blank');
   };
 
   return (
@@ -206,22 +283,46 @@ const MaterialManager = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => handleDownload(material)}
-                      className="cursor-pointer p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200"
-                      title="Download"
+                      onClick={() => handleView(material.url)}
+                      className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                      title="View"
                     >
                       <Eye className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => handleEdit(material.id)}
-                      className="cursor-pointer p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors duration-200"
+                      className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors duration-200"
                       title="Edit"
                     >
                       <Edit className="w-5 h-5" />
                     </button>
+                    <div className="relative">
+                      <button
+                        onClick={() => handleDownload(material.id, material.fileName)}
+                        className={`p-2 rounded-lg transition-all duration-300 ${downloading && downloadingId === material.id
+                          ? 'text-green-600 bg-green-50 scale-110 rotate-12'
+                          : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50 hover:scale-105'
+                          }`}
+                        title={downloading && downloadingId === material.id ? "Downloading..." : "Download"}
+                        disabled={downloading && downloadingId === material.id}
+                      >
+                        <Download className={`cursor-pointer w-5 h-5 transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''
+                          }`} />
+                      </button>
+                      {downloading && downloadingId === material.id && (
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                          {downloadMessage || `Downloading... ${downloadProgress}%`}
+                          <div className="w-16 bg-gray-600 rounded-full h-1 mt-1">
+                            <div
+                              className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                              style={{ width: `${downloadProgress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <button
-                      onClick={() => handleDelete(material.title, material.id, material.category, material.course)}
-                      className="cursor-pointer p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
                       title="Delete"
                     >
                       <Trash2 className="w-5 h-5" />
