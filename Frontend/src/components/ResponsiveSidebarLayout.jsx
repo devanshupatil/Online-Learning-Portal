@@ -61,6 +61,8 @@ const ResponsiveSidebarLayout = memo(({
         <style jsx>{`
           .responsive-sidebar-layout {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            overflow-x: hidden;
+            max-width: 100vw;
           }
 
           .header-with-toggle {
