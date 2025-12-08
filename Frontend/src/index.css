@@ -1,7 +1,16 @@
 @import "tailwindcss";
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'serif';
+  overflow-x: hidden;
+}
+
+#root {
+  overflow-x: hidden;
 }
 
 /* Tailwind CSS 4 Configuration */
