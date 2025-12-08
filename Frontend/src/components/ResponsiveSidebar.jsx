@@ -4,7 +4,7 @@ import { useSidebar } from './SidebarProvider';
 const ResponsiveSidebar = ({ 
   children, 
   className = '',
-  side = 'left' // 'left' or 'right'
+  side = 'right' // 'left' or 'right'
 }) => {
   const { isOpen, isMobile, isTablet, isDesktop, close } = useSidebar();
   const sidebarRef = useRef(null);
@@ -38,7 +38,7 @@ const ResponsiveSidebar = ({
     const handleTouchMove = (e) => {
       if (!isDragging) return;
       currentX = e.touches[0].clientX;
-      
+
       // Prevent default scrolling when swiping
       if (Math.abs(currentX - startX) > 10) {
         e.preventDefault();
@@ -57,6 +57,13 @@ const ResponsiveSidebar = ({
         if (deltaX > threshold && !isOpen) {
           // Open sidebar
         } else if (deltaX < -threshold && isOpen) {
+          close();
+        }
+      } else if (side === 'right') {
+        // Swipe left to open, right to close
+        if (deltaX < -threshold && !isOpen) {
+          // Open sidebar
+        } else if (deltaX > threshold && isOpen) {
           close();
         }
       }
@@ -101,12 +108,23 @@ const ResponsiveSidebar = ({
 
           /* Smooth entrance animation */
           .sidebar-desktop {
-            animation: slideInFromLeft 0.5s ease-out;
+            animation: ${side === 'left' ? 'slideInFromLeft' : 'slideInFromRight'} 0.5s ease-out;
           }
 
           @keyframes slideInFromLeft {
             from {
               transform: translateX(-100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+
+          @keyframes slideInFromRight {
+            from {
+              transform: translateX(100%);
               opacity: 0;
             }
             to {
@@ -125,7 +143,7 @@ const ResponsiveSidebar = ({
       {/* Backdrop */}
       {isOpen && (
         <div 
-          className="sidebar-overlay fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
+          className="sidebar-overlay fixed inset-0 bg-opacity-50 z-40 transition-opacity duration-300"
           onClick={close}
           style={{ backdropFilter: 'blur(4px)' }}
           aria-hidden="true"
@@ -146,6 +164,19 @@ const ResponsiveSidebar = ({
         aria-label="Main navigation"
         aria-hidden={!isOpen}
       >
+        {/* Back Button */}
+        <div className="p-4 border-b border-gray-200">
+          <button
+            onClick={close}
+            className="back-button p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            aria-label="Go back"
+          >
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
         {/* Sidebar content with staggered animation */}
         <div className={`sidebar-content h-full overflow-y-auto ${isOpen ? 'animate-content' : ''}`}>
           {React.cloneElement(children, {
@@ -163,7 +194,7 @@ const ResponsiveSidebar = ({
 
           /* Closed state - hidden off screen */
           .sidebar-mobile.sidebar-closed {
-            transform: translateX(-100%);
+            transform: ${side === 'left' ? 'translateX(-100%)' : 'translateX(100%)'};
           }
 
           /* Open state - smoothly slides in */
@@ -174,7 +205,7 @@ const ResponsiveSidebar = ({
 
           @keyframes smoothSlideIn {
             0% {
-              transform: translateX(-100%);
+              transform: ${side === 'left' ? 'translateX(-50%)' : 'translateX(50%)'};
               opacity: 0.7;
             }
             100% {
@@ -187,7 +218,7 @@ const ResponsiveSidebar = ({
           .sidebar-content.animate-content > * {
             animation: slideInStagger 0.5s ease-out forwards;
             opacity: 0;
-            transform: translateX(-20px);
+            transform: ${side === 'left' ? 'translateX(-20px)' : 'translateX(20px)'};
           }
 
           .sidebar-content.animate-content > *:nth-child(1) { animation-delay: 0.2s; }
@@ -246,7 +277,7 @@ const ResponsiveSidebar = ({
           /* High contrast mode */
           @media (prefers-contrast: high) {
             .sidebar-mobile {
-              border-right: 2px solid currentColor;
+              ${side === 'right' ? 'border-left: 2px solid currentColor;' : 'border-right: 2px solid currentColor;'}
             }
           }
 
