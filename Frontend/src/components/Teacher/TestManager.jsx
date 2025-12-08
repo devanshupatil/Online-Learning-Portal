@@ -561,14 +561,14 @@ const TestManager = () => {
 
               return (
                 <div key={material.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap  items-center justify-between">
                     <div className="flex items-center flex-1">
                       <div className="bg-blue-100 p-3 rounded-lg mr-4">
                         <FileText className="w-6 h-6 text-blue-600" />
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900">{fileName}</h4>
-                        <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                        <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-600">
                           <span>{course}</span>
                           <span>{fileType}</span>
                           <span>{formatSize(material.size)}</span>
@@ -695,7 +695,7 @@ const TestManager = () => {
 
       {/* Analysis Modal */}
       {showAnalysisModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100">
           <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto font-serif">
             <h3 className="text-3xl font-extrabold text-gray-900 mb-6 text-center font-serif">Image Analysis Results</h3>
             <div className="mb-6">
