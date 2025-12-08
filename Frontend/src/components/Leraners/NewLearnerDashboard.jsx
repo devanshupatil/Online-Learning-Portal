@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { BookOpen, TrendingUp, User, Users } from 'lucide-react';
 import Header from '../Header';
 import UserProfileCard from './UserProfileCard';
@@ -16,11 +17,18 @@ import ResponsiveSidebar from '../ResponsiveSidebar';
 import { useSidebar } from '../SidebarProvider';
 
 const NewLearnerDashboard = () => {
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState('syllabus');
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const { isMobile, isTablet } = useSidebar();
   const [testTab, setTestTab] = useState('Test');
+
+  useEffect(() => {
+    if (location.state?.activeSection) {
+      setActiveSection(location.state.activeSection);
+    }
+  }, [location.state]);
 
   const [profileData, setProfileData] = useState({
     name: 'Alex Johnson',
@@ -119,7 +127,7 @@ const NewLearnerDashboard = () => {
 
               {activeSection === 'test' && (
                 <div className="space-y-6">
-                  <div className="bg-white shadow-lg border border-gray-200">
+                  <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
                       <div className="flex justify-center space-x-1">
                         <button
