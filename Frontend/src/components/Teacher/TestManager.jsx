@@ -568,7 +568,7 @@ const TestManager = () => {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold text-gray-900">{fileName}</h4>
-                        <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-600">
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-600">
                           <span>{course}</span>
                           <span>{fileType}</span>
                           <span>{formatSize(material.size)}</span>
