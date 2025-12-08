@@ -194,7 +194,7 @@ const MaterialManager = () => {
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-gray-900">{material.title}</h4>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
+                      <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-600">
                         <span className="px-2 py-1 bg-gray-100 rounded-full">{material.type}</span>
                         <span>{material.category}</span>
                         <span>{material.course}</span>
