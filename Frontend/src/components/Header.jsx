@@ -17,6 +17,15 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3">
+            {/* Logo and Title */}
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
+              <GraduationCap className="text-blue-600 w-4 h-4 sm:w-6 sm:h-6" />
+            </div>
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">EduLearn Platform</h1>
+          </div>
+
+          {/* Right side CTA buttons */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-center">
             {/* Hamburger Icon - Mobile Only & Learner/Teacher Sections Only */}
             {isLearnerOrTeacherSection && (
               <div className="block md:hidden">
@@ -27,25 +36,15 @@ const Header = () => {
                 />
               </div>
             )}
-            
-            {/* Logo and Title */}
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="text-blue-600 w-4 h-4 sm:w-6 sm:h-6" />
-            </div>
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">EduLearn Platform</h1>
-          </div>
-          
-          {/* Right side CTA buttons */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            {/* <button 
-              onClick={() => navigate('/login')} 
+            {/* <button
+              onClick={() => navigate('/login')}
               className="cta-button cta-secondary group relative overflow-hidden px-4 sm:px-6 py-2 border border-white rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105 text-sm sm:text-base min-h-[40px]"
             >
               <span className="relative z-10">Login</span>
               <div className="absolute inset-0 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </button>
-            <button 
-              onClick={() => navigate('/signup')} 
+            <button
+              onClick={() => navigate('/signup')}
               className="cta-button cta-primary group relative overflow-hidden px-4 sm:px-6 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-sm sm:text-base min-h-[40px]"
             >
               <span className="relative z-10">Sign Up</span>
