@@ -119,7 +119,7 @@ const NewLearnerDashboard = () => {
 
               {activeSection === 'test' && (
                 <div className="space-y-6">
-                  <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
+                  <div className="bg-white shadow-lg border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
                       <div className="flex justify-center space-x-1">
                         <button
