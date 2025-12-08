@@ -33,12 +33,12 @@ const TestTaking = () => {
 
     toast.success(`Test submitted! Score: ${correct}/${testQuestions.length} (${score.toFixed(1)}%)`);
 
-    // Navigate back to tests
-    navigate('/learners');
+    // Navigate back to test section
+    navigate('/learners', { state: { activeSection: 'test' } });
   };
 
   const handleBackToTests = () => {
-    navigate('/learners');
+    navigate('/learners', { state: { activeSection: 'test' } });
   };
 
   // Timer effect
@@ -89,25 +89,38 @@ const TestTaking = () => {
                 </p>
               </div>
 
-              {/* Options */}
-              <div className="space-y-4">
-                {testQuestions[currentQuestionIndex]?.options.map((option, index) => (
-                  <label key={index} className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
-                    <input
-                      type="radio"
-                      name={`question-${testQuestions[currentQuestionIndex].id}`}
-                      value={option}
-                      checked={answers[testQuestions[currentQuestionIndex].id] === option}
-                      onChange={() => handleAnswerSelect(testQuestions[currentQuestionIndex].id, option)}
-                      className="w-4 h-4 text-blue-600 focus:ring-blue-500"
-                    />
-                    <span className="text-blue-600 font-medium text-lg">
-                      {String.fromCharCode(65 + index)}.
-                    </span>
-                    <span className="text-gray-700 text-lg flex-1">{option}</span>
-                  </label>
-                ))}
-              </div>
+              {/* Options or Answer Input */}
+              {testQuestions[currentQuestionIndex]?.options ? (
+                <div className="space-y-4">
+                  {testQuestions[currentQuestionIndex]?.options.map((option, index) => (
+                    <label key={index} className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <input
+                        type="radio"
+                        name={`question-${testQuestions[currentQuestionIndex].id}`}
+                        value={option}
+                        checked={answers[testQuestions[currentQuestionIndex].id] === option}
+                        onChange={() => handleAnswerSelect(testQuestions[currentQuestionIndex].id, option)}
+                        className="w-4 h-4 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-blue-600 font-medium text-lg">
+                        {String.fromCharCode(65 + index)}.
+                      </span>
+                      <span className="text-gray-700 text-lg flex-1">{option}</span>
+                    </label>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Your Answer</label>
+                  <textarea
+                    value={answers[testQuestions[currentQuestionIndex].id] || ''}
+                    onChange={(e) => handleAnswerSelect(testQuestions[currentQuestionIndex].id, e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    rows={4}
+                    placeholder="Type your answer here..."
+                  />
+                </div>
+              )}
             </div>
           </div>
 
