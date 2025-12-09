@@ -435,10 +435,15 @@ const TestManager = () => {
   };
 
   const handleDeleteQuestion = (index) => {
-    setEditingAnalysis(prev => ({
-      ...prev,
-      questions: prev.analysis.questions ? prev.analysis.questions.filter((_, i) => i !== index) : []
-    }));
+    setEditingAnalysis(prev => {
+      const next = { ...prev, analysis: { ...prev.analysis } };
+      if (Array.isArray(next.analysis?.questions)) {
+        next.analysis.questions = next.analysis.questions.filter((_, i) => i !== index);
+      } else {
+        next.analysis = { ...(next.analysis || {}), questions: [] };
+      }
+      return next;
+    });
   };
 
   const updateNestedValue = (obj, path, value) => {
@@ -719,18 +724,75 @@ const TestManager = () => {
                         </label>
                         <textarea
                           value={item.question || ''}
-                          onChange={(e) => handleAnalysisChange(`questions.${index}.question`, e.target.value)}
+                          onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.question`, e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           rows={3}
                         />
                       </div>
+
+                      {/* Options Section: show only if options exist */}
+                      {Array.isArray(item.options) && item.options.length > 0 && (
+                        <div className="mb-4">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Options
+                          </label>
+                          <div className="space-y-2">
+                            {item.options.map((opt, optIdx) => (
+                              <div key={`opt-${index}-${optIdx}`} className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  value={opt || ''}
+                                  onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.options.${optIdx}`, e.target.value)}
+                                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder={`Option ${optIdx + 1}`}
+                                />
+                                <button
+                                  type="button"
+                                  className="cursor-pointer px-2 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                                  onClick={() => {
+                                    setEditingAnalysis(prev => {
+                                      const next = { ...prev, analysis: { ...prev.analysis } };
+                                      const arr = Array.isArray(next.analysis?.questions?.[index]?.options)
+                                        ? [...next.analysis.questions[index].options]
+                                        : [];
+                                      arr.splice(optIdx, 1);
+                                      next.analysis.questions[index] = { ...next.analysis.questions[index], options: arr };
+                                      return next;
+                                    });
+                                  }}
+                                  title="Remove Option"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button
+                            type="button"
+                            className="cursor-pointer mt-2 px-3 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg"
+                            onClick={() => {
+                              setEditingAnalysis(prev => {
+                                const next = { ...prev, analysis: { ...prev.analysis } };
+                                const q = next.analysis?.questions?.[index] || {};
+                                const arr = Array.isArray(q.options) ? [...q.options] : [];
+                                arr.push('');
+                                next.analysis.questions[index] = { ...q, options: arr };
+                                return next;
+                              });
+                            }}
+                          >
+                            + Add Option
+                          </button>
+                        </div>
+                      )}
+
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           Answer
                         </label>
                         <textarea
                           value={item.answer || ''}
-                          onChange={(e) => handleAnalysisChange(`questions.${index}.answer`, e.target.value)}
+                          onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.answer`, e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           rows={3}
                         />
