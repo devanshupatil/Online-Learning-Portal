@@ -359,9 +359,7 @@ const teacher_controller = {
                 throw new Error('Failed to fetch file from URL');
             }
 
-            const text = await fileResponse.text();
-
-            const analysis = await teacherModels.analyzeText(text);
+            const analysis = await teacherModels.analyzeText(imageURL);
 
             res.status(200).json({
                 message: 'Text analyzed successfully.',

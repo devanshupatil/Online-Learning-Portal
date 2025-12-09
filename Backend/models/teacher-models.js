@@ -3,6 +3,7 @@ const supabase = require('../config/supabaseDB')
 const { createClient } = require('@supabase/supabase-js');
 const { get } = require('../routes/teachers-routes');
 const fs = require('fs');
+const llm = require('../llm');
 // const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 // Initialize Google Cloud Storage
@@ -497,46 +498,28 @@ const teacher = {
 
   analyzeText: async function(imageURL) {
     try {
-      const response = await fetch('https://api.perplexity.ai/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'sonar-pro',
-          messages: [
-            { role: 'user', content: `Extract questions from this text and convert them to JSON format, ignoring all other content. Structure the output as a JSON object where each step is an object containing "question" and "answer". If the text contains only questions without answers, provide the answers step by step. If answers are present in the text then does not provide: ${imageURL}` }
-          ]
-        })
-      });
+      // const result = await llm.gemini(imageURL);
+      // const response = await llm.perplexity(imageURL);
+      const response = await llm.openAI(imageURL);
+      // const response = await llm.claude(imageURL);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Perplexity API error: ${response.status} ${errorText}`);
-      }
-
-      const data = await response.json();
-      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-        throw new Error('Invalid response structure from Perplexity API');
-      }
-      return data.choices[0].message.content;
+      return response;
     } catch (error) {
-      console.error('Error analyzing text with Perplexity:', error);
+      console.error('Error analyzing text:', error);
       throw error;
     }
   },
 
-  saveTextAnalysis: async (textId, analysisData) => {
+  saveTextAnalysis: async (materialId, analysisData) => {
     try {
-      // First, try to update existing record
+      // First, try to update existing record in image_analysis_results
       const { data: updateData, error: updateError } = await supabase
-        .from('text_analysis_results')
+        .from('image_analysis_results')
         .update({
           analysis_data: analysisData,
           updated_at: new Date().toISOString()
         })
-        .eq('text_id', textId)
+        .eq('material_id', materialId)
         .select('*')
         .single();
 
@@ -547,16 +530,16 @@ const teacher = {
 
       // If update failed because row doesn't exist, insert new record
       const { data: insertData, error: insertError } = await supabase
-        .from('text_analysis_results')
+        .from('image_analysis_results')
         .insert({
-          text_id: textId,
+          material_id: materialId,
           analysis_data: analysisData
         })
         .select('*')
         .single();
 
       if (insertError) {
-        console.error('Error inserting text analysis:', insertError);
+        console.error('Error inserting image analysis:', insertError);
         throw insertError;
       }
 
@@ -584,8 +567,3 @@ const teacher = {
 }
 
 module.exports = teacher;
-
-
-
-
-
