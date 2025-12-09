@@ -10,15 +10,16 @@ const teacherRoutes = require('./routes/teachers-routes');
 const leranerRoutes = require('./routes/leraner-routes');
 
 // Connect to Supabase
-(async () => {
-  try {
-    const { data, error } = await supabase;
-    if (error) throw error;
-    console.log('Successfully connected to Supabase');
-  } catch (error) {
-    console.error('Error connecting to Supabase:', error.message);
-  }
-})();
+// (async () => {
+//   try {
+//     const { data, error } = await supabase;
+//     if (error) throw error;
+//     console.log('Successfully connected to Supabase');
+//   } catch (error) {
+//     console.error('Error connecting to Supabase:', error.message);
+//   }
+// })();
+
 
 
 // CORS configuration
