@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Download, Trash2, Eye, Edit, FileType } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Edit, FileType, NutOffIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 const TestManager = () => {
@@ -320,12 +320,16 @@ const TestManager = () => {
             } else {
               throw new Error('Invalid analysis data format');
             }
-            existingAnalysis = JSON.parse(text);
+
+            // Flatten nested analysis structure if present
+            if (existingAnalysis && existingAnalysis.analysis && existingAnalysis.analysis.analysis) {
+              existingAnalysis = { analysis: existingAnalysis.analysis.analysis };
+            }
           } catch (parseErr) {
             console.warn('Failed to parse analysis JSON from server:', parseErr);
           }
 
-          if (existingAnalysis && Object.keys(existingAnalysis).length > 0) {
+          if (existingAnalysis && Object.keys(existingAnalysis).length > 0 ) {
             // Cache server result locally for faster subsequent loads
             // try {
             //   localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(existingAnalysis));
@@ -398,9 +402,11 @@ const TestManager = () => {
         throw new Error('No material ID available. Please try analyzing the image again.');
       }
 
+     
       const requestBody = {
         materialId: currentMaterialId,
         analysis: editingAnalysis, // Changed from analysisData to analysis to match backend expectation
+        material: testMaterials.find(m => m.id === currentMaterialId),
       };
 
       const response = await fetch(`${URL}/api/saveImageAnalysis`, {
@@ -463,6 +469,8 @@ const TestManager = () => {
     target[lastKey] = value;
     return { ...obj };
   };
+
+
 
   const renderJsonValue = (key, value, path = '', level = 0) => {
     const currentPath = path ? `${path}.${key}` : key;
