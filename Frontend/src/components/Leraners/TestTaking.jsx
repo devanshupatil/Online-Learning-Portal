@@ -10,7 +10,7 @@ const TestTaking = () => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [testQuestions] = useState(test.analysis_data.questions || []);
+  const [testQuestions] = useState(test?.analysis_data.analysis.questions ?? []);
   const [timeLeft, setTimeLeft] = useState(1800); // 30 minutes
   const [timerActive, setTimerActive] = useState(true);
 
@@ -96,10 +96,10 @@ const TestTaking = () => {
                     <label key={index} className="flex items-center space-x-4 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
                       <input
                         type="radio"
-                        name={`question-${testQuestions[currentQuestionIndex].id}`}
+                        name={`question-${testQuestions[currentQuestionIndex]}`}
                         value={option}
-                        checked={answers[testQuestions[currentQuestionIndex].id] === option}
-                        onChange={() => handleAnswerSelect(testQuestions[currentQuestionIndex].id, option)}
+                        checked={answers[testQuestions[currentQuestionIndex]] === option}
+                        onChange={() => handleAnswerSelect(testQuestions[currentQuestionIndex], option)}
                         className="w-4 h-4 text-blue-600 focus:ring-blue-500"
                       />
                       <span className="text-blue-600 font-medium text-lg">
@@ -113,8 +113,8 @@ const TestTaking = () => {
                 <div className="mt-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Your Answer</label>
                   <textarea
-                    value={answers[testQuestions[currentQuestionIndex].id] || ''}
-                    onChange={(e) => handleAnswerSelect(testQuestions[currentQuestionIndex].id, e.target.value)}
+                    value={answers[testQuestions[currentQuestionIndex]] || ''}
+                    onChange={(e) => handleAnswerSelect(testQuestions[currentQuestionIndex], e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     rows={4}
                     placeholder="Type your answer here..."
@@ -152,7 +152,7 @@ const TestTaking = () => {
                     className={`cursor-pointer aspect-square rounded border-2 font-medium transition-all duration-200 ${
                       index === currentQuestionIndex
                         ? 'bg-blue-600 text-white border-blue-600'
-                        : answers[testQuestions[index].id]
+                        : answers[testQuestions[index]]
                         ? 'bg-green-500 text-white border-green-500'
                         : 'bg-black text-white border-black hover:bg-gray-800'
                     }`}
