@@ -49,8 +49,8 @@ const Tests = () => {
 
             setAnalysisData(existingAnalysis.textAnalyses);
 
-            console.log('Fetched existing analysis from server:', existingAnalysis.textAnalyses
-            );
+            // // console.log('Fetched existing analysis from server:', existingAnalysis.textAnalyses
+            // );
           }
         }
       }
