@@ -373,13 +373,13 @@ const teacher_controller = {
 
     saveImageAnalysis: async (req, res) => {
         try {
-            const { materialId, analysis } = req.body;
+            const { materialId, analysis, material } = req.body;
 
-            if (!materialId || !analysis) {
+            if (!materialId || !analysis || !material) {
                 return res.status(400).json({ message: 'materialId and analysis are required.' });
             }
 
-            await teacherModels.saveTextAnalysis(materialId, analysis);
+            await teacherModels.saveTextAnalysis(materialId, analysis, material);
 
             res.status(200).json({ message: 'Image analysis saved successfully.' });
         } catch (error) {

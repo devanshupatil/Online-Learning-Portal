@@ -510,13 +510,15 @@ const teacher = {
     }
   },
 
-  saveTextAnalysis: async (materialId, analysisData) => {
+  saveTextAnalysis: async (materialId, analysisData, material) => {
     try {
       // First, try to update existing record in image_analysis_results
       const { data: updateData, error: updateError } = await supabase
         .from('image_analysis_results')
         .update({
           analysis_data: analysisData,
+          test_name: material.name,
+          course: material.course,
           updated_at: new Date().toISOString()
         })
         .eq('material_id', materialId)
@@ -533,7 +535,9 @@ const teacher = {
         .from('image_analysis_results')
         .insert({
           material_id: materialId,
-          analysis_data: analysisData
+          analysis_data: analysisData,
+          test_name: material.name,
+          course: material.course
         })
         .select('*')
         .single();
@@ -562,7 +566,7 @@ const teacher = {
       throw error;
     }
 
-    return data ? data.analysis_data : null;
+    return data.analysis_data.analysis ? data.analysis_data : null;
   },
 }
 
