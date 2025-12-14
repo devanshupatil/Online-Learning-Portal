@@ -397,7 +397,7 @@ const teacher_controller = {
                 analysis: analysis
             }); 
         } catch (error) {
-            console.error('Error retrieving image analysis:', error);
+            // console.error('Error retrieving image analysis:', error);
             throw new Error('Internal server error: ' + error.message);
         }
     }
