@@ -20,6 +20,7 @@ const TestManager = () => {
 
   const URL = import.meta.env.VITE_BACKEND_URL;
   const teacherId = 'teacher123'; // Placeholder teacherId
+  const selectedModel = localStorage.getItem('selectedModel') || 'openAI';
 
   useEffect(() => {
     fetchTestMaterials();
@@ -358,6 +359,7 @@ const TestManager = () => {
 
       const queryParams = new URLSearchParams({
         imageURL: material.url,
+        modelName: selectedModel,
       });
 
       // Call the analyze API
