@@ -10,7 +10,7 @@ const Header = () => {
   const { isOpen: isSidebarOpen, toggle: toggleSidebar } = useSidebar();
 
   // Check if current route is learner or teacher section
-  const isLearnerOrTeacherSection = location.pathname.startsWith('/learners') || location.pathname.startsWith('/teachers');
+  const isLearnerOrTeacherSection = location.pathname.startsWith('/learners') || location.pathname.startsWith('/teachers') || location.pathname.startsWith('/admin');
 
   return (
     <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sticky top-0 z-50">
