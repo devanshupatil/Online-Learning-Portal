@@ -5,6 +5,8 @@ const { promisify } = require('util');
 const { execFile } = require('child_process');
 const axios = require('axios');
 const { OpenAI } = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const execFileAsync = promisify(execFile);
 
@@ -202,6 +204,119 @@ async function openAI(input) {
   }
 }
 
+async function perplexity(input) {
+  const model = process.env.PERPLEXITY_MODEL || 'llama-3.1-sonar-large-128k-online';
+  const client = new OpenAI({ apiKey: process.env.PERPLEXITY_API_KEY, baseURL: 'https://api.perplexity.ai' });
+
+  const images = await readInputToImages(input);
+
+  // Build content array: one text instruction + multiple images (pages)
+  const content = [
+    { type: 'text', text: 'Convert the document images to JSON. Extract ONLY questions and their options/answers. If the image or PDF shows a question with options and no marked answer, infer the single best answer from the options and set answer to that option\'s exact text. If the question has no options, infer the correct answer from your general knowledge and set answer to that inferred answer. If neither an explicit nor inferable answer is available, set answer to null. Always include keys for every item: question, options (array), answer (string or null), pageNumber (1-based by page order or null). Return only JSON that validates against the schema. Do not include explanations' }
+  ];
+  for (const img of images) {
+    content.push({ type: 'image_url', image_url: { url: bufferToDataUrl(img.mime, img.buffer) } });
+  }
+
+  const schema = buildSchema();
+
+  const resp = await client.chat.completions.create({
+    model,
+    temperature: 0,
+    messages: [
+      { role: 'system', content: 'You are a strict JSON extractor. Return valid JSON only, no prose. If options are provided, answer must be exactly one of the provided options; otherwise set answer to null.' },
+      { role: 'user', content }
+    ],
+    response_format: {
+      type: 'json_schema',
+      json_schema: { name: 'ExamQASchema', schema, strict: true }
+    }
+  });
+
+  const text = resp.choices?.[0]?.message?.content;
+  if (!text) {
+    throw new Error('Perplexity returned empty content');
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    // In rare cases, the content may include code fences; try to sanitize
+    const cleaned = text.replace(/^```json\n?|\n?```$/g, '');
+    return JSON.parse(cleaned);
+  }
+}
+
+async function claude(input) {
+  const model = process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022';
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const images = await readInputToImages(input);
+
+  const content = [
+    { type: 'text', text: 'Convert the document images to JSON. Extract ONLY questions and their options/answers. If the image or PDF shows a question with options and no marked answer, infer the single best answer from the options and set answer to that option\'s exact text. If the question has no options, infer the correct answer from your general knowledge and set answer to that inferred answer. If neither an explicit nor inferable answer is available, set answer to null. Always include keys for every item: question, options (array), answer (string or null), pageNumber (1-based by page order or null). Return only JSON that validates against the schema. Do not include explanations' }
+  ];
+  for (const img of images) {
+    content.push({ type: 'image', source: { type: 'base64', media_type: img.mime, data: Buffer.from(img.buffer).toString('base64') } });
+  }
+
+  const schema = buildSchema();
+
+  const tools = [{
+    name: 'extract_questions',
+    description: 'Extract questions from document',
+    input_schema: schema
+  }];
+
+  const message = await anthropic.messages.create({
+    model,
+    max_tokens: 4096,
+    temperature: 0,
+    system: 'You are a strict JSON extractor. Return valid JSON only, no prose. If options are provided, answer must be exactly one of the provided options; otherwise set answer to null.',
+    messages: [{ role: 'user', content }],
+    tools
+  });
+
+  const toolCall = message.content.find(c => c.type === 'tool_use');
+  if (!toolCall) {
+    throw new Error('No tool call from Claude');
+  }
+
+  return toolCall.input;
+}
+
+async function gemini(input) {
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-pro';
+  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+  const model = genAI.getGenerativeModel({ model: modelName });
+
+  const images = await readInputToImages(input);
+
+  const parts = [
+    { text: 'Convert the document images to JSON. Extract ONLY questions and their options/answers. If the image or PDF shows a question with options and no marked answer, infer the single best answer from the options and set answer to that option\'s exact text. If the question has no options, infer the correct answer from your general knowledge and set answer to that inferred answer. If neither an explicit nor inferable answer is available, set answer to null. Always include keys for every item: question, options (array), answer (string or null), pageNumber (1-based by page order or null). Return only JSON that validates against the schema. Do not include explanations' }
+  ];
+  for (const img of images) {
+    parts.push({ inlineData: { mimeType: img.mime, data: Buffer.from(img.buffer).toString('base64') } });
+  }
+
+  const schema = buildSchema();
+
+  const result = await model.generateContent({
+    contents: [{ role: 'user', parts }],
+    generationConfig: {
+      temperature: 0,
+      responseMimeType: 'application/json',
+      responseSchema: schema
+    }
+  });
+
+  const text = result.response.text();
+  return JSON.parse(text);
+}
+
 module.exports = {
   openAI,
+  perplexity,
+  claude,
+  gemini,
 };
