@@ -8,6 +8,7 @@ const port = process.env.PORT || 4000; // You can use any port number
 const supabase = require('./config/supabaseDB');
 const teacherRoutes = require('./routes/teachers-routes');
 const leranerRoutes = require('./routes/leraner-routes');
+const adminRoutes = require('./routes/admin-routes');
 
 // Connect to Supabase
 // (async () => {
@@ -64,6 +65,7 @@ app.use(express.json());
 // app.use('/api', router);
 app.use('/api', teacherRoutes);
 app.use('/api', leranerRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 app.listen(port, () => {
