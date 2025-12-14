@@ -5,6 +5,8 @@ import AdminSidebar from './AdminSidebar';
 import BackNavigation from '../BackNavigation';
 import ResponsiveSidebar from '../ResponsiveSidebar';
 import { useSidebar } from '../SidebarProvider';
+import { useAdminAuth } from '../Auth/AdminAuthContext';
+import { LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -16,6 +18,7 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedModel, setSelectedModel] = useState('openAI');
   const { isMobile, isTablet } = useSidebar();
+  const { getAuthHeaders, logout, admin } = useAdminAuth();
   const URL = import.meta.env.VITE_BACKEND_URL;
 
   // Mock data for admin overview
@@ -153,7 +156,7 @@ const AdminDashboard = () => {
 
   const fetchSelectedModel = async () => {
     try {
-      const response = await fetch(`${URL}/api/admin/settings/llm_model`);
+      const response = await fetch(`${URL}/admin/settings/llm_model`);
       if (response.ok) {
         const data = await response.json();
         setSelectedModel(data.value);
@@ -186,9 +189,21 @@ const AdminDashboard = () => {
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Dashboard Header */}
           <div className="mb-8">
-            <div className="flex items-center mb-2">
-              <BackNavigation className='cursor-pointer' />
-              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <BackNavigation className='cursor-pointer' />
+                <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">Welcome, {admin?.name || admin?.email}</span>
+                <button
+                  onClick={logout}
+                  className="flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </button>
+              </div>
             </div>
             <p className="text-gray-600">Manage your online learning platform efficiently.</p>
           </div>
@@ -963,7 +978,7 @@ const AdminDashboard = () => {
                           <button
                             onClick={async () => {
                               try {
-                                const response = await fetch(`${URL}/api/admin/settings`, {
+                                const response = await fetch(`${URL}/admin/settings`, {
                                   method: 'POST',
                                   headers: {
                                     'Content-Type': 'application/json',
