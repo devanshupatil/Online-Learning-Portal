@@ -285,8 +285,8 @@ const teacher = {
     // Generate public URLs from bucket
     return data.map(material => {
       const { data: publicUrlData } = supabase.storage
-      .from('tests-materials')
-      .getPublicUrl(`${material.course}/${material.file_name.split('/').pop()}`);
+        .from('tests-materials')
+        .getPublicUrl(`${material.course}/${material.file_name.split('/').pop()}`);
 
       return {
         id: material.id,
@@ -496,14 +496,37 @@ const teacher = {
   },
 
 
-  analyzeText: async function(imageURL) {
+  analyzeText: async function (imageURL) {
     try {
-      // const result = await llm.gemini(imageURL);
-      // const response = await llm.perplexity(imageURL);
-      const response = await llm.openAI(imageURL);
-      // const response = await llm.claude(imageURL);
+      // Fetch the selected LLM model from settings
+      const { data: setting, error: settingError } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'llm_model')
+        .single();
 
-      return response;
+      if (settingError) {
+        console.warn('Error fetching LLM model setting, defaulting to openAI:', settingError.message);
+        // Default to openAI if setting not found
+        return await llm.openAI(imageURL);
+      }
+
+      const selectedModel = setting.value;
+
+      // Call the appropriate LLM function based on the selected model
+      switch (selectedModel) {
+        case 'openAI':
+          return await llm.openAI(imageURL);
+        case 'perplexity':
+          return await llm.perplexity(imageURL);
+        case 'claude':
+          return await llm.claude(imageURL);
+        case 'gemini':
+          return await llm.gemini(imageURL);
+        default:
+          console.warn(`Unknown LLM model '${selectedModel}', defaulting to openAI`);
+          return await llm.openAI(imageURL);
+      }
     } catch (error) {
       console.error('Error analyzing text:', error);
       throw error;
