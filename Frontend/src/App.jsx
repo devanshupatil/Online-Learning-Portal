@@ -5,34 +5,39 @@ import Home from './components/Home'
 import LearnersPage from './components/Leraners/LearnersPage'
 import TeachersPage from './components/Teacher/TeachersPage'
 import ParentsPage from './components/Parents/ParentsPage'
+import AdminPage from './components/Admin/AdminPage'
 import AuthPage from './components/Auth/AuthPage'
 import TestTaking from './components/Leraners/TestTaking'
 import { Toaster } from 'sonner';
 import { SidebarProvider } from './components/SidebarProvider';
+import { AdminAuthProvider } from './components/Auth/AdminAuthContext';
 
 function App() {
 
 
   return (
     <>
-    <Toaster position="top-right" richColors/>
-      <SidebarProvider>
-        <Router>
+      <Toaster position="top-right" richColors />
+      <AdminAuthProvider>
+        <SidebarProvider>
+          <Router>
           <Routes>
             {/* Define your routes here */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
-            <Route path="/learners" element={<LearnersPage />} />
+            <Route path="/learners/*" element={<LearnersPage />} />
             <Route path="/test-taking" element={<TestTaking />} />
-            <Route path="/teachers" element={<TeachersPage />} />
-            <Route path="/parents" element={<ParentsPage />} />
+            <Route path="/teachers/*" element={<TeachersPage />} />
+            <Route path="/parents/*" element={<ParentsPage />} />
+            <Route path="/admin/*" element={<AdminPage />} />
 
           </Routes>
-        </Router>
-      </SidebarProvider>
+          </Router>
+        </SidebarProvider>
+      </AdminAuthProvider>
     </>
   )
 }
- 
+
 export default App
