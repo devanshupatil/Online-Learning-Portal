@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, Settings } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, Settings, LogOut } from 'lucide-react';
 
-const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = false }) => {
+const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = false, logout }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
     { id: 'users', label: 'User Management', icon: Users },
@@ -53,6 +53,15 @@ const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile =
           );
         })}
       </ul>
+      <div className={`${isMobile ? 'mt-4' : 'mt-6'}`}>
+        <button
+          onClick={logout}
+          className="cursor-pointer w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        >
+          <LogOut className="w-5 h-5 mr-3" />
+          Logout
+        </button>
+      </div>
       <style jsx>{`
         .sidebar-nav-button {
           position: relative;

@@ -6,7 +6,6 @@ import BackNavigation from '../BackNavigation';
 import ResponsiveSidebar from '../ResponsiveSidebar';
 import { useSidebar } from '../SidebarProvider';
 import { useAdminAuth } from '../Auth/AdminAuthContext';
-import { LogOut } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -181,6 +180,7 @@ const AdminDashboard = () => {
             activeSection={activeSection}
             onSectionChange={setActiveSection}
             isMobile={isMobile || isTablet}
+            logout={logout}
           />
         </ResponsiveSidebar>
       )}
@@ -194,24 +194,15 @@ const AdminDashboard = () => {
                 <BackNavigation className='cursor-pointer' />
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
               </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">Welcome, {admin?.name || admin?.email}</span>
-                <button
-                  onClick={logout}
-                  className="flex items-center px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </button>
-              </div>
             </div>
             <p className="text-gray-600">Manage your online learning platform efficiently.</p>
+            {/* <span className="text-sm text-gray-600">Welcome, {admin?.name || admin?.email}</span> */}
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Sidebar Navigation - Desktop Only */}
             <div className="lg:w-1/4 sticky top-25 self-start hidden lg:block">
-              <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+              <AdminSidebar activeSection={activeSection} onSectionChange={setActiveSection} logout={logout} />
             </div>
 
             {/* Main Content Area */}
@@ -266,8 +257,8 @@ const AdminDashboard = () => {
                         <button
                           onClick={() => setUserTab('students')}
                           className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${userTab === 'students'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                         >
                           <Users className="w-4 h-4 mr-2" />
@@ -276,8 +267,8 @@ const AdminDashboard = () => {
                         <button
                           onClick={() => setUserTab('teachers')}
                           className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${userTab === 'teachers'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                         >
                           <Users className="w-4 h-4 mr-2" />
@@ -326,18 +317,17 @@ const AdminDashboard = () => {
                               .filter(user =>
                                 (filterStatus === 'all' || user.status.toLowerCase() === filterStatus) &&
                                 (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                 user.email.toLowerCase().includes(searchTerm.toLowerCase()))
+                                  user.email.toLowerCase().includes(searchTerm.toLowerCase()))
                               )
                               .map((user) => (
                                 <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                                   <td className="py-3 px-4">{user.name}</td>
                                   <td className="py-3 px-4">{user.email}</td>
                                   <td className="py-3 px-4">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                      user.status === 'Active'
+                                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${user.status === 'Active'
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-red-100 text-red-800'
-                                    }`}>
+                                      }`}>
                                       {user.status}
                                     </span>
                                   </td>
@@ -430,7 +420,7 @@ const AdminDashboard = () => {
                               .filter(course =>
                                 (filterStatus === 'all' || course.status.toLowerCase() === filterStatus) &&
                                 (course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                 course.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
+                                  course.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
                               )
                               .map((course) => (
                                 <tr key={course.id} className="border-b border-gray-100 hover:bg-gray-50">
@@ -438,11 +428,10 @@ const AdminDashboard = () => {
                                   <td className="py-3 px-4">{course.teacher}</td>
                                   <td className="py-3 px-4">{course.enrolledStudents}</td>
                                   <td className="py-3 px-4">
-                                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                                      course.status === 'Active'
+                                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${course.status === 'Active'
                                         ? 'bg-green-100 text-green-800'
                                         : 'bg-red-100 text-red-800'
-                                    }`}>
+                                      }`}>
                                       {course.status}
                                     </span>
                                   </td>
@@ -508,8 +497,8 @@ const AdminDashboard = () => {
                         <button
                           onClick={() => setContentTab('materials')}
                           className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${contentTab === 'materials'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                         >
                           <FileText className="w-4 h-4 mr-2" />
@@ -518,8 +507,8 @@ const AdminDashboard = () => {
                         <button
                           onClick={() => setContentTab('tests')}
                           className={`cursor-pointer flex items-center px-4 py-2 rounded-lg font-medium transition-colors duration-200 ${contentTab === 'tests'
-                              ? 'bg-blue-100 text-blue-700'
-                              : 'text-gray-600 hover:bg-gray-100'
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
                             }`}
                         >
                           <BookOpen className="w-4 h-4 mr-2" />
@@ -713,35 +702,35 @@ const AdminDashboard = () => {
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">Mon</span>
                               <div className="flex-1 mx-4 bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '60%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '60%' }}></div>
                               </div>
                               <span className="text-sm font-medium">24</span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">Tue</span>
                               <div className="flex-1 mx-4 bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '75%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '75%' }}></div>
                               </div>
                               <span className="text-sm font-medium">30</span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">Wed</span>
                               <div className="flex-1 mx-4 bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '90%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '90%' }}></div>
                               </div>
                               <span className="text-sm font-medium">36</span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">Thu</span>
                               <div className="flex-1 mx-4 bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '85%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '85%' }}></div>
                               </div>
                               <span className="text-sm font-medium">34</span>
                             </div>
                             <div className="flex justify-between items-center">
                               <span className="text-sm text-gray-600">Fri</span>
                               <div className="flex-1 mx-4 bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '95%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '95%' }}></div>
                               </div>
                               <span className="text-sm font-medium">38</span>
                             </div>
@@ -759,7 +748,7 @@ const AdminDashboard = () => {
                                 <span>45 students</span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div className="bg-green-500 h-2 rounded-full" style={{width: '90%'}}></div>
+                                <div className="bg-green-500 h-2 rounded-full" style={{ width: '90%' }}></div>
                               </div>
                             </div>
                             <div>
@@ -768,7 +757,7 @@ const AdminDashboard = () => {
                                 <span>32 students</span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div className="bg-blue-500 h-2 rounded-full" style={{width: '64%'}}></div>
+                                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '64%' }}></div>
                               </div>
                             </div>
                             <div>
@@ -777,7 +766,7 @@ const AdminDashboard = () => {
                                 <span>28 students</span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div className="bg-purple-500 h-2 rounded-full" style={{width: '56%'}}></div>
+                                <div className="bg-purple-500 h-2 rounded-full" style={{ width: '56%' }}></div>
                               </div>
                             </div>
                             <div>
@@ -786,7 +775,7 @@ const AdminDashboard = () => {
                                 <span>21 students</span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div className="bg-orange-500 h-2 rounded-full" style={{width: '42%'}}></div>
+                                <div className="bg-orange-500 h-2 rounded-full" style={{ width: '42%' }}></div>
                               </div>
                             </div>
                           </div>
@@ -943,7 +932,7 @@ const AdminDashboard = () => {
                             <select
                               value={selectedModel}
                               onChange={(e) => setSelectedModel(e.target.value)}
-                              className="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                              className="cursor-pointer mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                             >
                               <option value="openAI">OpenAI (GPT-4o)</option>
                               <option value="perplexity">Perplexity</option>
@@ -958,11 +947,11 @@ const AdminDashboard = () => {
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">Maintenance</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <button className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                          <button className="cursor-pointer flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                             <Settings className="w-4 h-4 mr-2" />
                             Database Backup
                           </button>
-                          <button className="flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                          <button className="cursor-pointer flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                             <Activity className="w-4 h-4 mr-2" />
                             View System Logs
                           </button>
@@ -972,7 +961,7 @@ const AdminDashboard = () => {
                       {/* Save Settings */}
                       <div className="pt-6 border-t border-gray-200">
                         <div className="flex justify-end">
-                          <button className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors mr-4">
+                          <button className="cursor-pointer px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors mr-4">
                             Reset to Defaults
                           </button>
                           <button
@@ -999,7 +988,7 @@ const AdminDashboard = () => {
                                 alert('Error saving settings.');
                               }
                             }}
-                            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="cursor-pointer px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                           >
                             Save Settings
                           </button>
