@@ -195,7 +195,7 @@ const AdminDashboard = () => {
                 <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
               </div>
             </div>
-            <p className="text-gray-600">Manage your online learning platform efficiently.</p>
+            <p className="text-gray-600">Welcome back, {admin?.name || admin?.email}! Manage your online learning platform efficiently.</p>
             {/* <span className="text-sm text-gray-600">Welcome, {admin?.name || admin?.email}</span> */}
           </div>
 
