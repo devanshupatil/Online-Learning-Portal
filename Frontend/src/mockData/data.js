@@ -7,6 +7,8 @@ const isoDaysAgo = (n) => {
   return d.toISOString();
 };
 
+const dateDaysAgo = (n) => isoDaysAgo(n).split('T')[0];
+
 export const STREAM_CLASSES = ['JEE', 'NEET', 'CET (PCM)', 'CET (PCB)'];
 
 // Students grouped by coaching stream — used by attendance features.
@@ -139,3 +141,59 @@ export const seedAttendanceHistory = () => {
 
   return records;
 };
+
+// --- Parent portal demo data ---
+// The demo shows a single child (Aarav Sharma) so the Parents dashboard
+// stays consistent with the same student referenced in the Teacher/Learner
+// mock data (STUDENTS_BY_STREAM / STUDENTS_DIRECTORY).
+export const PARENT_CHILD = {
+  id: 'STU101',
+  rollNo: 'DIR001',
+  name: 'Aarav Sharma',
+  stream: 'JEE',
+  grade: '12th',
+  institute: 'EduLearn Coaching Center',
+  parentName: 'Rakesh Sharma',
+  parentEmail: 'rakesh.sharma@example.com',
+};
+
+export const CHILD_SCHEDULE = [
+  { day: 'Monday', subject: 'Mathematics', time: '6:00 AM - 7:30 AM', teacher: 'John Smith', room: 'Room 101' },
+  { day: 'Monday', subject: 'Physics', time: '7:30 AM - 9:00 AM', teacher: 'Priya Rao', room: 'Room 203' },
+  { day: 'Tuesday', subject: 'Chemistry', time: '6:00 AM - 7:30 AM', teacher: 'Anil Kulkarni', room: 'Room 105' },
+  { day: 'Tuesday', subject: 'Mathematics', time: '7:30 AM - 9:00 AM', teacher: 'John Smith', room: 'Room 101' },
+  { day: 'Wednesday', subject: 'Physics', time: '6:00 AM - 7:30 AM', teacher: 'Priya Rao', room: 'Room 203' },
+  { day: 'Wednesday', subject: 'Chemistry', time: '7:30 AM - 9:00 AM', teacher: 'Anil Kulkarni', room: 'Room 105' },
+  { day: 'Thursday', subject: 'Mathematics', time: '6:00 AM - 7:30 AM', teacher: 'John Smith', room: 'Room 101' },
+  { day: 'Thursday', subject: 'Physics', time: '7:30 AM - 9:00 AM', teacher: 'Priya Rao', room: 'Room 203' },
+  { day: 'Friday', subject: 'Chemistry', time: '6:00 AM - 7:30 AM', teacher: 'Anil Kulkarni', room: 'Room 105' },
+  { day: 'Friday', subject: 'Mathematics', time: '7:30 AM - 9:00 AM', teacher: 'John Smith', room: 'Room 101' },
+  { day: 'Saturday', subject: 'Full Syllabus Mock Test', time: '9:00 AM - 12:00 PM', teacher: 'John Smith', room: 'Exam Hall' },
+];
+
+export const CHILD_ATTENDANCE_BY_SUBJECT = [
+  { subject: 'Mathematics', totalClasses: 48, attended: 44 },
+  { subject: 'Physics', totalClasses: 46, attended: 41 },
+  { subject: 'Chemistry', totalClasses: 44, attended: 40 },
+];
+
+export const CHILD_RECENT_ATTENDANCE = [
+  { date: dateDaysAgo(0), status: 'present' },
+  { date: dateDaysAgo(1), status: 'present' },
+  { date: dateDaysAgo(2), status: 'absent' },
+  { date: dateDaysAgo(3), status: 'present' },
+  { date: dateDaysAgo(4), status: 'present' },
+  { date: dateDaysAgo(5), status: 'present' },
+  { date: dateDaysAgo(6), status: 'present' },
+  { date: dateDaysAgo(7), status: 'absent' },
+  { date: dateDaysAgo(8), status: 'present' },
+  { date: dateDaysAgo(9), status: 'present' },
+];
+
+export const CHILD_TEST_MARKS = [
+  { test_name: 'JEE Mock Test - Physics Mechanics', subject: 'Physics', date: dateDaysAgo(1), marksObtained: 78, totalMarks: 100 },
+  { test_name: 'JEE Mock Test - Algebra & Calculus', subject: 'Mathematics', date: dateDaysAgo(7), marksObtained: 85, totalMarks: 100 },
+  { test_name: 'CET Mock Test - Organic Chemistry', subject: 'Chemistry', date: dateDaysAgo(5), marksObtained: 71, totalMarks: 100 },
+  { test_name: 'JEE Mock Test - Physics Mechanics', subject: 'Physics', date: dateDaysAgo(15), marksObtained: 74, totalMarks: 100 },
+  { test_name: 'JEE Mock Test - Algebra & Calculus', subject: 'Mathematics', date: dateDaysAgo(20), marksObtained: 80, totalMarks: 100 },
+];

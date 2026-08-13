@@ -1,12 +1,15 @@
 import React from 'react';
 
+import ParentDashboard from './ParentDashboard';
+import Footer from '../Footer';
+
 const ParentsPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Parents Page</h1>
-        <p className="text-xl text-gray-600">Coming soon...</p>
+    <div className="min-h-screen bg-gray-100">
+      <div className="bg-white">
+        <ParentDashboard />
       </div>
+      <Footer />
     </div>
   );
 };
