@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FileText, Eye, Download, Edit, Trash2, Search, Filter } from 'lucide-react';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const MaterialManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -21,7 +22,7 @@ const MaterialManager = () => {
   const getStudyMaterials = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${URL}/api/getStudyMaterials/teacher123`); // Placeholder teacherId
+      const response = await mockFetch(`${URL}/api/getStudyMaterials/teacher123`); // Placeholder teacherId
       const data = await response.json();
       if (response.ok) {
         console.log('Materials fetched successfully:', data.materials);
@@ -93,7 +94,7 @@ const MaterialManager = () => {
     }
 
     try {
-      const response = await fetch(`${URL}/api/deleteStudyMaterial`, {
+      const response = await mockFetch(`${URL}/api/deleteStudyMaterial`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fileName: `${category}/${course}/${title}` })
@@ -158,7 +159,7 @@ const MaterialManager = () => {
       }, 100);
 
       // Fetch the file through backend API
-      const response = await fetch(`${URL}/api/downloadTestMaterial/${materialId}`);
+      const response = await mockFetch(`${URL}/api/downloadTestMaterial/${materialId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

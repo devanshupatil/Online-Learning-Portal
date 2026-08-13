@@ -4,6 +4,9 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
+# System dependencies for PDF rendering (pdftoppm)
+RUN apk add --no-cache poppler-utils
+
 # Copy package files
 COPY package*.json ./
 

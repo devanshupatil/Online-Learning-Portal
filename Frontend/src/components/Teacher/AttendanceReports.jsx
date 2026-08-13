@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Users, TrendingUp, TrendingDown, BarChart3, PieChart } from 'lucide-react';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const AttendanceReports = () => {
   const [selectedClass, setSelectedClass] = useState('JEE');
@@ -23,7 +24,7 @@ const AttendanceReports = () => {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch(`${URL}/api/getAllStudentInfo`);
+      const response = await mockFetch(`${URL}/api/getAllStudentInfo`);
       const data = await response.json();
 
 
@@ -46,7 +47,7 @@ const AttendanceReports = () => {
         startDate: dateRange.start,
         endDate: dateRange.end
       });
-      const response = await fetch(`${URL}/api/attendanceRecords/${teacherId.id}?${queryParams}`, {
+      const response = await mockFetch(`${URL}/api/attendanceRecords/${teacherId.id}?${queryParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

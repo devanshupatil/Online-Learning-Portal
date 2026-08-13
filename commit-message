@@ -1,0 +1,3 @@
+Backend/controllers/teachers-controller.js: 6bcdca2 Add test materials management functions (UploadTestsMaterial, getTestsMaterials, deleteTestsMaterials, updateTestMaterial), attendance tracking (getAttendanceByDateAndClass, saveAttendance, getAttendanceRecords), and image analysis endpoint
+Backend/models/student-models.js: 0c60f26 Modified
+Backend/server.js: 379289c remove the commit message

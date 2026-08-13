@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, Trash2, Eye, Edit, FileType, NutOffIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const TestManager = () => {
   const [testMaterials, setTestMaterials] = useState([]);
@@ -29,7 +30,7 @@ const TestManager = () => {
   const fetchTestMaterials = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${URL}/api/getTestsMaterials/${teacherId}`);
+      const response = await mockFetch(`${URL}/api/getTestsMaterials/${teacherId}`);
       const data = await response.json();
       if (response.ok) {
         setTestMaterials(data.materials || []);
@@ -64,7 +65,7 @@ const TestManager = () => {
       }, 100);
 
       // Fetch the file through backend API
-      const response = await fetch(`${URL}/api/downloadTestMaterial/${materialId}`);
+      const response = await mockFetch(`${URL}/api/downloadTestMaterial/${materialId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -113,7 +114,7 @@ const TestManager = () => {
     if (!confirm('Are you sure you want to delete this test material?')) return;
 
     try {
-      const response = await fetch(`${URL}/api/deleteTestsMaterials`, {
+      const response = await mockFetch(`${URL}/api/deleteTestsMaterials`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +157,7 @@ const TestManager = () => {
     }
 
     try {
-      const response = await fetch(`${URL}/api/updateTestMaterial/${editingMaterial.id}`, {
+      const response = await mockFetch(`${URL}/api/updateTestMaterial/${editingMaterial.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -306,7 +307,7 @@ const TestManager = () => {
 
     // If no cached analysis, check backend for existing analysis
     try {
-      const getImageResponse = await fetch(`${URL}/api/getImageAnalysis/${material.id}`);
+      const getImageResponse = await mockFetch(`${URL}/api/getImageAnalysis/${material.id}`);
       if (getImageResponse.ok) {
         // Some endpoints may return empty body (204) — handle that gracefully
         const text = await getImageResponse.text();
@@ -363,7 +364,7 @@ const TestManager = () => {
       });
 
       // Call the analyze API
-      const analyzeResponse = await fetch(`${URL}/api/analyzeImage?${queryParams}`, {
+      const analyzeResponse = await mockFetch(`${URL}/api/analyzeImage?${queryParams}`, {
         method: 'POST',
       });
 
@@ -411,7 +412,7 @@ const TestManager = () => {
         material: testMaterials.find(m => m.id === currentMaterialId),
       };
 
-      const response = await fetch(`${URL}/api/saveImageAnalysis`, {
+      const response = await mockFetch(`${URL}/api/saveImageAnalysis`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

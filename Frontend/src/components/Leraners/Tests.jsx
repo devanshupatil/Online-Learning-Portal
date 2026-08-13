@@ -3,6 +3,7 @@ import { FileCheck, Clock, Calendar, Award, ChevronLeft, ChevronRight } from 'lu
 import { useNavigate } from 'react-router-dom';
 import TestResults from './TestResults';
 import { toast } from 'sonner';
+import { mockFetch } from '../../mockData/mockFetch';
 
 
 const Tests = () => {
@@ -17,7 +18,7 @@ const Tests = () => {
   const geAllImageAnalysis = async () => {
 
     try {
-      const getImageResponse = await fetch(`${URL}/api/textAnalysis`);
+      const getImageResponse = await mockFetch(`${URL}/api/textAnalysis`);
 
       if (getImageResponse.ok) {
         // Some endpoints may return empty body (204) — handle that gracefully

@@ -14,6 +14,7 @@ import StudentProfileView from './StudentProfileView';
 import ResponsiveSidebar from '../ResponsiveSidebar';
 import { useSidebar } from '../SidebarProvider';
 import { useEffect } from 'react';
+import { mockFetch } from '../../mockData/mockFetch';
 
 
 
@@ -51,7 +52,7 @@ const TeacherDashboard = () => {
 
   const getAllStudentsCount = async () => {
     try {
-      const response = await fetch(`${URL}/api/getAllStudentcount`, {
+      const response = await mockFetch(`${URL}/api/getAllStudentcount`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ const TeacherDashboard = () => {
 
   const getAllUploadedMaterialscount = async () => {
     try {
-      const response = await fetch(`${URL}/api/getStudyMaterials/teacher123`, {
+      const response = await mockFetch(`${URL}/api/getStudyMaterials/teacher123`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

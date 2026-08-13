@@ -6,6 +6,7 @@ import BackNavigation from '../BackNavigation';
 import ResponsiveSidebar from '../ResponsiveSidebar';
 import { useSidebar } from '../SidebarProvider';
 import { useAdminAuth } from '../Auth/AdminAuthContext';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -155,7 +156,7 @@ const AdminDashboard = () => {
 
   const fetchSelectedModel = async () => {
     try {
-      const response = await fetch(`${URL}/admin/settings/llm_model`);
+      const response = await mockFetch(`${URL}/admin/settings/llm_model`);
       if (response.ok) {
         const data = await response.json();
         setSelectedModel(data.value);
@@ -967,7 +968,7 @@ const AdminDashboard = () => {
                           <button
                             onClick={async () => {
                               try {
-                                const response = await fetch(`${URL}/admin/settings`, {
+                                const response = await mockFetch(`${URL}/admin/settings`, {
                                   method: 'POST',
                                   headers: {
                                     'Content-Type': 'application/json',

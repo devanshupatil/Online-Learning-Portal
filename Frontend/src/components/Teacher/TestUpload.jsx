@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, File, X, CheckCircle, AlertCircle, CloudCog } from 'lucide-react';
 import { toast } from 'sonner';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const TestUpload = () => {
   const [files, setFiles] = useState([]);
@@ -26,7 +27,7 @@ const TestUpload = () => {
   };
 
   const categories = ['Assignments', 'Lectures', 'Resources', 'Exams', 'Projects'];
-  const courses = ['Mathematics', 'Physics', 'Chemistry', 'Biology'];
+  const courses = ['Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer'];
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -94,7 +95,7 @@ const TestUpload = () => {
         formData.append('files', fileObj.file);
       });
 
-      const response = await fetch(`${URL}/api/UploadTestsMaterial/teacher123`, {
+      const response = await mockFetch(`${URL}/api/UploadTestsMaterial/teacher123`, {
         method: 'POST',
         body: formData,
       });

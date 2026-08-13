@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { FileText, Video, Eye, CloudCog } from 'lucide-react';
 import { MaterialViewer, detectFileType, getFileTypeInfo } from './MaterialViewer';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const Material = () => {
 
@@ -13,7 +14,7 @@ const Material = () => {
 
   const fetchStudyMaterials = async () => {
     try {
-      const response = await fetch(`${URL}/api/studyMaterials/student123`, {
+      const response = await mockFetch(`${URL}/api/studyMaterials/student123`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

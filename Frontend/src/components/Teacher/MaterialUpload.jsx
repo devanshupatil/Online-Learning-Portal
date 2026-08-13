@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Upload, File, X, CheckCircle, AlertCircle, CloudCog } from 'lucide-react';
 import { toast } from 'sonner';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const MaterialUpload = () => {
   const [files, setFiles] = useState([]);
@@ -94,7 +95,7 @@ const MaterialUpload = () => {
         formData.append('files', fileObj.file);
       });
 
-      const response = await fetch(`${URL}/api/UploadStudyMaterial/teacher123`, {
+      const response = await mockFetch(`${URL}/api/UploadStudyMaterial/teacher123`, {
         method: 'POST',
         body: formData,
       });

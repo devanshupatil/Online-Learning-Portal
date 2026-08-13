@@ -1,0 +1,11 @@
+# Copy this file to terraform.tfvars and update the values
+
+# AWS Region where you want to deploy the VM
+aws_region = "us-east-1"
+
+# EC2 instance type (t2.micro is free tier eligible)
+instance_type = "t2.micro"
+
+# Your SSH public key content (paste the content of your ~/.ssh/id_rsa.pub file here)
+# Example: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ... your-email@example.com"
+public_key = "your-ssh-public-key-content-here"

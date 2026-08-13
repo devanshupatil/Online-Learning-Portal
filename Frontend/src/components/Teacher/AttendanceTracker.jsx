@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Users, CheckCircle, XCircle, Save, UserCheck, UserX } from 'lucide-react';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const AttendanceTracker = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -24,7 +25,7 @@ const AttendanceTracker = () => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${URL}/api/getAllStudentInfo`);
+        const response = await mockFetch(`${URL}/api/getAllStudentInfo`);
         const data = await response.json();
 
         if (response.ok) {
@@ -99,7 +100,7 @@ const AttendanceTracker = () => {
     };
 
     try {
-      const response = await fetch(`${URL}/api/attendance`, {
+      const response = await mockFetch(`${URL}/api/attendance`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +138,7 @@ const AttendanceTracker = () => {
   const fetchTodaysAttendance = async () => {
     try {
       setLoadingAttendance(true);
-      const response = await fetch(`${URL}/api/attendance?date=${selectedDate}&class=${selectedClass}`);
+      const response = await mockFetch(`${URL}/api/attendance?date=${selectedDate}&class=${selectedClass}`);
       const data = await response.json();
 
 

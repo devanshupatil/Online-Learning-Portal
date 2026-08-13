@@ -75,7 +75,7 @@ router.get('/downloadTestMaterial/:id', async (req, res) => {
             .from('study-materials')
             .getPublicUrl(data.file_name);
 
-        res.redirect(publicUrlData.publicUrl);
+      return  res.redirect(publicUrlData.publicUrl);
     } catch (err) {
         console.error('Error serving file:', err);
         res.status(500).json({ message: 'Internal server error' });

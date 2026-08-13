@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Users, Mail, Phone, Eye, Filter } from 'lucide-react';
+import { mockFetch } from '../../mockData/mockFetch';
 
 const StudentDirectory = ({ onViewProfile }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +18,7 @@ const StudentDirectory = ({ onViewProfile }) => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${URL}/api/students`);
+        const response = await mockFetch(`${URL}/api/students`);
         const data = await response.json();
 
         if (response.ok) {

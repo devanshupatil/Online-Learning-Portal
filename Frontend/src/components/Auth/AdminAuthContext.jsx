@@ -32,31 +32,24 @@ export const AdminAuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
+  // Demo mode: the real backend/DB isn't connected, so login is validated
+  // against a fixed demo account instead of calling the API.
+  const DEMO_ADMIN_EMAIL = 'admin@example.com';
+  const DEMO_ADMIN_PASSWORD = 'admin123';
+
   const login = async (email, password) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    await new Promise((resolve) => setTimeout(resolve, 400));
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      // Store token and admin data
-      localStorage.setItem('adminToken', data.token);
-      localStorage.setItem('adminData', JSON.stringify(data.admin));
-
-      setAdmin(data.admin);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
+    if (email !== DEMO_ADMIN_EMAIL || password !== DEMO_ADMIN_PASSWORD) {
+      return { success: false, error: 'Invalid email or password' };
     }
+
+    const demoAdmin = { id: 1, name: 'Admin', email: DEMO_ADMIN_EMAIL };
+    localStorage.setItem('adminToken', 'demo-admin-token');
+    localStorage.setItem('adminData', JSON.stringify(demoAdmin));
+
+    setAdmin(demoAdmin);
+    return { success: true };
   };
 
   const logout = () => {
