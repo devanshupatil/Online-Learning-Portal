@@ -1,14 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import bgImage from "../assets/bgImage.png";
 import studentImage from "../assets/student.jpg";
 import { SiteNav, SiteFooter } from "./SiteChrome";
 
 const aboutStats = [
-  { icon: "history_edu", value: "13+", label: "Years of Experience" },
-  { icon: "groups", value: "5,000+", label: "Students Mentored" },
-  { icon: "person", value: "50+", label: "Expert Faculty" },
-  { icon: "military_tech", value: "98%", label: "Success Rate" },
+  { icon: "history_edu", value: "13+", labelKey: "homeAboutStatYears" },
+  { icon: "groups", value: "5,000+", labelKey: "homeAboutStatStudents" },
+  { icon: "person", value: "50+", labelKey: "homeAboutStatFaculty" },
+  { icon: "military_tech", value: "98%", labelKey: "homeAboutStatSuccessRate" },
 ];
 
 const topAchievers = [
@@ -25,6 +26,7 @@ const topAchievers = [
 ];
 
 const Home = () => {
+  const { t } = useTranslation();
   return (
     <div className="bg-background text-on-background font-sans antialiased overflow-x-hidden">
       <SiteNav active="Home" />
@@ -46,30 +48,29 @@ const Home = () => {
         <div className="relative z-10 max-w-[1280px] mx-auto px-6 text-center flex flex-col items-center">
           <span className="glass-panel px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary mb-6 flex items-center gap-2">
             <span className="material-symbols-outlined text-[16px]">school</span>
-            ADMISSIONS OPEN FOR 2026-2027
+            {t("homeHeroBadge")}
           </span>
           <h1 className="font-display text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] text-on-surface mb-6 max-w-4xl mx-auto tracking-tight">
-            Building Bright Futures Through{" "}
+            {t("homeHeroTitle")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-              Quality Education
+              {t("homeHeroTitleHighlight")}
             </span>
           </h1>
           <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10">
-            Join EduLearning Platform and experience a transformative journey towards academic
-            excellence. Expert faculty, proven results, and a commitment to your success.
+            {t("homeHeroSubtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <a
               className="inline-flex items-center justify-center px-6 py-[6px] rounded-full gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
               href="#enroll"
             >
-              Enroll Now
+              {t("navEnrollNow")}
             </a>
             <Link
               className="inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all text-center h-9"
               to="/login"
             >
-              Login
+              {t("navLogin")}
             </Link>
           </div>
         </div>
@@ -82,7 +83,7 @@ const Home = () => {
             <div className="relative order-2 lg:order-1">
               <div className="rounded-2xl overflow-hidden soft-shadow max-w-md mx-auto lg:mx-0">
                 <img
-                  alt="A student at EduLearning Platform"
+                  alt={t("homeAboutImageAlt")}
                   className="w-full h-full object-cover"
                   src={studentImage}
                 />
@@ -93,27 +94,24 @@ const Home = () => {
                 </span>
                 <div className="text-left">
                   <div className="text-xl font-bold text-on-surface">5,000+</div>
-                  <div className="text-xs text-on-surface-variant">Success Stories</div>
+                  <div className="text-xs text-on-surface-variant">{t("homeAboutSuccessStoriesLabel")}</div>
                 </div>
               </div>
             </div>
             <div className="order-1 lg:order-2">
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary bg-primary/10 mb-4">
-                ABOUT US
+                {t("homeAboutBadge")}
               </span>
               <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface mb-6 tracking-tight">
-                Committed to Nurturing Every Learner
+                {t("homeAboutTitle")}
               </h2>
               <p className="text-lg text-on-surface-variant mb-8">
-                EduLearning Platform has spent over a decade helping students turn potential
-                into performance. Our expert faculty pair rigorous, exam-focused teaching with
-                genuine mentorship, so every learner gets a clear path from where they are to
-                where they want to be.
+                {t("homeAboutText")}
               </p>
               <div className="grid grid-cols-2 gap-4 mb-8">
                 {aboutStats.map((stat) => (
                   <div
-                    key={stat.label}
+                    key={stat.labelKey}
                     className="flex items-center gap-3 p-4 rounded-2xl bg-primary/5"
                   >
                     <span className="material-symbols-outlined text-primary text-[28px]">
@@ -123,7 +121,7 @@ const Home = () => {
                       <div className="text-lg font-bold text-on-surface leading-tight">
                         {stat.value}
                       </div>
-                      <div className="text-xs text-on-surface-variant">{stat.label}</div>
+                      <div className="text-xs text-on-surface-variant">{t(stat.labelKey)}</div>
                     </div>
                   </div>
                 ))}
@@ -132,7 +130,7 @@ const Home = () => {
                 className="inline-flex items-center justify-center px-6 py-[6px] rounded-full gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
                 href="#courses"
               >
-                Explore Our Courses
+                {t("homeAboutExploreCoursesBtn")}
               </a>
             </div>
           </div>
@@ -144,13 +142,13 @@ const Home = () => {
         <div className="max-w-[1280px] mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary bg-primary/10 mb-4">
-              OUR PRIDE
+              {t("homeResultsBadge")}
             </span>
             <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface mb-6 tracking-tight">
-              Star Achievers 2025
+              {t("homeResultsTitle")}
             </h2>
             <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto">
-              Celebrating the outstanding academic success of our dedicated students.
+              {t("homeResultsSubtitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -175,7 +173,7 @@ const Home = () => {
                       : "inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider"
                   }
                 >
-                  {student.tag}
+                  {t(student.tag === "Topper" ? "homeResultsTagTopper" : "homeResultsTagDistinction")}
                 </span>
               </div>
             ))}

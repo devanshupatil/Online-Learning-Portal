@@ -1,42 +1,43 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { SiteNav, SiteFooter } from "./SiteChrome";
 
 const methodology = [
   {
     step: 1,
     icon: "menu_book",
-    title: "Learn",
-    text: "Comprehensive delivery of core concepts by expert faculty, utilizing interactive modern pedagogical tools to ensure deep understanding.",
+    titleKey: "aboutMethodologyStep1Title",
+    textKey: "aboutMethodologyStep1Text",
   },
   {
     step: 2,
     icon: "edit_document",
-    title: "Practice",
-    text: "Rigorous application of learned concepts through structured assignments, curated problem sets, and daily practice papers.",
+    titleKey: "aboutMethodologyStep2Title",
+    textKey: "aboutMethodologyStep2Text",
   },
   {
     step: 3,
     icon: "quiz",
-    title: "Test",
-    text: "Simulated examination environments with periodic part-syllabus and full-syllabus tests aligned perfectly with exam patterns.",
+    titleKey: "aboutMethodologyStep3Title",
+    textKey: "aboutMethodologyStep3Text",
   },
   {
     step: 4,
     icon: "analytics",
-    title: "Analyze",
-    text: "Micro-level performance analysis using our proprietary tech platform to identify weak areas, speed issues, and conceptual gaps.",
+    titleKey: "aboutMethodologyStep4Title",
+    textKey: "aboutMethodologyStep4Text",
   },
   {
     step: 5,
     icon: "trending_up",
-    title: "Improve",
-    text: "Targeted doubt-clearing sessions and personalized remedial action plans designed to systematically eliminate weaknesses.",
+    titleKey: "aboutMethodologyStep5Title",
+    textKey: "aboutMethodologyStep5Text",
   },
   {
     step: 6,
     icon: "workspace_premium",
-    title: "Succeed",
-    text: "The final outcome. Entering the examination hall with supreme confidence, leading to top-tier ranks and admissions into dream institutes.",
+    titleKey: "aboutMethodologyStep6Title",
+    textKey: "aboutMethodologyStep6Text",
     highlight: true,
   },
 ];
@@ -44,31 +45,32 @@ const methodology = [
 const faculty = [
   {
     name: "Dr. A. Wakhare",
-    role: "Founder & Chief Mentor",
-    credentials: "Ph.D. Mathematics, 25+ Years Exp.",
+    roleKey: "aboutFacultyRole1",
+    credentialsKey: "aboutFacultyCredentials1",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCQH2a7sescF-N1ciBsCeqIsNILgPrPLAZmKWKogdEsuPF06cCF_hsG_jvk-xZAaE54sU4lZ0DQ3QlWnl40aLydukEN2jj7CdK9se_LFLl4MQP4VDJ29_MJzYKV8ifGzfPSZCompSv8Q0MZNgqUqGEkJpeQCoPgseJX6IHBsYb-p8a30SFzVl33a5UTTOAARW9mxkBC8g9v0Scs9pPMWn9LK4r7f3bAcfdLZduLCBrDOreAQ4vPLUd0",
   },
   {
     name: "Prof. S. Mehta",
-    role: "HOD, Physics",
-    credentials: "M.Tech IIT Bombay, 15+ Years Exp.",
+    roleKey: "aboutFacultyRole2",
+    credentialsKey: "aboutFacultyCredentials2",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBOzmAFCU7GvasHMXANUtYXi16OULhDnPyywfv19SO4IR2NbnBbyuXrF0S9iqwtMZFnpFPTtP-M0kMA8ekTakkNZSz6urnZXSJHZsw7c5erN63XwePX2LzL6NHzVuapovNBM0tVe65xQC1LlX3vTX4UXyEEiuWfDVeSzU64akTk5DKGJAAlxCOeyOY8e-c0YT6VYiw-P7js0bjfggWH53sbQc2n-FpZyFNVBGoZMdvUCRBVb208CIFl",
   },
   {
     name: "Mr. R. Deshmukh",
-    role: "Senior Faculty, Chemistry",
-    credentials: "M.Sc. Organic Chemistry, Author",
+    roleKey: "aboutFacultyRole3",
+    credentialsKey: "aboutFacultyCredentials3",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDFhanuswmGgbQDHu7ATP7U4qtL1SI30xeG2cREqdKOMomoGWynrJWOsCTwUcwew8jMT5dpvoDlDs4z7ge4vV6t07v7grjBrorT5CNEhK-Dgwf5XWmFRZ0fcotZHBenCfVdL3z2Bn8GhwRwiqhN_rUNHO2qBQ1J3Rv3gQquM1gwF6tgcSYdLdyjxcTkk6-w3OPNr3gSye1FogvmdjeFaGkVQGqNG_6Fv3qPAP4o3pVvO94trUb89H3l",
   },
   {
     name: "Dr. N. Joshi",
-    role: "HOD, Biology",
-    credentials: "MBBS, Medical Entrance Specialist",
+    roleKey: "aboutFacultyRole4",
+    credentialsKey: "aboutFacultyCredentials4",
     img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDLuUwlIHp5fca-hAVK3sNiKK1G6VqeXiEJ2l6deRbnE9ddfp6pIK4uHF-1I7IJwGxN2UBjaH_agCGh7IPu3ccaXp29Y3NOq9x9Gxrd7SwhgXjsn5F57lISKf_KIx5kaMOUxFL02tGsvfAVZwvGNyuoKcrnxtcPxqGwIcyOzyzqdQeZo6NAhQh43ai6IL59dndtKSuhyKzQaVjMMnWwdjY9IicKBMpVphTFOZnUPz0j49kt6sQweL-S",
   },
 ];
 
 const AboutPage = () => {
+  const { t } = useTranslation();
   return (
     <div className="bg-background text-on-background font-sans antialiased overflow-x-hidden">
       <SiteNav active="About" />
@@ -78,24 +80,22 @@ const AboutPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-6">
             <span className="inline-block py-1.5 px-3 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-wider">
-              The EduLearning Legacy
+              {t("aboutHeroBadge")}
             </span>
             <h1 className="text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] font-extrabold text-on-surface tracking-tight">
-              Where Knowledge Meets{" "}
+              {t("aboutHeroTitle")}{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-                Excellence
+                {t("aboutHeroTitleHighlight")}
               </span>
               .
             </h1>
             <p className="text-lg md:text-xl text-on-surface-variant max-w-xl">
-              For over two decades, EduLearning Platform has redefined educational standards. We
-              don't just teach syllabus; we engineer thought processes, cultivating the analytical
-              minds required to conquer the most challenging competitive landscapes.
+              {t("aboutHeroText")}
             </p>
           </div>
           <div className="relative h-[400px] lg:h-[500px] w-full rounded-2xl overflow-hidden soft-shadow">
             <img
-              alt="A bright, modern educational institute with sunlit interiors and a smart board"
+              alt={t("aboutHeroImageAlt")}
               className="absolute inset-0 w-full h-full object-cover"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV90c5Hd7AJbn0TTFoipqCyOpNA4EfswSGMrj-qzfwtH9vy81jnPxhnSM07NEQuswkmIqTEH9nY_96wfq5DCskZ2iBtgKj3nQuZXNMUm2ZQ6mcg3KhNM-qIZpXNHjsG7BQixX9KQuuBhTAzn-xKDFRqdRFAuP8HZGPnK_Ff9aYJjhgsdW_l-nnCFyd9GIOmiBFLLPG9Oh9roJniHJHov6QBzOewk-pwtsnezGJPu8kqQciIW7KQeZe"
             />
@@ -105,8 +105,8 @@ const AboutPage = () => {
                   <span className="material-symbols-outlined">school</span>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-on-surface">20+ Years</h3>
-                  <p className="text-on-surface-variant">Of Academic Brilliance</p>
+                  <h3 className="text-xl font-bold text-on-surface">{t("aboutHeroStatValue")}</h3>
+                  <p className="text-on-surface-variant">{t("aboutHeroStatLabel")}</p>
                 </div>
               </div>
             </div>
@@ -123,13 +123,10 @@ const AboutPage = () => {
                 <span className="material-symbols-outlined text-3xl">explore</span>
               </div>
               <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight">
-                Our Mission
+                {t("aboutMissionTitle")}
               </h2>
               <p className="text-lg text-on-surface-variant leading-relaxed">
-                To provide unparalleled academic coaching through a rigorous, technology-integrated
-                curriculum. We strive to unlock the latent potential within every student,
-                transforming raw ambition into measurable success through systematic guidance and
-                unwavering mentorship.
+                {t("aboutMissionText")}
               </p>
             </div>
           </div>
@@ -140,12 +137,10 @@ const AboutPage = () => {
                 <span className="material-symbols-outlined text-3xl">visibility</span>
               </div>
               <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold tracking-tight">
-                Our Vision
+                {t("aboutVisionTitle")}
               </h2>
               <p className="text-lg text-white/90 leading-relaxed">
-                To be the undisputed national leader in competitive exam preparation. We envision a
-                future where 'EduLearning Platform' is synonymous with academic supremacy, creating
-                a legacy of leaders, innovators, and professionals who shape tomorrow's world.
+                {t("aboutVisionText")}
               </p>
             </div>
           </div>
@@ -156,11 +151,10 @@ const AboutPage = () => {
       <section className="max-w-[1280px] mx-auto px-6 py-16 md:py-[120px]">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight mb-4">
-            Structured Teaching Methodology
+            {t("aboutMethodologyTitle")}
           </h2>
           <p className="text-lg text-on-surface-variant">
-            Success isn't accidental. It is the result of our scientifically designed, iterative
-            learning framework that ensures conceptual mastery and exam readiness.
+            {t("aboutMethodologySubtitle")}
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -187,8 +181,8 @@ const AboutPage = () => {
                   {item.icon}
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-on-surface mb-3">{item.title}</h3>
-              <p className="text-on-surface-variant">{item.text}</p>
+              <h3 className="text-xl font-bold text-on-surface mb-3">{t(item.titleKey)}</h3>
+              <p className="text-on-surface-variant">{t(item.textKey)}</p>
             </div>
           ))}
         </div>
@@ -200,18 +194,17 @@ const AboutPage = () => {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div className="max-w-2xl">
               <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight mb-4">
-                Meet Our Faculty
+                {t("aboutFacultyTitle")}
               </h2>
               <p className="text-lg text-on-surface-variant">
-                Our greatest asset. A highly curated team of distinguished academicians, authors,
-                and industry experts dedicated to sculpting academic excellence.
+                {t("aboutFacultySubtitle")}
               </p>
             </div>
             <a
               className="text-primary text-lg font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity"
               href="/#contact"
             >
-              View All Mentors
+              {t("aboutFacultyViewAllLink")}
               <span className="material-symbols-outlined">arrow_forward</span>
             </a>
           </div>
@@ -226,8 +219,8 @@ const AboutPage = () => {
                   />
                 </div>
                 <h3 className="text-xl font-bold text-on-surface">{member.name}</h3>
-                <p className="text-primary font-medium mb-1">{member.role}</p>
-                <p className="text-on-surface-variant text-sm">{member.credentials}</p>
+                <p className="text-primary font-medium mb-1">{t(member.roleKey)}</p>
+                <p className="text-on-surface-variant text-sm">{t(member.credentialsKey)}</p>
               </div>
             ))}
           </div>
