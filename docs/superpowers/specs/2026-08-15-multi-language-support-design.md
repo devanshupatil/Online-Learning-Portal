@@ -68,6 +68,25 @@ CREATE TABLE translations (
   edited text naturally gets a new hash (no invalidation logic needed —
   the old row just stops being referenced).
 
+**`geminiTranslate` is a new function**, not the existing `gemini()` export
+from `llm.js`. `llm.js`'s `gemini()` is hard-wired for image/PDF question
+extraction (it calls `readInputToImages()` and forces a fixed exam-Q&A
+response schema) — it cannot take a plain string. The new function lives in
+`Backend/services/translate.js`, initializes its own
+`GoogleGenerativeAI(process.env.GOOGLE_API_KEY)` client (same env var,
+independent of `llm.js`), and sends a plain translation prompt, e.g.:
+
+```js
+async function geminiTranslate(text, targetLang) {
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-pro' });
+  const langName = targetLang === 'hi' ? 'Hindi' : 'Marathi';
+  const result = await model.generateContent(
+    `Translate the following text to ${langName}. Return ONLY the translated text, no explanation:\n\n${text}`
+  );
+  return result.response.text().trim();
+}
+```
+
 **Backend helper** (`Backend/services/translate.js`):
 
 ```js
@@ -81,7 +100,9 @@ async function translateText(text, targetLang) {
   if (cached.rows[0]) return cached.rows[0].translated_text;
 
   try {
-    const translated = await geminiTranslate(text, targetLang); // via existing gemini() pattern in llm.js
+    const translated = await geminiTranslate(text, targetLang);
+    // ON CONFLICT DO NOTHING: benign if two concurrent requests race to
+    // translate the same new string — both succeed, one INSERT is dropped.
     await db.query(
       'INSERT INTO translations (content_hash, target_lang, translated_text) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
       [hash, targetLang, translated]
@@ -93,30 +114,67 @@ async function translateText(text, targetLang) {
   }
 }
 
+// Translates all given fields on one object in parallel (not sequentially).
 async function translateFields(obj, fields, targetLang) {
-  for (const field of fields) {
+  await Promise.all(fields.map(async (field) => {
     if (obj[field]) obj[field] = await translateText(obj[field], targetLang);
-  }
+  }));
   return obj;
+}
+
+// For list endpoints: translates rows with bounded concurrency so a
+// cold-cache list page doesn't fire 50+ simultaneous Gemini calls.
+async function translateRows(rows, fields, targetLang, concurrency = 5) {
+  const queue = [...rows];
+  const workers = Array.from({ length: concurrency }, async () => {
+    while (queue.length) {
+      const row = queue.shift();
+      await translateFields(row, fields, targetLang);
+    }
+  });
+  await Promise.all(workers);
+  return rows;
 }
 ```
 
-- `translateFields` is called explicitly in controllers on the specific
-  free-text fields that should be translated (e.g. `description`, `remarks`,
-  `title`) — never blindly across an entire JSON object, so IDs, emails,
-  dates, and enum values are never mistranslated.
+- `translateFields`/`translateRows` are called explicitly in controllers on
+  the specific free-text fields that should be translated (e.g.
+  `description`, `remarks`, `title`) — never blindly across an entire JSON
+  object, so IDs, emails, dates, and enum values are never mistranslated.
 - Because this is generic (hash of text, not tied to a table), adding a new
   translatable field anywhere in the app later requires zero schema changes
-  — just one `translateFields(...)` call in the relevant controller.
+  — just one `translateFields`/`translateRows` call in the relevant
+  controller.
+
+**Cache warming on write** (avoids cold-cache latency on read): when
+translatable content is created or updated (course saved, announcement
+posted, remarks entered), the controller fires `translateText` for `hi` and
+`mr` in the background, without awaiting it in the response cycle:
+
+```js
+// after saving `course` in the create/update controller:
+res.json(course); // respond immediately, don't block on translation
+translateFields({ ...course }, ['description'], 'hi').catch(() => {});
+translateFields({ ...course }, ['description'], 'mr').catch(() => {});
+```
+
+This means the common case (many reads, few writes) almost always hits a
+warm cache. The synchronous on-read path in `translateText`/`translateRows`
+still exists as a fallback for content created before this feature shipped,
+or in the rare case a read races ahead of the background warm-up — it will
+simply pay the one-time Gemini latency for that specific string, once.
 
 **Request flow**:
 
 - Frontend sends the current locale as a header, `X-Lang: hi|mr|en`, on API
   requests (read from the same i18next locale state used for static text).
+  If the header is absent, the middleware defaults `req.lang` to `'en'`
+  (untranslated passthrough) — this covers non-browser callers and any
+  request made before the frontend sets the header.
 - A small Express middleware reads `X-Lang` and attaches `req.lang` for
   controllers to use.
 - Controllers fetch data from Postgres as normal (always English at rest),
-  then call `translateFields(row, [...], req.lang)` before responding when
+  then call `translateFields`/`translateRows` before responding when
   `req.lang !== 'en'`.
 
 ### 3. Language switcher (frontend)
@@ -154,6 +212,12 @@ API calls now send X-Lang: hi
 
 - Unit test `translateText`: cache hit path, cache miss path (mocked Gemini
   call), and fallback-to-English on error.
+- Unit test `translateRows` bounded concurrency (e.g. 20 rows, concurrency 5,
+  mocked Gemini calls — verify all rows get translated and no more than 5
+  calls are in flight at once).
+- Verify write-time background warming: after creating/updating content,
+  confirm a `translations` row appears for `hi`/`mr` without a subsequent
+  read ever needing to call Gemini synchronously.
 - Manual pass through each major page (Home, About, Results, Courses,
   Contact, Admin/Teacher/Parent dashboards) in all three languages to catch
   missing i18next keys and layout issues from longer Hindi/Marathi strings.
