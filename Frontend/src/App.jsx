@@ -3,6 +3,7 @@ import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
 import AboutPage from './components/AboutPage'
+import ResultsPage from './components/Results/ResultsPage'
 import LearnersPage from './components/Leraners/LearnersPage'
 import TeachersPage from './components/Teacher/TeachersPage'
 import ParentsPage from './components/Parents/ParentsPage'
@@ -26,6 +27,7 @@ function App() {
             {/* Define your routes here */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/results" element={<ResultsPage />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
             <Route path="/learners/*" element={<LearnersPage />} />

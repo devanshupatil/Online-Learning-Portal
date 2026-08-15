@@ -5,7 +5,7 @@ import ButtonWithIcon from "./ui/button-witn-icon";
 export const navLinks = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
-  { label: "Results", path: "/#results" },
+  { label: "Results", path: "/results" },
   { label: "Courses", path: "/#courses" },
   { label: "Contact", path: "/#contact" },
 ];
