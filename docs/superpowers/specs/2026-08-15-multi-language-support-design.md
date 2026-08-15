@@ -100,11 +100,21 @@ CREATE TABLE translations (
 from `llm.js`. `llm.js`'s `gemini()` is hard-wired for image/PDF question
 extraction (it calls `readInputToImages()` and forces a fixed exam-Q&A
 response schema) — it cannot take a plain string. The new function lives in
-`Backend/services/translate.js`, initializes its own
-`GoogleGenerativeAI(process.env.GOOGLE_API_KEY)` client (same env var,
-independent of `llm.js`), and sends a plain translation prompt, e.g.:
+`Backend/services/translate.js` and initializes its own
+`GoogleGenerativeAI` client, independent of `llm.js`.
+
+**Env var note**: `llm.js`'s `gemini()` reads `process.env.GOOGLE_API_KEY`,
+but the repo's `.env` only defines `GEMINI_API_KEY` — `gemini()` appears to
+be relying on `GOOGLE_API_KEY` being set outside this local `.env` (e.g. in
+a deployment environment), or is currently broken locally. This is a
+pre-existing issue in `llm.js`, out of scope to fix here — but the new
+`geminiTranslate` function must read `process.env.GEMINI_API_KEY` (the
+variable that's actually set in `.env`), not copy `GOOGLE_API_KEY`.
 
 ```js
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
 async function geminiTranslate(text, targetLang) {
   const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-pro' });
   const langName = targetLang === 'hi' ? 'Hindi' : 'Marathi';
