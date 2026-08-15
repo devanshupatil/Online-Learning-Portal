@@ -1,49 +1,70 @@
 import React from "react";
-import classroomImage from "../assets/bgImage.png";
 import { SiteNav, SiteFooter } from "./SiteChrome";
 
-const features = [
+const methodology = [
   {
-    icon: "school",
-    title: "Elite Faculty",
-    text: "Instruction delivered by distinguished educators with proven track records of shaping top performers.",
-  },
-  {
+    step: 1,
     icon: "menu_book",
-    title: "Rigorous Curriculum",
-    text: "A structured, comprehensive syllabus designed to challenge students and ensure mastery of core concepts.",
+    title: "Learn",
+    text: "Comprehensive delivery of core concepts by expert faculty, utilizing interactive modern pedagogical tools to ensure deep understanding.",
   },
   {
-    icon: "insights",
-    title: "Continuous Evaluation",
-    text: "Frequent, uncompromising assessments to pinpoint weaknesses and reinforce strengths methodically.",
+    step: 2,
+    icon: "edit_document",
+    title: "Practice",
+    text: "Rigorous application of learned concepts through structured assignments, curated problem sets, and daily practice papers.",
+  },
+  {
+    step: 3,
+    icon: "quiz",
+    title: "Test",
+    text: "Simulated examination environments with periodic part-syllabus and full-syllabus tests aligned perfectly with exam patterns.",
+  },
+  {
+    step: 4,
+    icon: "analytics",
+    title: "Analyze",
+    text: "Micro-level performance analysis using our proprietary tech platform to identify weak areas, speed issues, and conceptual gaps.",
+  },
+  {
+    step: 5,
+    icon: "trending_up",
+    title: "Improve",
+    text: "Targeted doubt-clearing sessions and personalized remedial action plans designed to systematically eliminate weaknesses.",
+  },
+  {
+    step: 6,
+    icon: "workspace_premium",
+    title: "Succeed",
+    text: "The final outcome. Entering the examination hall with supreme confidence, leading to top-tier ranks and admissions into dream institutes.",
+    highlight: true,
   },
 ];
 
-const achievers = [
+const faculty = [
   {
-    name: "Rahul D.",
-    score: "99.8%",
-    exam: "STATE BOARD",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCPB6PanccHwjEg26SbRgbDLvHYCDZTdfwOJ5hBz3kLcrLyD6i_DFcSU6Yzm2yTeItJstVvfcpwDLsTngIqydJvzSMxU7BT1GxL7pW7Gqlg-ATMimGcjTw7YAXWCVd0fE1Z-c0cMYeWP6S6Kx2gPR8XkFvUKQz8-mPvtZogywGbh4VbX3YD6lAMF4IuiKBXkXzNJfcETraxsrhMlKCpQ2xeewwHdNURHoSp95LntjvcJyzyMJ1w2fm1",
+    name: "Dr. A. Wakhare",
+    role: "Founder & Chief Mentor",
+    credentials: "Ph.D. Mathematics, 25+ Years Exp.",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCQH2a7sescF-N1ciBsCeqIsNILgPrPLAZmKWKogdEsuPF06cCF_hsG_jvk-xZAaE54sU4lZ0DQ3QlWnl40aLydukEN2jj7CdK9se_LFLl4MQP4VDJ29_MJzYKV8ifGzfPSZCompSv8Q0MZNgqUqGEkJpeQCoPgseJX6IHBsYb-p8a30SFzVl33a5UTTOAARW9mxkBC8g9v0Scs9pPMWn9LK4r7f3bAcfdLZduLCBrDOreAQ4vPLUd0",
   },
   {
-    name: "Ananya S.",
-    score: "99.5%",
-    exam: "JEE ADVANCED",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1fqIA9GJ_jSFCZiBJXXWEKk5iNbUKZMQLNaMtZqbO3Bh1bI25vgkxKIKOxXiX8MIHhnFVUSbgLdZaPaaX6CE2PAiZfa14g0o7CfGaiW5KriBJFS_QsENNhkawgsZw__Pljstr4Ou5NTxf3QtfQ_xmDEs3my_951wJMoFPnEjV9VPckcamsQXH5hB5N_NYjdGheOhQMdLQNUXjSRdb_iAQjq4j7ZuUyOT-9WCV4jHFyXPThD0oC54u",
+    name: "Prof. S. Mehta",
+    role: "HOD, Physics",
+    credentials: "M.Tech IIT Bombay, 15+ Years Exp.",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBOzmAFCU7GvasHMXANUtYXi16OULhDnPyywfv19SO4IR2NbnBbyuXrF0S9iqwtMZFnpFPTtP-M0kMA8ekTakkNZSz6urnZXSJHZsw7c5erN63XwePX2LzL6NHzVuapovNBM0tVe65xQC1LlX3vTX4UXyEEiuWfDVeSzU64akTk5DKGJAAlxCOeyOY8e-c0YT6VYiw-P7js0bjfggWH53sbQc2n-FpZyFNVBGoZMdvUCRBVb208CIFl",
   },
   {
-    name: "Vikram P.",
-    score: "99.2%",
-    exam: "NEET",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCYde61gYFrXNFnhxULyfnHzs9hQLItRWyLm4wMUsiMjMw6ptCWHEhnEVnnW0KzFqSb-72cgBga9Pj1BGZ_PysX6y5v6zK7M9-HmkNJYNc3gw0Q0h7vuy_QESkoyN-BXQz-y9vRe6weFnEvG1PLL8tk5i6prn88QMn30ii2GYu05_HfY0ysh2gR598W08WeoFcFA12yq9lo0SbNodntDUHoHQyoWCBmvNsgXD7TBspJT9PA5yQDS9EA",
+    name: "Mr. R. Deshmukh",
+    role: "Senior Faculty, Chemistry",
+    credentials: "M.Sc. Organic Chemistry, Author",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDFhanuswmGgbQDHu7ATP7U4qtL1SI30xeG2cREqdKOMomoGWynrJWOsCTwUcwew8jMT5dpvoDlDs4z7ge4vV6t07v7grjBrorT5CNEhK-Dgwf5XWmFRZ0fcotZHBenCfVdL3z2Bn8GhwRwiqhN_rUNHO2qBQ1J3Rv3gQquM1gwF6tgcSYdLdyjxcTkk6-w3OPNr3gSye1FogvmdjeFaGkVQGqNG_6Fv3qPAP4o3pVvO94trUb89H3l",
   },
   {
-    name: "Priya M.",
-    score: "98.9%",
-    exam: "STATE BOARD",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCkSw1FBi4YyIz80chf-MshSExOe3TXUe0C7sn_Bm1KntQxk_ig7HmK7ickbMHPGkRPNmIR39U9Ldk7o9fS9ZzCewaCWTRqHf26-ac0AcFNNvSklkjsxK4zEtZbagqb-2JP455xPgOhHIUycf7tbVLG2vM5sRzYUqtVt-y5URchmFCMX9OZ3Dd-NXZmrZ9Gvmn77XaOhKFfv_MGme9qFvxwootHsRZG3HacUaUgPsOdtUEehUoKpc9V",
+    name: "Dr. N. Joshi",
+    role: "HOD, Biology",
+    credentials: "MBBS, Medical Entrance Specialist",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDLuUwlIHp5fca-hAVK3sNiKK1G6VqeXiEJ2l6deRbnE9ddfp6pIK4uHF-1I7IJwGxN2UBjaH_agCGh7IPu3ccaXp29Y3NOq9x9Gxrd7SwhgXjsn5F57lISKf_KIx5kaMOUxFL02tGsvfAVZwvGNyuoKcrnxtcPxqGwIcyOzyzqdQeZo6NAhQh43ai6IL59dndtKSuhyKzQaVjMMnWwdjY9IicKBMpVphTFOZnUPz0j49kt6sQweL-S",
   },
 ];
 
@@ -53,89 +74,160 @@ const AboutPage = () => {
       <SiteNav active="About" />
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-16 md:pb-[120px] overflow-hidden">
-        <div className="max-w-[1280px] mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-          <div className="w-full md:w-1/2 flex flex-col items-start text-left gap-6">
-            <span className="glass-panel px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px]">school</span>
-              ABOUT US
+      <section className="max-w-[1280px] mx-auto px-6 pt-32 pb-16 md:pb-[120px]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="space-y-6">
+            <span className="inline-block py-1.5 px-3 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-wider">
+              The EduLearning Legacy
             </span>
-            <h1 className="text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] font-extrabold text-on-surface max-w-lg tracking-tight">
-              Excellence in{" "}
+            <h1 className="text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] font-extrabold text-on-surface tracking-tight">
+              Where Knowledge Meets{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
-                Academic Rigor
+                Excellence
               </span>
+              .
             </h1>
-            <p className="text-lg md:text-xl text-on-surface-variant max-w-md">
-              Cultivating brilliant minds through disciplined study, expert guidance, and an
-              unwavering commitment to success.
+            <p className="text-lg md:text-xl text-on-surface-variant max-w-xl">
+              For over two decades, EduLearning Platform has redefined educational standards. We
+              don't just teach syllabus; we engineer thought processes, cultivating the analytical
+              minds required to conquer the most challenging competitive landscapes.
             </p>
-            <a
-              className="px-8 py-4 rounded-[1.25rem] gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center"
-              href="/#courses"
-            >
-              Discover Our Methodology
-            </a>
           </div>
-          <div className="w-full md:w-1/2">
-            <div className="rounded-2xl overflow-hidden soft-shadow">
-              <img
-                alt="Modern bright classroom"
-                className="w-full h-96 object-cover"
-                src={classroomImage}
-              />
+          <div className="relative h-[400px] lg:h-[500px] w-full rounded-2xl overflow-hidden soft-shadow">
+            <img
+              alt="A bright, modern educational institute with sunlit interiors and a smart board"
+              className="absolute inset-0 w-full h-full object-cover"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV90c5Hd7AJbn0TTFoipqCyOpNA4EfswSGMrj-qzfwtH9vy81jnPxhnSM07NEQuswkmIqTEH9nY_96wfq5DCskZ2iBtgKj3nQuZXNMUm2ZQ6mcg3KhNM-qIZpXNHjsG7BQixX9KQuuBhTAzn-xKDFRqdRFAuP8HZGPnK_Ff9aYJjhgsdW_l-nnCFyd9GIOmiBFLLPG9Oh9roJniHJHov6QBzOewk-pwtsnezGJPu8kqQciIW7KQeZe"
+            />
+            <div className="absolute bottom-6 left-6 right-6 p-6 glass-panel rounded-xl">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined">school</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-on-surface">20+ Years</h3>
+                  <p className="text-on-surface-variant">Of Academic Brilliance</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-[120px] bg-surface-container-lowest relative">
-        <div className="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {features.map((feature) => (
+      {/* Mission & Vision */}
+      <section className="bg-surface-container-low py-16 md:py-[120px] border-y border-outline-variant/10">
+        <div className="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-surface-container-lowest p-10 rounded-2xl soft-shadow flex flex-col justify-between hover:-translate-y-1 transition-transform duration-300">
+            <div className="space-y-6">
+              <div className="w-14 h-14 rounded-xl bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center">
+                <span className="material-symbols-outlined text-3xl">explore</span>
+              </div>
+              <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight">
+                Our Mission
+              </h2>
+              <p className="text-lg text-on-surface-variant leading-relaxed">
+                To provide unparalleled academic coaching through a rigorous, technology-integrated
+                curriculum. We strive to unlock the latent potential within every student,
+                transforming raw ambition into measurable success through systematic guidance and
+                unwavering mentorship.
+              </p>
+            </div>
+          </div>
+          <div className="bg-primary text-white p-10 rounded-2xl soft-shadow flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+            <div className="space-y-6 relative z-10">
+              <div className="w-14 h-14 rounded-xl bg-white/20 text-white flex items-center justify-center backdrop-blur-sm">
+                <span className="material-symbols-outlined text-3xl">visibility</span>
+              </div>
+              <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold tracking-tight">
+                Our Vision
+              </h2>
+              <p className="text-lg text-white/90 leading-relaxed">
+                To be the undisputed national leader in competitive exam preparation. We envision a
+                future where 'EduLearning Platform' is synonymous with academic supremacy, creating
+                a legacy of leaders, innovators, and professionals who shape tomorrow's world.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Structured Teaching Methodology */}
+      <section className="max-w-[1280px] mx-auto px-6 py-16 md:py-[120px]">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight mb-4">
+            Structured Teaching Methodology
+          </h2>
+          <p className="text-lg text-on-surface-variant">
+            Success isn't accidental. It is the result of our scientifically designed, iterative
+            learning framework that ensures conceptual mastery and exam readiness.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {methodology.map((item) => (
             <div
-              key={feature.title}
-              className="glass-panel rounded-2xl p-8 soft-shadow transform transition-transform hover:-translate-y-2"
+              key={item.step}
+              className={
+                item.highlight
+                  ? "bg-surface-container-lowest p-8 rounded-2xl soft-shadow border border-outline-variant/20 border-l-4 border-l-primary hover:border-primary/30 transition-colors"
+                  : "bg-surface-container-lowest p-8 rounded-2xl soft-shadow border border-outline-variant/20 hover:border-primary/30 transition-colors"
+              }
             >
-              <span className="material-symbols-outlined text-primary text-[36px] mb-4 block">
-                {feature.icon}
-              </span>
-              <h3 className="text-xl font-bold text-on-surface mb-2">{feature.title}</h3>
-              <p className="text-on-surface-variant">{feature.text}</p>
+              <div className="flex items-center gap-4 mb-6">
+                <div
+                  className={
+                    item.highlight
+                      ? "w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold"
+                      : "w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-bold"
+                  }
+                >
+                  {item.step}
+                </div>
+                <span className="material-symbols-outlined text-3xl text-primary">
+                  {item.icon}
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-on-surface mb-3">{item.title}</h3>
+              <p className="text-on-surface-variant">{item.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Star Achievers Section */}
-      <section className="py-16 md:py-[120px] bg-surface relative">
-        <div className="max-w-[1280px] mx-auto px-6 relative z-10">
-          <div className="text-center mb-16">
-            <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary bg-primary/10 mb-4">
-              OUR PROUD LEGACY
-            </span>
-            <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface font-bold tracking-tight">
-              Star Achievers
-            </h2>
+      {/* Meet Our Faculty */}
+      <section className="bg-surface-bright py-16 md:py-[120px]">
+        <div className="max-w-[1280px] mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold text-on-surface tracking-tight mb-4">
+                Meet Our Faculty
+              </h2>
+              <p className="text-lg text-on-surface-variant">
+                Our greatest asset. A highly curated team of distinguished academicians, authors,
+                and industry experts dedicated to sculpting academic excellence.
+              </p>
+            </div>
+            <a
+              className="text-primary text-lg font-semibold flex items-center gap-2 hover:opacity-80 transition-opacity"
+              href="/#contact"
+            >
+              View All Mentors
+              <span className="material-symbols-outlined">arrow_forward</span>
+            </a>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {achievers.map((achiever) => (
-              <div
-                key={achiever.name}
-                className="glass-panel rounded-2xl p-6 text-center soft-shadow transform transition-transform hover:-translate-y-2"
-              >
-                <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-4 border-primary/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {faculty.map((member) => (
+              <div key={member.name} className="group">
+                <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden mb-6 soft-shadow bg-surface-variant">
                   <img
-                    alt={achiever.name}
-                    className="w-full h-full object-cover"
-                    src={achiever.img}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    src={member.img}
                   />
                 </div>
-                <div className="text-xl font-bold text-on-surface mb-1">{achiever.name}</div>
-                <div className="text-3xl font-bold text-primary mb-2">{achiever.score}</div>
-                <span className="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold rounded-full uppercase tracking-wider">
-                  {achiever.exam}
-                </span>
+                <h3 className="text-xl font-bold text-on-surface">{member.name}</h3>
+                <p className="text-primary font-medium mb-1">{member.role}</p>
+                <p className="text-on-surface-variant text-sm">{member.credentials}</p>
               </div>
             ))}
           </div>
