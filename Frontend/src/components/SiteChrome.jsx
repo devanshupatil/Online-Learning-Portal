@@ -29,17 +29,17 @@ export const SiteNav = ({ active = "Home" }) => {
     <nav className="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-white/20 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.08)]">
       <div className="max-w-[1280px] mx-auto px-6 flex justify-between items-center h-20">
         <Link className="text-2xl font-bold text-primary" to="/">
-          Online Learning Portal
+          EduLearning Platform
         </Link>
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 text-lg">
           {navLinks.map((link) => (
             <NavItem
               key={link.label}
               path={link.path}
               className={
                 link.label === active
-                  ? "text-primary border-b-2 border-primary pb-1"
-                  : "text-on-surface-variant hover:text-primary transition-colors hover:opacity-90 transition-all duration-300"
+                  ? "font-bold text-primary border-b-2 border-primary pb-1"
+                  : "font-bold text-on-surface-variant hover:text-primary transition-colors hover:opacity-90 transition-all duration-300"
               }
             >
               {link.label}
@@ -65,7 +65,7 @@ export const SiteFooter = () => {
     <footer className="relative w-full bg-surface-container-highest border-t border-outline-variant mt-[120px]">
       <div className="max-w-[1280px] mx-auto px-6 py-[120px] grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="col-span-1 md:col-span-1">
-          <h3 className="text-2xl font-bold text-primary mb-4">Online Learning Portal</h3>
+          <h3 className="text-2xl font-bold text-primary mb-4">EduLearning Platform</h3>
           <p className="text-on-surface-variant mb-6">
             Excellence in Education since 2011. Building foundations for future leaders.
           </p>
@@ -98,14 +98,14 @@ export const SiteFooter = () => {
             </li>
             <li className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">mail</span>
-              <span>info@onlinelearningportal.com</span>
+              <span>info@edulearningplatform.com</span>
             </li>
           </ul>
         </div>
       </div>
       <div className="border-t border-outline-variant/30 py-6 text-center">
         <p className="text-on-surface-variant">
-          © 2026 Online Learning Portal. Excellence in Education.
+          © 2026 EduLearning Platform. Excellence in Education.
         </p>
       </div>
     </footer>

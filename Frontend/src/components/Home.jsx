@@ -54,7 +54,7 @@ const Home = () => {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10">
-            Join Online Learning Portal and experience a transformative journey towards academic
+            Join EduLearning Platform and experience a transformative journey towards academic
             excellence. Expert faculty, proven results, and a commitment to your success.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -81,7 +81,7 @@ const Home = () => {
             <div className="relative order-2 lg:order-1">
               <div className="rounded-2xl overflow-hidden soft-shadow max-w-md mx-auto lg:mx-0">
                 <img
-                  alt="A student at Online Learning Portal"
+                  alt="A student at EduLearning Platform"
                   className="w-full h-full object-cover"
                   src={studentImage}
                 />
@@ -104,7 +104,7 @@ const Home = () => {
                 Committed to Nurturing Every Learner
               </h2>
               <p className="text-lg text-on-surface-variant mb-8">
-                Online Learning Portal has spent over a decade helping students turn potential
+                EduLearning Platform has spent over a decade helping students turn potential
                 into performance. Our expert faculty pair rigorous, exam-focused teaching with
                 genuine mentorship, so every learner gets a clear path from where they are to
                 where they want to be.

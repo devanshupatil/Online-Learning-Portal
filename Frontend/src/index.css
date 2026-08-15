@@ -5,7 +5,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Slabo 27px', serif;
   overflow-x: hidden;
 }
 
@@ -15,7 +15,7 @@ body {
 
 /* Tailwind CSS 4 Configuration */
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Slabo 27px', serif;
 
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
