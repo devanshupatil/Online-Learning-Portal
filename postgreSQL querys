@@ -86,3 +86,16 @@ INSERT INTO students (name, class, grade, email, phone, parent_phone, parent_nam
 ('Frank Miller', 'Class A', '10th', 'frank.miller@example.com', '+1 (555) 678-9012', '+1 (555) 234-5678', 'Susan Miller', 'susan.miller@example.com', '303 Birch Rd, Springfield, IL 62706'),
 ('Grace Lee', 'Class B', '9th', 'grace.lee@example.com', '+1 (555) 789-0123', '+1 (555) 345-6789', 'David Lee', 'david.lee@example.com', '404 Cedar Ln, Springfield, IL 62707'),
 ('Henry Garcia', 'Class B', '10th', 'henry.garcia@example.com', '+1 (555) 890-1234', '+1 (555) 456-7890', 'Maria Garcia', 'maria.garcia@example.com', '505 Walnut St, Springfield, IL 62708');
+
+
+-- Generic translation cache: keyed by hash of the original English text,
+-- not by table/row/column, so any free-text field anywhere in the app can
+-- share cache entries and requires no schema change to become translatable.
+CREATE TABLE translations (
+    id SERIAL PRIMARY KEY,
+    content_hash CHAR(64) NOT NULL,   -- sha256 of the original English text
+    target_lang VARCHAR(5) NOT NULL,  -- 'hi' | 'mr'
+    translated_text TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (content_hash, target_lang)
+);
