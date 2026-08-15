@@ -7,7 +7,7 @@ export const navLinks = [
   { label: "About", path: "/about" },
   { label: "Results", path: "/results" },
   { label: "Courses", path: "/courses" },
-  { label: "Contact", path: "/#contact" },
+  { label: "Contact", path: "/contact" },
 ];
 
 const NavItem = ({ path, className, children, onClick }) => {
