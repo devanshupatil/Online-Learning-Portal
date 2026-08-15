@@ -560,7 +560,7 @@ Apply this procedure once per directory below, in order. Each is its own task/co
 - [ ] **Task 8:** `Results/` (all `.jsx` files, including `Results/sections/`)
 - [ ] **Task 9:** `Auth/` (all `.jsx` files)
 - [ ] **Task 10:** `Parents/` (all `.jsx` files)
-- [ ] **Task 11:** `Leraners/` (all `.jsx` files)
+- [ ] **Task 11:** `Leraners/` (all `.jsx` files, including `Leraners/MaterialViewer/`)
 - [ ] **Task 12:** `Teacher/` (all `.jsx` files)
 - [ ] **Task 13:** `Admin/` (all `.jsx` files)
 - [ ] **Task 14:** `ui/` (all `.jsx` files) and any remaining root-level component not yet covered (e.g. `Navigation.jsx`, `Header.jsx`, `HamburgerIcon.jsx`, `ResponsiveSidebarLayout.jsx`, `SidebarToggle.jsx` — check `Frontend/src/components/*.jsx` at the top level for anything missed by Tasks 4–13)
