@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Wakhare Classes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-surface": "#111c2d",
+                        "primary": "#000000",
+                        "inverse-primary": "#bec6e0",
+                        "inverse-surface": "#263143",
+                        "surface-container": "#e7eeff",
+                        "outline": "#76777d",
+                        "outline-variant": "#c6c6cd",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-variant": "#d8e3fb",
+                        "primary-container": "#131b2e",
+                        "inverse-on-surface": "#ecf1ff",
+                        "on-surface-variant": "#45464d",
+                        "secondary-container": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "background": "#f9f9ff",
+                        "on-primary-container": "#7c839b",
+                        "on-primary-fixed": "#131b2e",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container-highest": "#d8e3fb",
+                        "surface-container-high": "#dee8ff",
+                        "surface-dim": "#cfdaf2",
+                        "tertiary-fixed": "#e0e3e5",
+                        "on-tertiary-fixed": "#191c1e",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-bright": "#f9f9ff",
+                        "primary-fixed": "#dae2fd",
+                        "surface": "#f9f9ff",
+                        "on-background": "#111c2d",
+                        "tertiary-container": "#191c1e",
+                        "tertiary": "#000000",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#565e74",
+                        "on-tertiary-container": "#818486",
+                        "on-secondary-container": "#57657a",
+                        "secondary-fixed": "#d5e3fc",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "32px",
+                        "inner-padding": "40px",
+                        "section-padding": "80px",
+                        "margin-safe": "24px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-xl-mobile": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "headline-xl": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "30px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-xl-mobile": ["32px", { "lineHeight": "38px", "fontWeight": "500" }],
+                        "label-caps": ["11px", { "lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.03em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-surface min-h-screen flex flex-col">
+    <!-- TopNavBar -->
+    <nav
+        class="w-full sticky top-0 z-50 bg-background dark:bg-on-primary-fixed border-b border-outline-variant dark:border-on-primary-fixed-variant">
+        <div class="flex justify-between items-center max-w-7xl mx-auto px-gutter py-6">
+            <div class="font-headline-xl text-headline-xl font-bold text-primary dark:text-inverse-primary">
+                Wakhare Classes
+            </div>
+            <div class="hidden md:flex space-x-8 font-body-md text-body-md uppercase tracking-wider">
+                <a class="text-primary dark:text-inverse-primary border-b-2 border-primary dark:border-inverse-primary pb-1 cursor-pointer transition-transform active:scale-95"
+                    href="#">Home</a>
+                <a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 cursor-pointer transition-transform active:scale-95"
+                    href="#">About</a>
+                <a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 cursor-pointer transition-transform active:scale-95"
+                    href="#">Results</a>
+                <a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 cursor-pointer transition-transform active:scale-95"
+                    href="#">Courses</a>
+                <a class="text-on-surface-variant dark:text-on-primary-container hover:text-primary dark:hover:text-inverse-primary transition-colors duration-200 cursor-pointer transition-transform active:scale-95"
+                    href="#">Contact</a>
+            </div>
+            <button
+                class="hidden md:block bg-primary text-on-primary px-6 py-3 font-body-md text-body-md uppercase tracking-wider hover:bg-on-surface transition-colors cursor-pointer active:scale-95">
+                Enroll Now
+            </button>
+            <button class="md:hidden text-primary">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </div>
+    </nav>
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col items-center w-full">
+        <!-- Hero Section -->
+        <section
+            class="w-full max-w-7xl mx-auto px-gutter py-section-padding flex flex-col md:flex-row items-center gap-inner-padding">
+            <div class="w-full md:w-1/2 flex flex-col items-start text-left gap-6 border-l-2 border-primary pl-6">
+                <h1
+                    class="font-headline-xl text-headline-xl text-primary max-w-lg md:hidden font-headline-xl-mobile text-headline-xl-mobile">
+                    Excellence in Academic Rigor
+                </h1>
+                <h1 class="hidden md:block font-headline-xl text-headline-xl text-primary max-w-lg">
+                    Excellence in Academic Rigor
+                </h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+                    Cultivating brilliant minds through disciplined study, expert guidance, and an unwavering commitment
+                    to success.
+                </p>
+                <button
+                    class="bg-primary text-on-primary px-8 py-4 font-label-caps text-label-caps hover:bg-on-surface transition-colors">
+                    DISCOVER OUR METHODOLOGY
+                </button>
+            </div>
+            <div class="w-full md:w-1/2 relative h-96">
+                <img alt="Modern bright classroom" class="w-full h-full object-cover border border-outline-variant"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLtkCFJ2Z2R8HICeR_WsWYhEEhoAMqcmwJoiSUdcFrMxy9gZAhJbINYjyTujub7_2pmoqGSTCSk9ooYZMfHBtuRhXDN81YlUTt80Kn34xIFmpfJEfOdfiiIa--AuszMkGOveGNkCcAJ7Te0CH_EHTcPgjjvZKe5ZeKwGfrnWPYWjbuxTTQHroNmP2hC1teuijKJT0of9hppdSpTZG9RVIf9amkfdZC5XBXm8hcHdeBTLfF0vGPFwDobtfg" />
+            </div>
+        </section>
+        <!-- Features Section -->
+        <section class="w-full bg-surface-container-lowest border-y border-outline-variant py-section-padding">
+            <div class="max-w-7xl mx-auto px-gutter grid grid-cols-1 md:grid-cols-3 gap-inner-padding">
+                <div
+                    class="flex flex-col gap-4 p-8 border border-outline-variant bg-surface-bright hover:border-primary transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">school</span>
+                    <h3 class="font-body-lg text-body-lg font-bold text-primary">Elite Faculty</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        Instruction delivered by distinguished educators with proven track records of shaping top
+                        performers.
+                    </p>
+                </div>
+                <div
+                    class="flex flex-col gap-4 p-8 border border-outline-variant bg-surface-bright hover:border-primary transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">menu_book</span>
+                    <h3 class="font-body-lg text-body-lg font-bold text-primary">Rigorous Curriculum</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        A structured, comprehensive syllabus designed to challenge students and ensure mastery of core
+                        concepts.
+                    </p>
+                </div>
+                <div
+                    class="flex flex-col gap-4 p-8 border border-outline-variant bg-surface-bright hover:border-primary transition-colors group">
+                    <span
+                        class="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">insights</span>
+                    <h3 class="font-body-lg text-body-lg font-bold text-primary">Continuous Evaluation</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">
+                        Frequent, uncompromising assessments to pinpoint weaknesses and reinforce strengths
+                        methodically.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- Star Achievers Section -->
+        <section class="w-full max-w-7xl mx-auto px-gutter py-section-padding flex flex-col items-center">
+            <div class="text-center mb-16 border-b border-outline-variant pb-8 w-full max-w-2xl">
+                <h2 class="font-label-caps text-label-caps text-primary tracking-widest mb-4">OUR PROUD LEGACY</h2>
+                <h3
+                    class="font-headline-xl text-headline-xl text-primary md:hidden font-headline-xl-mobile text-headline-xl-mobile">
+                    Star Achievers</h3>
+                <h3 class="hidden md:block font-headline-xl text-headline-xl text-primary">Star Achievers</h3>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
+                <!-- Achiever 1 -->
+                <div class="flex flex-col items-center text-center gap-4 group">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden border border-outline-variant group-hover:border-primary transition-colors">
+                        <img class="w-full h-full object-cover"
+                            data-alt="A professional studio portrait of a confident teenage male student looking directly at the camera. The background is a clean, bright, and minimal white studio setting. The lighting is high-key and even, conveying a sense of academic success, clarity, and professionalism. The mood is serious yet optimistic."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPB6PanccHwjEg26SbRgbDLvHYCDZTdfwOJ5hBz3kLcrLyD6i_DFcSU6Yzm2yTeItJstVvfcpwDLsTngIqydJvzSMxU7BT1GxL7pW7Gqlg-ATMimGcjTw7YAXWCVd0fE1Z-c0cMYeWP6S6Kx2gPR8XkFvUKQz8-mPvtZogywGbh4VbX3YD6lAMF4IuiKBXkXzNJfcETraxsrhMlKCpQ2xeewwHdNURHoSp95LntjvcJyzyMJ1w2fm1" />
+                    </div>
+                    <div>
+                        <p class="font-body-lg text-body-lg font-bold text-primary">Rahul D.</p>
+                        <p class="font-headline-xl text-headline-xl text-secondary mt-2">99.8%</p>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant">STATE BOARD</p>
+                    </div>
+                </div>
+                <!-- Achiever 2 -->
+                <div class="flex flex-col items-center text-center gap-4 group">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden border border-outline-variant group-hover:border-primary transition-colors">
+                        <img class="w-full h-full object-cover"
+                            data-alt="A professional studio portrait of a focused teenage female student with a slight, confident smile. The background is a clean, bright, and minimal white studio setting. The lighting is high-key, casting soft shadows that convey a sense of academic excellence, clarity, and professionalism. The mood is determined and bright."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1fqIA9GJ_jSFCZiBJXXWEKk5iNbUKZMQLNaMtZqbO3Bh1bI25vgkxKIKOxXiX8MIHhnFVUSbgLdZaPaaX6CE2PAiZfa14g0o7CfGaiW5KriBJFS_QsENNhkawgsZw__Pljstr4Ou5NTxf3QtfQ_xmDEs3my_951wJMoFPnEjV9VPckcamsQXH5hB5N_NYjdGheOhQMdLQNUXjSRdb_iAQjq4j7ZuUyOT-9WCV4jHFyXPThD0oC54u" />
+                    </div>
+                    <div>
+                        <p class="font-body-lg text-body-lg font-bold text-primary">Ananya S.</p>
+                        <p class="font-headline-xl text-headline-xl text-secondary mt-2">99.5%</p>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant">JEE ADVANCED</p>
+                    </div>
+                </div>
+                <!-- Achiever 3 -->
+                <div class="flex flex-col items-center text-center gap-4 group">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden border border-outline-variant group-hover:border-primary transition-colors">
+                        <img class="w-full h-full object-cover"
+                            data-alt="A professional studio portrait of a serious teenage male student looking directly at the camera. The background is a clean, bright, and minimal white studio setting. The lighting is high-key and even, conveying a sense of academic success, clarity, and professionalism. The mood is calm and focused."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYde61gYFrXNFnhxULyfnHzs9hQLItRWyLm4wMUsiMjMw6ptCWHEhnEVnnW0KzFqSb-72cgBga9Pj1BGZ_PysX6y5v6zK7M9-HmkNJYNc3gw0Q0h7vuy_QESkoyN-BXQz-y9vRe6weFnEvG1PLL8tk5i6prn88QMn30ii2GYu05_HfY0ysh2gR598W08WeoFcFA12yq9lo0SbNodntDUHoHQyoWCBmvNsgXD7TBspJT9PA5yQDS9EA" />
+                    </div>
+                    <div>
+                        <p class="font-body-lg text-body-lg font-bold text-primary">Vikram P.</p>
+                        <p class="font-headline-xl text-headline-xl text-secondary mt-2">99.2%</p>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant">NEET</p>
+                    </div>
+                </div>
+                <!-- Achiever 4 -->
+                <div class="flex flex-col items-center text-center gap-4 group">
+                    <div
+                        class="w-32 h-32 rounded-full overflow-hidden border border-outline-variant group-hover:border-primary transition-colors">
+                        <img class="w-full h-full object-cover"
+                            data-alt="A professional studio portrait of a bright teenage female student looking slightly off-camera with a confident demeanor. The background is a clean, bright, and minimal white studio setting. The lighting is high-key and even, conveying a sense of academic success, clarity, and professionalism. The mood is intellectual and inspiring."
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkSw1FBi4YyIz80chf-MshSExOe3TXUe0C7sn_Bm1KntQxk_ig7HmK7ickbMHPGkRPNmIR39U9Ldk7o9fS9ZzCewaCWTRqHf26-ac0AcFNNvSklkjsxK4zEtZbagqb-2JP455xPgOhHIUycf7tbVLG2vM5sRzYUqtVt-y5URchmFCMX9OZ3Dd-NXZmrZ9Gvmn77XaOhKFfv_MGme9qFvxwootHsRZG3HacUaUgPsOdtUEehUoKpc9V" />
+                    </div>
+                    <div>
+                        <p class="font-body-lg text-body-lg font-bold text-primary">Priya M.</p>
+                        <p class="font-headline-xl text-headline-xl text-secondary mt-2">98.9%</p>
+                        <p class="font-label-caps text-label-caps text-on-surface-variant">STATE BOARD</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer -->
+    <footer
+        class="w-full border-t border-outline-variant dark:border-on-primary-fixed-variant bg-background dark:bg-on-primary-fixed mt-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-inner-padding max-w-7xl mx-auto px-gutter py-section-padding">
+            <div class="flex flex-col gap-4">
+                <span class="font-headline-xl text-headline-xl font-bold text-primary dark:text-inverse-primary">Wakhare
+                    Classes</span>
+                <p class="font-body-md text-body-md text-on-surface-variant dark:text-on-primary-container">
+                    Excellence in Academic Rigor. Setting the standard for education.
+                </p>
+            </div>
+            <div class="flex flex-col gap-4">
+                <h4 class="font-label-caps text-label-caps text-primary dark:text-inverse-primary tracking-widest">LINKS
+                </h4>
+                <div class="flex flex-col space-y-2 font-body-md text-body-md">
+                    <a class="text-on-surface-variant dark:text-on-primary-container hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors inline-block transition-opacity hover:opacity-80"
+                        href="#">Privacy Policy</a>
+                    <a class="text-on-surface-variant dark:text-on-primary-container hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors inline-block transition-opacity hover:opacity-80"
+                        href="#">Terms of Service</a>
+                    <a class="text-on-surface-variant dark:text-on-primary-container hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors inline-block transition-opacity hover:opacity-80"
+                        href="#">FAQ</a>
+                    <a class="text-on-surface-variant dark:text-on-primary-container hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors inline-block transition-opacity hover:opacity-80"
+                        href="#">Careers</a>
+                </div>
+            </div>
+            <div class="flex flex-col gap-4 md:items-end md:text-right">
+                <p class="font-body-md text-body-md text-primary dark:text-inverse-primary mt-auto">
+                    © 2024 Wakhare Classes. Excellence in Academic Rigor.
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
