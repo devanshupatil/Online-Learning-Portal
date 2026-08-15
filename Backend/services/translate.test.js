@@ -117,3 +117,33 @@ describe('translateText', () => {
     expect(generateContent).toHaveBeenCalledTimes(1); // second call hit the cache, not Gemini
   });
 });
+
+describe('translateFields', () => {
+  it('translates only the specified fields, in parallel, leaving others untouched', async () => {
+    const translate = require('./translate');
+    const spy = jest.spyOn(translate, 'translateText').mockImplementation(
+      async (text, lang) => `[${lang}] ${text}`
+    );
+
+    const obj = { title: 'Hello', description: 'World', id: 42 };
+    const result = await translate.translateFields(obj, ['title', 'description'], 'hi');
+
+    expect(result.title).toBe('[hi] Hello');
+    expect(result.description).toBe('[hi] World');
+    expect(result.id).toBe(42); // untouched — not in the fields list
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    spy.mockRestore();
+  });
+
+  it('skips fields that are falsy without calling translateText', async () => {
+    const translate = require('./translate');
+    const spy = jest.spyOn(translate, 'translateText');
+
+    const obj = { title: '', description: null };
+    await translate.translateFields(obj, ['title', 'description'], 'hi');
+
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+});

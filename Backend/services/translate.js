@@ -48,4 +48,13 @@ async function translateText(text, targetLang) {
   }
 }
 
-module.exports = { translateText, hashText, geminiTranslate };
+async function translateFields(obj, fields, targetLang) {
+  await Promise.all(
+    fields.map(async (field) => {
+      if (obj[field]) obj[field] = await module.exports.translateText(obj[field], targetLang);
+    })
+  );
+  return obj;
+}
+
+module.exports = { translateText, translateFields, hashText, geminiTranslate };
