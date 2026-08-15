@@ -1,6 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const CoursesHero = () => {
+  const { t } = useTranslation();
   const scrollToFoundation = (e) => {
     e.preventDefault();
     document.getElementById("foundation")?.scrollIntoView({ behavior: "smooth" });
@@ -15,14 +17,13 @@ const CoursesHero = () => {
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed text-xs font-bold uppercase tracking-wider mb-8 border border-primary-fixed/50 shadow-sm">
           <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
-          Academic Excellence Defined
+          {t('coursesHeroBadge')}
         </span>
         <h1 className="font-display text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] text-on-surface mb-6 tracking-tight">
-          Elevate Your Potential.
+          {t('coursesHeroTitle')}
         </h1>
         <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto mb-10">
-          Comprehensive academic programs engineered for rigor, clarity, and success. From middle
-          school foundations to competitive exam mastery.
+          {t('coursesHeroSubtitle')}
         </p>
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
           <a
@@ -30,15 +31,15 @@ const CoursesHero = () => {
             href="#foundation"
             onClick={scrollToFoundation}
           >
-            View Foundation
+            {t('coursesHeroViewFoundationBtn')}
           </a>
           <span
             className="inline-flex items-center justify-center gap-2 px-6 py-[6px] rounded-full border-2 border-outline-variant text-on-surface-variant/60 font-semibold h-9 cursor-not-allowed select-none"
-            title="High School programs coming soon"
+            title={t('coursesHeroViewHighSchoolTooltip')}
           >
-            View High School
+            {t('coursesHeroViewHighSchoolBtn')}
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-surface-container-high">
-              Soon
+              {t('coursesHeroSoonBadge')}
             </span>
           </span>
         </div>
