@@ -71,59 +71,65 @@ export const SiteNav = ({ active = "Home" }) => {
           </button>
         </div>
       </nav>
-      {menuOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+      <div
+        className={
+          menuOpen
+            ? "fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden opacity-100 pointer-events-auto transition-opacity duration-300 ease-in-out"
+            : "fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+        }
+        onClick={() => setMenuOpen(false)}
+      />
+      <div
+        className={
+          menuOpen
+            ? "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-0 transition-transform duration-300 ease-in-out"
+            : "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-full transition-transform duration-300 ease-in-out"
+        }
+      >
+        <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
+          <span className="font-display text-xl font-bold text-primary">
+            Menu
+          </span>
+          <button
+            className="text-on-surface p-2"
             onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div className="flex flex-col px-6 py-4 gap-2 overflow-y-auto">
+          {navLinks.map((link) => (
+            <NavItem
+              key={link.label}
+              path={link.path}
+              onClick={() => setMenuOpen(false)}
+              className={
+                link.label === active
+                  ? "font-bold text-primary py-3 border-b-2 border-primary"
+                  : "font-bold text-on-surface-variant hover:text-primary transition-colors py-3"
+              }
+            >
+              {link.label}
+            </NavItem>
+          ))}
+          <a
+            className="mt-2 inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
+            href="/#enroll"
+            onClick={() => setMenuOpen(false)}
+          >
+            Enroll Now
+          </a>
+          <ButtonWithIcon
+            label="Login"
+            className="w-full"
+            onClick={() => {
+              setMenuOpen(false);
+              navigate("/login");
+            }}
           />
-          <div className="fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col">
-            <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
-              <span className="font-display text-xl font-bold text-primary">
-                Menu
-              </span>
-              <button
-                className="text-on-surface p-2"
-                onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="flex flex-col px-6 py-4 gap-2 overflow-y-auto">
-              {navLinks.map((link) => (
-                <NavItem
-                  key={link.label}
-                  path={link.path}
-                  onClick={() => setMenuOpen(false)}
-                  className={
-                    link.label === active
-                      ? "font-bold text-primary py-3 border-b-2 border-primary"
-                      : "font-bold text-on-surface-variant hover:text-primary transition-colors py-3"
-                  }
-                >
-                  {link.label}
-                </NavItem>
-              ))}
-              <a
-                className="mt-2 inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
-                href="/#enroll"
-                onClick={() => setMenuOpen(false)}
-              >
-                Enroll Now
-              </a>
-              <ButtonWithIcon
-                label="Login"
-                className="w-full"
-                onClick={() => {
-                  setMenuOpen(false);
-                  navigate("/login");
-                }}
-              />
-            </div>
-          </div>
-        </>
-      )}
+        </div>
+      </div>
     </>
   );
 };
