@@ -7,11 +7,14 @@ WORKDIR /app
 # System dependencies for PDF rendering (pdftoppm)
 RUN apk add --no-cache poppler-utils
 
+# Install bun (used for dependency installation; the app itself still runs on Node)
+RUN npm install -g bun
+
 # Copy package files
-COPY package*.json ./
+COPY package.json bun.lock ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN bun install --production --frozen-lockfile
 
 # Copy source code
 COPY . .
