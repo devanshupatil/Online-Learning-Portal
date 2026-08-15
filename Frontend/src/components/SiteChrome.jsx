@@ -86,10 +86,7 @@ export const SiteNav = ({ active = "Home" }) => {
             : "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-full transition-transform duration-300 ease-in-out"
         }
       >
-        <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
-          <span className="font-display text-xl font-bold text-primary">
-            Menu
-          </span>
+        <div className="flex justify-end items-center h-20 px-6 border-b border-outline-variant">
           <button
             className="text-on-surface p-2"
             onClick={() => setMenuOpen(false)}
