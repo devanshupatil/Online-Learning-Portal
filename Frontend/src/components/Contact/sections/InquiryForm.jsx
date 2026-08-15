@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const initialForm = {
   firstName: "",
@@ -13,6 +14,7 @@ const inputClass =
   "bg-surface-bright border border-outline-variant/50 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 transition-all duration-200";
 
 const InquiryForm = () => {
+  const { t } = useTranslation();
   const [form, setForm] = useState(initialForm);
 
   const handleChange = (field) => (e) => {
@@ -21,14 +23,14 @@ const InquiryForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    toast.success("Thanks for reaching out! Our team will get back to you shortly.");
+    toast.success(t("inquiryFormSuccessToast"));
     setForm(initialForm);
   };
 
   return (
     <div className="lg:col-span-7 bg-surface-container-lowest rounded-2xl p-8 soft-shadow border border-outline-variant/20 relative overflow-hidden">
       <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <h2 className="text-xl font-bold text-on-surface mb-6 relative z-10">Send an Inquiry</h2>
+      <h2 className="text-xl font-bold text-on-surface mb-6 relative z-10">{t("inquiryFormTitle")}</h2>
       <form className="space-y-6 relative z-10" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-2">
@@ -36,12 +38,12 @@ const InquiryForm = () => {
               className="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
               htmlFor="firstName"
             >
-              First Name
+              {t("inquiryFormFirstNameLabel")}
             </label>
             <input
               className={inputClass}
               id="firstName"
-              placeholder="Jane"
+              placeholder={t("inquiryFormFirstNamePlaceholder")}
               type="text"
               required
               value={form.firstName}
@@ -53,12 +55,12 @@ const InquiryForm = () => {
               className="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
               htmlFor="lastName"
             >
-              Last Name
+              {t("inquiryFormLastNameLabel")}
             </label>
             <input
               className={inputClass}
               id="lastName"
-              placeholder="Doe"
+              placeholder={t("inquiryFormLastNamePlaceholder")}
               type="text"
               required
               value={form.lastName}
@@ -71,7 +73,7 @@ const InquiryForm = () => {
             className="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
             htmlFor="email"
           >
-            Email Address
+            {t("inquiryFormEmailLabel")}
           </label>
           <input
             className={inputClass}
@@ -88,7 +90,7 @@ const InquiryForm = () => {
             className="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
             htmlFor="subject"
           >
-            Subject
+            {t("inquiryFormSubjectLabel")}
           </label>
           <select
             className={`${inputClass} appearance-none cursor-pointer`}
@@ -96,11 +98,11 @@ const InquiryForm = () => {
             value={form.subject}
             onChange={handleChange("subject")}
           >
-            <option>Admissions Inquiry</option>
-            <option>Course Information</option>
-            <option>Campus Tour Scheduling</option>
-            <option>Technical Support</option>
-            <option>Other</option>
+            <option value="Admissions Inquiry">{t("inquiryFormSubjectAdmissions")}</option>
+            <option value="Course Information">{t("inquiryFormSubjectCourseInfo")}</option>
+            <option value="Campus Tour Scheduling">{t("inquiryFormSubjectCampusTour")}</option>
+            <option value="Technical Support">{t("inquiryFormSubjectTechSupport")}</option>
+            <option value="Other">{t("inquiryFormSubjectOther")}</option>
           </select>
         </div>
         <div className="flex flex-col gap-2">
@@ -108,12 +110,12 @@ const InquiryForm = () => {
             className="text-xs font-bold uppercase tracking-wider text-on-surface-variant"
             htmlFor="message"
           >
-            Message
+            {t("inquiryFormMessageLabel")}
           </label>
           <textarea
             className={`${inputClass} resize-none`}
             id="message"
-            placeholder="How can we help you achieve your goals?"
+            placeholder={t("inquiryFormMessagePlaceholder")}
             rows={5}
             required
             value={form.message}
@@ -124,7 +126,7 @@ const InquiryForm = () => {
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1"
           type="submit"
         >
-          Send Message
+          {t("inquiryFormSubmitBtn")}
           <span className="material-symbols-outlined text-[20px]">send</span>
         </button>
       </form>

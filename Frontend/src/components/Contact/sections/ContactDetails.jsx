@@ -1,6 +1,9 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ContactDetails = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="lg:col-span-5 flex flex-col gap-6">
       <div className="bg-surface-container-lowest rounded-2xl p-6 soft-shadow border border-outline-variant/20 flex items-start gap-4 hover:-translate-y-1 transition-transform duration-300">
@@ -8,11 +11,11 @@ const ContactDetails = () => {
           <span className="material-symbols-outlined text-primary">location_on</span>
         </div>
         <div>
-          <h3 className="font-semibold text-on-surface mb-1">Campus Address</h3>
+          <h3 className="font-semibold text-on-surface mb-1">{t("contactDetailsAddressTitle")}</h3>
           <p className="text-on-surface-variant leading-relaxed">
-            123 Education Hub, Knowledge City,
+            {t("contactDetailsAddressLine1")}
             <br />
-            State - 400001
+            {t("contactDetailsAddressLine2")}
           </p>
         </div>
       </div>
@@ -22,7 +25,7 @@ const ContactDetails = () => {
           <span className="material-symbols-outlined text-secondary">call</span>
         </div>
         <div>
-          <h3 className="font-semibold text-on-surface">Telephone</h3>
+          <h3 className="font-semibold text-on-surface">{t("contactDetailsPhoneTitle")}</h3>
           <a
             className="text-on-surface-variant hover:text-primary transition-colors"
             href="tel:+919876543210"
@@ -37,7 +40,7 @@ const ContactDetails = () => {
           <span className="material-symbols-outlined text-tertiary-container">mail</span>
         </div>
         <div>
-          <h3 className="font-semibold text-on-surface">Electronic Mail</h3>
+          <h3 className="font-semibold text-on-surface">{t("contactDetailsEmailTitle")}</h3>
           <a
             className="text-on-surface-variant hover:text-primary transition-colors"
             href="mailto:info@edulearningplatform.com"
@@ -62,7 +65,7 @@ const ContactDetails = () => {
         <div className="glass-panel py-2 px-4 rounded-full flex items-center gap-2 relative z-10">
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           <span className="text-xs font-bold uppercase tracking-wider text-on-surface">
-            Knowledge City
+            {t("contactDetailsMapLabel")}
           </span>
         </div>
       </div>
