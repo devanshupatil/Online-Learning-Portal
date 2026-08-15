@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
 import AboutPage from './components/AboutPage'
 import ResultsPage from './components/Results/ResultsPage'
+import CoursesPage from './components/Courses/CoursesPage'
 import LearnersPage from './components/Leraners/LearnersPage'
 import TeachersPage from './components/Teacher/TeachersPage'
 import ParentsPage from './components/Parents/ParentsPage'
@@ -28,6 +29,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/results" element={<ResultsPage />} />
+            <Route path="/courses" element={<CoursesPage />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
             <Route path="/learners/*" element={<LearnersPage />} />
