@@ -103,8 +103,7 @@ const Navigation = () => {
           >
             <div className="flex flex-col h-full">
               {/* Sidebar Header */}
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Menu</h2>
+              <div className="flex items-center justify-end p-6 border-b border-gray-200">
                 <button
                   onClick={closeMenu}
                   className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300"
