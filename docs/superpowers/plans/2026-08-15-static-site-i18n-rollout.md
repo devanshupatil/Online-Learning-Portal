@@ -4,9 +4,11 @@
 
 **Goal:** Make every static UI string on the site (nav, buttons, labels, headings — across public pages and Admin/Teacher/Parent dashboards) render in English, Hindi, or Marathi via `react-i18next`, switchable from a language selector in the nav, persisted in `localStorage`.
 
-**Architecture:** `react-i18next` with three flat-ish JSON resource files (`en`, `hi`, `mr`) under `Frontend/src/locales/`. A one-time Gemini-powered script (in `Backend/`, where `GEMINI_API_KEY` already lives) bootstraps `hi`/`mr` from whatever keys exist in `en/translation.json`, so no string is translated by hand. A `<LanguageSwitcher>` component changes the active language and persists the choice. Component migration (replacing hardcoded JSX text with `t('key')`) happens directory-by-directory using one repeatable procedure, since ~100 component files need the same mechanical treatment.
+**Architecture:** `react-i18next` with three flat-ish JSON resource files (`en`, `hi`, `mr`) under `Frontend/src/i18n/locales/`. A one-time script bootstraps `hi`/`mr` from whatever keys exist in `en.json` by calling the free, unofficial Google Translate endpoint (`translate.googleapis.com/translate_a/single`) — no API key, no account, no backend involvement. This is the same approach already proven in a sibling project (`devanshupatil/MediFind`), reused here directly. A `<LanguageSwitcher>` component changes the active language; `i18next-browser-languagedetector` handles persistence/detection (localStorage + browser language, no hand-rolled logic needed). Component migration (replacing hardcoded JSX text with `t('key')`) happens directory-by-directory using one repeatable procedure, since ~100 component files need the same mechanical treatment.
 
-**Tech Stack:** React 19 + Vite, `i18next` + `react-i18next` (new dependencies), `@google/generative-ai` (already a Backend dependency, reused for the bootstrap script only).
+**Tech Stack:** React 19 + Vite, `i18next` + `react-i18next` + `i18next-browser-languagedetector` (new dependencies). No backend dependency at all — this whole feature is client-side only.
+
+**Revision note:** this plan originally used a Gemini-powered bootstrap script (`Backend/scripts/generate-ui-translations.js`) requiring `GEMINI_API_KEY`, paired with a separate backend plan (`2026-08-15-dynamic-translation-infrastructure.md`) for a Supabase-cached dynamic-content translation service. Both were fully implemented and tested, then **replaced** on the user's direction with the simpler, already-proven MediFind approach below — no backend, no API key, no database. The backend plan is now superseded in full; see the note at the top of that file.
 
 **Reference spec:** `docs/superpowers/specs/2026-08-15-multi-language-support-design.md`
 
@@ -24,44 +26,43 @@ Tasks 1–4 below are fully specified with exact code, same as the rest of this 
 
 **Files:**
 - Modify: `Frontend/package.json`
-- Create: `Frontend/src/i18n.js`
-- Create: `Frontend/src/locales/en/translation.json`
-- Create: `Frontend/src/locales/hi/translation.json`
-- Create: `Frontend/src/locales/mr/translation.json`
+- Create: `Frontend/src/i18n/index.js`
+- Create: `Frontend/src/i18n/locales/en.json`
+- Create: `Frontend/src/i18n/locales/hi.json`
+- Create: `Frontend/src/i18n/locales/mr.json`
 - Modify: `Frontend/src/main.jsx`
+
+This structure and config deliberately mirror `devanshupatil/MediFind`'s already-working `src/i18n/index.js` — reusing a proven setup rather than inventing a new one.
 
 - [ ] **Step 1: Install dependencies**
 
-Run: `cd "Frontend" && npm install i18next react-i18next`
-Expected: both packages added under `dependencies` in `Frontend/package.json`.
+Run: `cd "Frontend" && bun install i18next react-i18next i18next-browser-languagedetector`
+(This repo enforces `bun`, not `npm` — a shell hook blocks npm commands.)
+Expected: all three packages added under `dependencies` in `Frontend/package.json`.
 
 - [ ] **Step 2: Create the initial English resource file**
 
-Create `Frontend/src/locales/en/translation.json`:
+Create `Frontend/src/i18n/locales/en.json` with flat (non-nested) keys, one per translatable string — nesting isn't needed since i18next namespaces by key name, not JSON structure depth:
 
 ```json
 {
-  "nav": {
-    "home": "Home",
-    "about": "About",
-    "results": "Results",
-    "courses": "Courses",
-    "contact": "Contact",
-    "enrollNow": "Enroll Now",
-    "login": "Login"
-  },
-  "footer": {
-    "quickLinks": "Quick Links",
-    "contactInfo": "Contact Info",
-    "tagline": "Excellence in Education since 2011. Building foundations for future leaders.",
-    "copyright": "© 2026 EduLearning Platform. Excellence in Education."
-  }
+  "navHome": "Home",
+  "navAbout": "About",
+  "navResults": "Results",
+  "navCourses": "Courses",
+  "navContact": "Contact",
+  "navEnrollNow": "Enroll Now",
+  "navLogin": "Login",
+  "footerQuickLinks": "Quick Links",
+  "footerContactInfo": "Contact Info",
+  "footerTagline": "Excellence in Education since 2011. Building foundations for future leaders.",
+  "footerCopyright": "© 2026 EduLearning Platform. Excellence in Education."
 }
 ```
 
 - [ ] **Step 3: Create empty placeholder files for the other two languages**
 
-Create `Frontend/src/locales/hi/translation.json` and `Frontend/src/locales/mr/translation.json`, both with just:
+Create `Frontend/src/i18n/locales/hi.json` and `Frontend/src/i18n/locales/mr.json`, both with just:
 
 ```json
 {}
@@ -71,30 +72,39 @@ Create `Frontend/src/locales/hi/translation.json` and `Frontend/src/locales/mr/t
 
 - [ ] **Step 4: Create the i18next config**
 
-Create `Frontend/src/i18n.js`:
+Create `Frontend/src/i18n/index.js` (this is verbatim MediFind's working config):
 
 ```js
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import en from './locales/en/translation.json';
-import hi from './locales/hi/translation.json';
-import mr from './locales/mr/translation.json';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import en from './locales/en.json'
+import hi from './locales/hi.json'
+import mr from './locales/mr.json'
 
-const storedLang = localStorage.getItem('lang');
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: { translation: en },
+      hi: { translation: hi },
+      mr: { translation: mr },
+    },
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'hi', 'mr'],
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+    },
+    interpolation: { escapeValue: false },
+    react: { useSuspense: false },
+  })
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: en },
-    hi: { translation: hi },
-    mr: { translation: mr },
-  },
-  lng: storedLang || 'en',
-  fallbackLng: 'en',
-  interpolation: { escapeValue: false },
-});
-
-export default i18n;
+export default i18n
 ```
+
+`i18next-browser-languagedetector` replaces hand-rolled `localStorage.getItem('lang')` logic: it checks `localStorage` first, falls back to the browser's own language setting, and — via `caches: ['localStorage']` — automatically persists whatever `i18n.changeLanguage(...)` sets, with no manual `localStorage.setItem` call needed anywhere in the app.
 
 - [ ] **Step 5: Load it before the app renders**
 
@@ -108,11 +118,11 @@ import './index.css'
 import App from './App.jsx'
 ```
 
-(Import order matters here only in that `i18n.js` must run its `.init()` before any component calls `useTranslation()` — putting it first guarantees that.)
+(Import order matters here only in that `i18n/index.js` must run its `.init()` before any component calls `useTranslation()` — putting it first guarantees that.)
 
 - [ ] **Step 6: Verify the app still builds and runs**
 
-Run: `cd "Frontend" && npm run dev`
+Run: `cd "Frontend" && bun run dev`
 Expected: Vite starts with no errors. Open the printed local URL in a browser and confirm the site loads exactly as before (no visible changes yet — nothing consumes `t()` until Task 4). Stop the dev server after confirming (Ctrl+C).
 
 - [ ] **Step 7: Commit**
@@ -129,6 +139,8 @@ git commit -m "Add i18next configuration and initial English resource file"
 **Files:**
 - Create: `Frontend/src/components/LanguageSwitcher.jsx`
 
+This mirrors MediFind's `src/components/LanguageSwitcher.jsx` (pill-button group, `aria-pressed` state, `i18n.changeLanguage` on click) but rendered with this project's own Tailwind utility classes instead of MediFind's custom `sp-lang-*` CSS classes, since those classes don't exist in this stylesheet — the behavior is what's being reused, not literal class names from a different app's design system.
+
 - [ ] **Step 1: Write the component**
 
 Create `Frontend/src/components/LanguageSwitcher.jsx`:
@@ -137,41 +149,45 @@ Create `Frontend/src/components/LanguageSwitcher.jsx`:
 import { useTranslation } from "react-i18next";
 
 const LANGUAGES = [
-  { code: "en", label: "English" },
-  { code: "hi", label: "हिंदी" },
-  { code: "mr", label: "मराठी" },
+  { code: "en", label: "English", short: "EN" },
+  { code: "hi", label: "हिंदी", short: "हि" },
+  { code: "mr", label: "मराठी", short: "मर" },
 ];
 
 const LanguageSwitcher = ({ className = "" }) => {
   const { i18n } = useTranslation();
-
-  const handleChange = (e) => {
-    const lang = e.target.value;
-    i18n.changeLanguage(lang);
-    localStorage.setItem("lang", lang);
-    document.documentElement.lang = lang;
-  };
+  const current = i18n.language?.split("-")[0] ?? "en";
 
   return (
-    <select
+    <div
+      role="group"
       aria-label="Select language"
-      value={i18n.language}
-      onChange={handleChange}
-      className={`bg-transparent border border-outline-variant rounded-lg px-2 py-1 text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors cursor-pointer ${className}`}
+      className={`inline-flex items-center gap-1 rounded-full border border-outline-variant p-1 ${className}`}
     >
-      {LANGUAGES.map((lang) => (
-        <option key={lang.code} value={lang.code}>
-          {lang.label}
-        </option>
+      {LANGUAGES.map(({ code, label, short }) => (
+        <button
+          key={code}
+          type="button"
+          onClick={() => i18n.changeLanguage(code)}
+          aria-pressed={current === code}
+          aria-label={`Switch to ${label}`}
+          className={
+            current === code
+              ? "px-3 py-1 rounded-full text-sm font-semibold bg-primary text-white transition-colors"
+              : "px-3 py-1 rounded-full text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
+          }
+        >
+          {short}
+        </button>
       ))}
-    </select>
+    </div>
   );
 };
 
 export default LanguageSwitcher;
 ```
 
-Note: a plain `<select>` is used deliberately — no new UI dependency, matches the earlier decision to keep language persistence to a simple browser-only toggle rather than build custom dropdown open/close state.
+Note: persistence is handled entirely by `i18next-browser-languagedetector` (configured in Task 1) — this component only ever calls `i18n.changeLanguage(code)`, no manual `localStorage` calls needed.
 
 - [ ] **Step 2: Commit**
 
@@ -184,132 +200,193 @@ git commit -m "Add LanguageSwitcher component"
 
 ---
 
-### Task 3: Gemini bootstrap script for `hi`/`mr` resource files
+### Task 3: Free-endpoint bootstrap script for `hi`/`mr` resource files
 
 **Files:**
-- Create: `Backend/scripts/generate-ui-translations.js`
+- Create: `Frontend/scripts/generate-translations.js`
+
+This reuses `devanshupatil/MediFind`'s `scripts/generate-mr.js` approach verbatim — translating via the free, unofficial Google Translate endpoint (`translate.googleapis.com/translate_a/single`), no API key, no account, no backend involvement. Generalized here to (a) handle both `hi` and `mr` in one script, since this project needs both generated from scratch (MediFind only needed `mr`, since its `hi.json` already existed by other means), and (b) only translate keys missing from the target file, so hand-edited corrections survive a re-run.
 
 - [ ] **Step 1: Write the script**
 
-Create `Backend/scripts/generate-ui-translations.js`:
+Create `Frontend/scripts/generate-translations.js` (ESM — this project's `package.json` has `"type": "module"`):
 
 ```js
-// One-time (or re-run-when-keys-change) offline script. Not part of the
-// request path — run manually with `node Backend/scripts/generate-ui-translations.js`.
-// Reads Frontend/src/locales/en/translation.json, fills in any missing keys
-// in hi/translation.json and mr/translation.json via Gemini, and writes them
-// back. Existing keys in hi/mr are left untouched, so hand-edited
-// corrections are never overwritten by a re-run.
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+#!/usr/bin/env node
+/**
+ * generate-translations.js
+ * One-time (or re-run-when-keys-change) offline script: fills in missing
+ * keys in hi.json/mr.json from en.json via the free Google Translate
+ * endpoint. Not part of the request path — run manually with
+ * `node scripts/generate-translations.js`. Existing keys in hi/mr are left
+ * untouched, so hand-edited corrections are never overwritten by a re-run.
+ */
+import { readFileSync, writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-const LOCALES_DIR = path.join(__dirname, '..', '..', 'Frontend', 'src', 'locales');
-const LANGUAGES = { hi: 'Hindi', mr: 'Marathi' };
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const LOCALES_DIR = resolve(__dirname, '../src/i18n/locales');
+const LANGUAGES = ['hi', 'mr'];
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+function readJson(path) {
+  return JSON.parse(readFileSync(path, 'utf-8'));
 }
 
-function writeJson(filePath, obj) {
-  fs.writeFileSync(filePath, JSON.stringify(obj, null, 2) + '\n', 'utf8');
+function writeJson(path, obj) {
+  writeFileSync(path, JSON.stringify(obj, null, 2) + '\n', 'utf-8');
 }
 
-// Flattens {a: {b: "text"}} to {"a.b": "text"} and back, so we can diff
-// missing keys regardless of nesting depth.
-function flatten(obj, prefix = '', out = {}) {
-  for (const [key, value] of Object.entries(obj)) {
-    const fullKey = prefix ? `${prefix}.${key}` : key;
-    if (value && typeof value === 'object') {
-      flatten(value, fullKey, out);
-    } else {
-      out[fullKey] = value;
-    }
-  }
-  return out;
-}
-
-function unflatten(flat) {
-  const result = {};
-  for (const [flatKey, value] of Object.entries(flat)) {
-    const parts = flatKey.split('.');
-    let node = result;
-    for (let i = 0; i < parts.length - 1; i++) {
-      node[parts[i]] = node[parts[i]] || {};
-      node = node[parts[i]];
-    }
-    node[parts[parts.length - 1]] = value;
-  }
-  return result;
-}
-
-async function translateBatch(entries, targetLangName) {
-  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-pro' });
-  const keys = Object.keys(entries);
-  const prompt =
-    `Translate each value in this JSON object to ${targetLangName}. ` +
-    `Keep the same keys. Return ONLY a valid JSON object, no explanation, no code fences.\n\n` +
-    JSON.stringify(entries, null, 2);
-  const result = await model.generateContent(prompt);
-  const text = result.response.text().trim();
-  const cleaned = text.replace(/^```json\n?|```$/g, '');
-  const translated = JSON.parse(cleaned);
-  for (const key of keys) {
-    if (!(key in translated)) throw new Error(`Gemini response missing key: ${key}`);
-  }
-  return translated;
+async function translate(text, targetLang) {
+  const url =
+    `https://translate.googleapis.com/translate_a/single` +
+    `?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+  const res = await fetch(url);
+  const data = await res.json();
+  // Response structure: [[["translatedText","originalText",...],...],...]
+  return data[0].map((chunk) => chunk[0]).join('');
 }
 
 async function main() {
-  const enPath = path.join(LOCALES_DIR, 'en', 'translation.json');
-  const enFlat = flatten(readJson(enPath));
+  const en = readJson(resolve(LOCALES_DIR, 'en.json'));
 
-  for (const [langCode, langName] of Object.entries(LANGUAGES)) {
-    const targetPath = path.join(LOCALES_DIR, langCode, 'translation.json');
-    const targetFlat = flatten(readJson(targetPath));
+  for (const lang of LANGUAGES) {
+    const targetPath = resolve(LOCALES_DIR, `${lang}.json`);
+    const existing = readJson(targetPath);
+    const missing = Object.entries(en).filter(([key]) => !(key in existing));
 
-    const missing = {};
-    for (const [key, value] of Object.entries(enFlat)) {
-      if (!(key in targetFlat)) missing[key] = value;
-    }
-
-    if (Object.keys(missing).length === 0) {
-      console.log(`[${langCode}] up to date, nothing to translate`);
+    if (missing.length === 0) {
+      console.log(`[${lang}] up to date, nothing to translate`);
       continue;
     }
 
-    console.log(`[${langCode}] translating ${Object.keys(missing).length} missing key(s)...`);
-    const translated = await translateBatch(missing, langName);
-    const merged = { ...targetFlat, ...translated };
-    writeJson(targetPath, unflatten(merged));
-    console.log(`[${langCode}] wrote ${targetPath}`);
+    console.log(`[${lang}] translating ${missing.length} missing key(s)...`);
+    const updated = { ...existing };
+    for (const [key, value] of missing) {
+      const translated = await translate(value, lang);
+      updated[key] = translated;
+      console.log(`  ${key}: "${value}" -> "${translated}"`);
+      await new Promise((r) => setTimeout(r, 200)); // avoid rate limiting
+    }
+    writeJson(targetPath, updated);
+    console.log(`[${lang}] wrote ${targetPath}`);
   }
 }
 
 main().catch((err) => {
-  console.error('generate-ui-translations failed:', err);
+  console.error('generate-translations failed:', err);
   process.exit(1);
 });
 ```
 
 - [ ] **Step 2: Run it against the keys added in Task 1**
 
-Run: `cd "Backend" && node scripts/generate-ui-translations.js`
-Expected: console output like `[hi] translating 11 missing key(s)...` / `[mr] translating 11 missing key(s)...`, then both files written. Open `Frontend/src/locales/hi/translation.json` and `Frontend/src/locales/mr/translation.json` and confirm they now contain the same keys as `en/translation.json`, with Hindi/Marathi values.
+Run: `cd "Frontend" && node scripts/generate-translations.js`
+Expected: console output like `[hi] translating 11 missing key(s)...` / `[mr] translating 11 missing key(s)...`, then both files written. Open `Frontend/src/i18n/locales/hi.json` and `Frontend/src/i18n/locales/mr.json` and confirm they now contain the same keys as `en.json`, with Hindi/Marathi values.
 
 - [ ] **Step 3: Spot-check translation quality**
 
-Manually read a few entries (e.g. `nav.home`, `footer.tagline`) in each generated file. If anything reads oddly, hand-edit it directly — the script won't touch existing keys on a future run.
+Manually read a few entries (e.g. `navHome`, `footerTagline`) in each generated file. If anything reads oddly, hand-edit it directly — the script won't touch existing keys on a future run.
 
 - [ ] **Step 4: Commit**
 
 ```bash
-git add Backend/scripts/generate-ui-translations.js Frontend/src/locales/hi/translation.json Frontend/src/locales/mr/translation.json
-git commit -m "Add Gemini bootstrap script for UI translations; generate initial hi/mr resources"
+git add Frontend/scripts/generate-translations.js Frontend/src/i18n/locales/hi.json Frontend/src/i18n/locales/mr.json
+git commit -m "Add free-endpoint bootstrap script for UI translations; generate initial hi/mr resources"
 ```
+
+---
+
+### Task 3b: `useTranslatedName` hook for dynamic content
+
+**Files:**
+- Create: `Frontend/src/hooks/useTranslatedName.js`
+
+Unlike the original Gemini+Supabase design (which needed a real backend endpoint with free-text content to attach to before it could be used — see the superseded backend plan), this hook needs **no backend at all**: it translates any given string client-side, on demand, the moment it's rendered. This mirrors `devanshupatil/MediFind`'s `src/hooks/useTranslatedName.js` verbatim. Because it has no backend dependency, it can be used immediately wherever the app renders dynamic/mock data (e.g. course titles, student names) — there's no "wire it into a real endpoint later" deferral needed this time.
+
+- [ ] **Step 1: Write the hook**
+
+Create `Frontend/src/hooks/useTranslatedName.js`:
+
+```js
+/**
+ * useTranslatedName
+ *
+ * Translates a single text string to the current i18n language using the
+ * free (unofficial) Google Translate endpoint. Results are cached in a
+ * module-level Map so identical strings are never fetched twice per session.
+ *
+ * - Returns the original text immediately (no flicker on first render)
+ * - Swaps to the translated string asynchronously
+ * - For 'en' locale → always returns the original (no network request)
+ * - Cache is keyed by `${lang}:${text}` so switching languages re-fetches
+ */
+
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+
+// Module-level cache: survives re-renders, shared across all component instances
+export const translationCache = new Map()
+
+async function googleTranslate(text, targetLang) {
+  const cacheKey = `${targetLang}:${text}`
+  if (translationCache.has(cacheKey)) {
+    return translationCache.get(cacheKey)
+  }
+
+  const url =
+    `https://translate.googleapis.com/translate_a/single` +
+    `?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`
+
+  const res = await fetch(url)
+  const data = await res.json()
+  // Response: [[["translatedText","originalText",...], ...], ...]
+  const translated = data[0].map(chunk => chunk[0]).join('')
+
+  translationCache.set(cacheKey, translated)
+  return translated
+}
+
+export function useTranslatedName(originalName) {
+  const { i18n } = useTranslation()
+  const lang = i18n.language?.split('-')[0] ?? 'en'
+
+  const [translatedName, setTranslatedName] = useState(originalName)
+
+  useEffect(() => {
+    // Always reset to original immediately on name or language change
+    setTranslatedName(originalName)
+
+    // English — no translation needed
+    if (lang === 'en') return
+
+    let cancelled = false
+
+    googleTranslate(originalName, lang)
+      .then(result => {
+        if (!cancelled) setTranslatedName(result)
+      })
+      .catch(() => {
+        // Silently fall back to original name on any network error
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [originalName, lang])
+
+  return translatedName
+}
+```
+
+- [ ] **Step 2: Commit**
+
+```bash
+git add Frontend/src/hooks/useTranslatedName.js
+git commit -m "Add useTranslatedName hook for client-side dynamic content translation"
+```
+
+(No test file — mirrors MediFind's untested hook exactly; it's a thin wrapper with a network call, and its behavior is easiest to verify visually once something in the app actually calls it. Nothing in this plan wires it into a component yet — the whole-site migration in Tasks 5+ is scoped to *static* text. Callers should reach for this hook only for genuinely dynamic strings not covered by `t()`, e.g. a name coming from mock/API data.)
 
 ---
 
@@ -334,11 +411,11 @@ import LanguageSwitcher from "./LanguageSwitcher";
 // Display text comes from navLabelKey via t(), so it can be translated
 // without breaking the active-page highlighting logic below.
 export const navLinks = [
-  { label: "Home", path: "/", navLabelKey: "nav.home" },
-  { label: "About", path: "/about", navLabelKey: "nav.about" },
-  { label: "Results", path: "/results", navLabelKey: "nav.results" },
-  { label: "Courses", path: "/courses", navLabelKey: "nav.courses" },
-  { label: "Contact", path: "/contact", navLabelKey: "nav.contact" },
+  { label: "Home", path: "/", navLabelKey: "navHome" },
+  { label: "About", path: "/about", navLabelKey: "navAbout" },
+  { label: "Results", path: "/results", navLabelKey: "navResults" },
+  { label: "Courses", path: "/courses", navLabelKey: "navCourses" },
+  { label: "Contact", path: "/contact", navLabelKey: "navContact" },
 ];
 
 const NavItem = ({ path, className, children, onClick }) => {
@@ -389,9 +466,9 @@ export const SiteNav = ({ active = "Home" }) => {
               className="inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
               href="/#enroll"
             >
-              {t("nav.enrollNow")}
+              {t("navEnrollNow")}
             </a>
-            <ButtonWithIcon label={t("nav.login")} onClick={() => navigate("/login")} />
+            <ButtonWithIcon label={t("navLogin")} onClick={() => navigate("/login")} />
           </div>
           <button
             className="md:hidden text-on-surface p-2"
@@ -449,10 +526,10 @@ export const SiteNav = ({ active = "Home" }) => {
             href="/#enroll"
             onClick={() => setMenuOpen(false)}
           >
-            {t("nav.enrollNow")}
+            {t("navEnrollNow")}
           </a>
           <ButtonWithIcon
-            label={t("nav.login")}
+            label={t("navLogin")}
             className="w-full"
             onClick={() => {
               setMenuOpen(false);
@@ -472,10 +549,10 @@ export const SiteFooter = () => {
       <div className="max-w-[1280px] mx-auto px-6 py-[120px] grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="col-span-1 md:col-span-1">
           <h3 className="font-display text-2xl text-primary mb-4">EduLearning Platform</h3>
-          <p className="text-on-surface-variant mb-6">{t("footer.tagline")}</p>
+          <p className="text-on-surface-variant mb-6">{t("footerTagline")}</p>
         </div>
         <div>
-          <h4 className="text-2xl text-on-surface mb-4">{t("footer.quickLinks")}</h4>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerQuickLinks")}</h4>
           <ul className="space-y-3">
             {navLinks.map((link) => (
               <li key={link.label}>
@@ -490,7 +567,7 @@ export const SiteFooter = () => {
           </ul>
         </div>
         <div>
-          <h4 className="text-2xl text-on-surface mb-4">{t("footer.contactInfo")}</h4>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerContactInfo")}</h4>
           <ul className="space-y-3 text-on-surface-variant">
             <li className="flex items-start gap-2">
               <span className="material-symbols-outlined text-primary">location_on</span>
@@ -508,7 +585,7 @@ export const SiteFooter = () => {
         </div>
       </div>
       <div className="border-t border-outline-variant/30 py-6 text-center">
-        <p className="text-on-surface-variant">{t("footer.copyright")}</p>
+        <p className="text-on-surface-variant">{t("footerCopyright")}</p>
       </div>
     </footer>
   );
@@ -519,7 +596,7 @@ Note: the address/phone/email in the footer are intentionally left untranslated 
 
 - [ ] **Step 2: Manual verification**
 
-Run: `cd "Frontend" && npm run dev`, open the site, and:
+Run: `cd "Frontend" && bun run dev`, open the site, and:
 1. Confirm the nav and footer render in English exactly as before.
 2. Use the new language dropdown (desktop nav, and open the mobile hamburger menu to check it there too) to switch to हिंदी and मराठी, and confirm nav links, "Enroll Now", "Login", and footer text change language.
 3. Click through to `/about`, `/results`, `/courses`, `/contact` and confirm the correct nav link is still highlighted as active in each language (this verifies the `label`/`navLabelKey` split didn't break active-page highlighting).
@@ -543,12 +620,12 @@ Apply this procedure once per directory below, in order. Each is its own task/co
 **The procedure:**
 
 1. Read every `.jsx` file in the directory.
-2. For each hardcoded, user-visible English string (JSX text content, `label`/`title`/`placeholder`/`aria-label` props on visible UI — not internal identifiers, CSS classes, route paths, or console messages), pick a namespaced key following the pattern already established (`<directoryOrFeature>.<element>`, e.g. `courses.heroTitle`, `admin.sidebar.dashboard`). Reuse the `nav.*`/`footer.*` keys from Task 1 instead of duplicating them if a file reuses that exact text.
-3. Add the new keys (with their current English text as the value) to `Frontend/src/locales/en/translation.json`, nested under a sensible namespace.
-4. Add `import { useTranslation } from "react-i18next";` and `const { t } = useTranslation();` to each component, and replace the hardcoded strings with `t('the.key')`.
+2. For each hardcoded, user-visible English string (JSX text content, `label`/`title`/`placeholder`/`aria-label` props on visible UI — not internal identifiers, CSS classes, route paths, or console messages), pick a flat camelCase key following the pattern already established (`<directoryOrFeature><Element>`, e.g. `coursesHeroTitle`, `adminSidebarDashboard`) — flat, not nested, matching Task 1's `en.json` structure. Reuse the `nav*`/`footer*` keys from Task 1 instead of duplicating them if a file reuses that exact text.
+3. Add the new keys (with their current English text as the value) to `Frontend/src/i18n/locales/en.json` as flat top-level keys (no nesting).
+4. Add `import { useTranslation } from "react-i18next";` and `const { t } = useTranslation();` to each component, and replace the hardcoded strings with `t('theKey')`.
 5. Leave alone: numbers, dates already formatted upstream, proper nouns (person/place/product names), email addresses, phone numbers, and URLs.
-6. Run `cd "Backend" && node scripts/generate-ui-translations.js` to fill in the new keys for `hi`/`mr` (it only translates what's missing, so this is safe to re-run after every directory).
-7. Run `cd "Frontend" && npm run build` — must succeed with no errors (catches typos in `t()` keys/imports; it does not catch missing translation keys, since i18next falls back silently to the key string or `fallbackLng`).
+6. Run `cd "Frontend" && node scripts/generate-translations.js` to fill in the new keys for `hi`/`mr` (it only translates what's missing, so this is safe to re-run after every directory).
+7. Run `cd "Frontend" && bun run build` — must succeed with no errors (catches typos in `t()` keys/imports; it does not catch missing translation keys, since i18next falls back silently to the key string or `fallbackLng`).
 8. Manually load the affected page(s) in the browser in all three languages and visually confirm no leftover hardcoded English and no layout breakage from longer Hindi/Marathi strings (these tend to run longer than English — watch for text overflow/wrapping in buttons and nav-like elements especially).
 9. Commit with a message naming the directory, e.g. `git commit -m "Translate Courses components to i18next"`.
 
@@ -571,12 +648,12 @@ Apply this procedure once per directory below, in order. Each is its own task/co
 
 - [ ] **Step 1: Build**
 
-Run: `cd "Frontend" && npm run build`
+Run: `cd "Frontend" && bun run build`
 Expected: succeeds with no errors.
 
 - [ ] **Step 2: Full manual pass**
 
-Run: `cd "Frontend" && npm run dev`. In each of the three languages, visit: Home, About, Results, Courses, Contact, and (if reachable without real backend auth) the Admin/Teacher/Parent/Learner dashboard shells. Confirm nav, buttons, and headings are translated and no page is visibly broken.
+Run: `cd "Frontend" && bun run dev`. In each of the three languages, visit: Home, About, Results, Courses, Contact, and (if reachable without real backend auth) the Admin/Teacher/Parent/Learner dashboard shells. Confirm nav, buttons, and headings are translated and no page is visibly broken.
 
 - [ ] **Step 3: Commit any final fixes found during verification, then confirm clean tree**
 
@@ -584,6 +661,6 @@ Run: `git status` — expect a clean working tree with everything committed task
 
 ## What This Plan Does Not Do
 
-- Does not touch any backend code or the dynamic-content translation cache — that's `docs/superpowers/plans/2026-08-15-dynamic-translation-infrastructure.md`.
-- Does not attach an `X-Lang` header to any API call — there's no shared API client yet and no live endpoint reads it (see that plan's scope notes).
-- Does not add per-user account language preference — browser-only per the approved spec.
+- Does not touch any backend code — this whole feature is client-side only now (see the revision note at the top of this file for why the earlier Gemini+Supabase backend plan was reverted).
+- Does not wire `useTranslatedName` (Task 3b) into any specific component — it's built and ready, but this plan's scope is the static-text rollout; wiring it into a real dynamic-content display is left for whoever needs it next.
+- Does not add per-user account language preference — browser-only per the approved spec (now handled by `i18next-browser-languagedetector` instead of hand-rolled localStorage code).

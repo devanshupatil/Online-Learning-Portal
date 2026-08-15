@@ -1,5 +1,15 @@
 # Dynamic Content Translation Infrastructure Implementation Plan
 
+> **SUPERSEDED:** This plan was fully implemented and tested (all 9 tasks,
+> commits `27622f4`..`f23b7a4`), then reverted on the user's explicit
+> direction in favor of a simpler approach already proven in a sibling
+> project (`devanshupatil/MediFind`): dynamic content translation now goes
+> through a client-side `useTranslatedName`-style hook calling the free,
+> unofficial Google Translate endpoint directly from the browser, with an
+> in-memory cache — no backend, no `GEMINI_API_KEY`, no Supabase table. See
+> `2026-08-15-static-site-i18n-rollout.md` for the current approach. This
+> file is kept as a historical record only; do not execute it.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build a generic, hash-keyed translation cache service (Postgres/Supabase + Gemini) that any backend controller can call to translate free-text fields to Hindi or Marathi, plus the Express middleware that reads the caller's requested language. No existing endpoint has translatable free-text content yet, so this plan produces tested, standalone infrastructure — not wired into any route.
