@@ -10,13 +10,29 @@ tooling.
 ## Constraints & Decisions
 
 - **Translation engine**: reuse the existing Gemini setup already wired into
-  `Backend/llm.js` (`GOOGLE_API_KEY` / `@google/generative-ai`). No new
-  accounts, no paid API.
+  `Backend/llm.js` (`GOOGLE_API_KEY` / `@google/generative-ai`, though as a
+  new function — see below). No new accounts, no paid API.
 - **Rollout scope**: whole site at once (public pages + Admin/Teacher/Parent
-  dashboards), not phased.
-- **Dynamic content scope**: all user-entered text content across the app
-  (course info, announcements/notices, results remarks, profile text, and
-  anything added later) — not a fixed list of tables/fields.
+  dashboards), not phased — for **static UI text**.
+- **Dynamic content scope, revised after codebase check**: most pages
+  (Results, Courses, Contact, Parents, and much of Admin/Teacher) are
+  currently built against `Frontend/src/mockData/mockFetch.js` — a
+  documented stand-in for a disconnected real backend — not live Postgres
+  data. A grep of `Backend/models` and `Backend/controllers` also found no
+  existing free-text content fields (title/description/remark/announcement)
+  on any currently-real endpoint; live routes today cover study materials,
+  test materials, attendance, and student info, which are file/numeric data,
+  not translatable prose. There is also no shared API client (no
+  `axios.create`, no central fetch wrapper) to attach an `X-Lang` header to.
+  Given this, **v1 builds the dynamic-content translation infrastructure
+  (table + service functions below) but does not wire it into any endpoint
+  yet**, since no real endpoint currently has free-text content to
+  translate. It's built as a ready-to-use foundation: the next time a
+  feature adds a real free-text field (e.g. course descriptions once
+  Courses moves off mock data), wiring it in is one `translateFields(...)`
+  call plus one `X-Lang` header — no new schema or service work. Building
+  the missing CRUD/backend wiring for those pages is a separate, larger
+  effort, out of scope here.
 - **Source language**: all content is always authored in English. Hindi and
   Marathi versions are always derived from the English original — no
   source-language detection needed.
@@ -164,7 +180,8 @@ still exists as a fallback for content created before this feature shipped,
 or in the rare case a read races ahead of the background warm-up — it will
 simply pay the one-time Gemini latency for that specific string, once.
 
-**Request flow**:
+**Request flow (infrastructure only — not wired into any endpoint in v1, per
+the scope note above)**:
 
 - Frontend sends the current locale as a header, `X-Lang: hi|mr|en`, on API
   requests (read from the same i18next locale state used for static text).
@@ -176,6 +193,11 @@ simply pay the one-time Gemini latency for that specific string, once.
 - Controllers fetch data from Postgres as normal (always English at rest),
   then call `translateFields`/`translateRows` before responding when
   `req.lang !== 'en'`.
+- Note: there is no shared frontend API client today (no `axios.create`, no
+  central fetch wrapper) — this middleware and header convention are new
+  infrastructure to build, and since v1 has no real endpoint to attach them
+  to, they're implemented and unit-tested in isolation, ready for the next
+  real endpoint to use.
 
 ### 3. Language switcher (frontend)
 
@@ -230,3 +252,12 @@ API calls now send X-Lang: hi
   for now).
 - Source-language auto-detection (all content is authored in English).
 - Real-time/streaming translation UI (e.g. as-you-type preview).
+- Wiring dynamic-content translation into any specific endpoint (no real
+  endpoint has translatable free-text content yet — see Constraints above).
+  Building that CRUD/backend wiring for Courses/Results/etc. is a separate
+  effort.
+- Cleanup of stale `translations` rows: the table grows unboundedly as
+  content is edited (old hashes are simply never referenced again, not
+  deleted). Acceptable for v1 given the free-tooling goal and expected
+  content volume; can be revisited later with a simple periodic cleanup job
+  if it ever matters.
