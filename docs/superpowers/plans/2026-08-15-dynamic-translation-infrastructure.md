@@ -254,7 +254,56 @@ Add to `Backend/services/translate.test.js` (inside the existing `describe('tran
 
     expect(result).toBe('Hello');
   });
+
+  it('write-time cache warming: a second call for the same text is a cache hit (Gemini called only once)', async () => {
+    // A stateful fake, unlike the one-shot mocks above: it actually stores
+    // what upsert() writes and returns it from select(), so this test can
+    // prove the cache persists a value across two separate translateText
+    // calls — this is what the spec's "write-time cache warming" behavior
+    // means in practice: translate once, read from cache thereafter.
+    const store = new Map(); // key: `${content_hash}:${target_lang}` -> translated_text
+    supabase.from = jest.fn(() => ({
+      select: jest.fn(() => {
+        let hash, lang;
+        const builder = {
+          eq: jest.fn((col, val) => {
+            if (col === 'content_hash') hash = val;
+            if (col === 'target_lang') lang = val;
+            return builder;
+          }),
+          maybeSingle: jest.fn(async () => {
+            const key = `${hash}:${lang}`;
+            return store.has(key)
+              ? { data: { translated_text: store.get(key) }, error: null }
+              : { data: null, error: null };
+          }),
+        };
+        return builder;
+      }),
+      upsert: jest.fn(async (row) => {
+        store.set(`${row.content_hash}:${row.target_lang}`, row.translated_text);
+        return { data: null, error: null };
+      }),
+    }));
+
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    const generateContent = jest.fn().mockResolvedValue({
+      response: { text: () => 'अनुवादित' },
+    });
+    GoogleGenerativeAI.mockImplementation(() => ({
+      getGenerativeModel: () => ({ generateContent }),
+    }));
+
+    const first = await translateText('Warm me up', 'hi');
+    const second = await translateText('Warm me up', 'hi');
+
+    expect(first).toBe('अनुवादित');
+    expect(second).toBe('अनुवादित');
+    expect(generateContent).toHaveBeenCalledTimes(1); // second call hit the cache, not Gemini
+  });
 ```
+
+Note: `translateFields`/`translateRows` (Tasks 5-6) both call `translateText` for each field/row — they don't duplicate its caching logic. This test at the `translateText` level is therefore the right place to prove the cache-then-hit behavior; there's no need to repeat it at the `translateFields`/`translateRows` level once those are implemented.
 
 **Why these tests will actually work**: the implementation in Step 3 below constructs the `GoogleGenerativeAI` client *lazily, inside* `geminiTranslate` on each call — not once at module load. If it were constructed once at the top of the file (a module-level singleton), the singleton would be built from `@google/generative-ai`'s default automock (before any test's `.mockImplementation(...)` runs), and every test in this file would silently get that same stale, unconfigured client — no test would ever reach the real mock behavior it sets up. Constructing it fresh inside `geminiTranslate` avoids this entirely: each call to `new GoogleGenerativeAI(...)` picks up whatever `.mockImplementation(...)` the current test configured first.
 
