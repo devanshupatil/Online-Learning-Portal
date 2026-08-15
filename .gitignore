@@ -37,6 +37,9 @@ terraform.tfvars
 crash.log
 crash.*.log
 
+# Git worktrees (isolated implementation workspaces)
+.worktrees/
+
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json
