@@ -28,7 +28,8 @@ rest of the frontend (no backend is connected yet).
 - `Frontend/src/components/Results/ResultsPage.jsx` — top-level page. Renders
   `SiteNav active="Results"`, the 14 section components in order, then
   `SiteFooter`. Mirrors the structure of `AboutPage.jsx`.
-- `Frontend/src/components/Results/sections/` — one file per section:
+- `Frontend/src/components/Results/sections/` — one file per section, in
+  render order (see §4 for the same order):
   - `ResultsHero.jsx`
   - `OverallStats.jsx`
   - `YearwiseResults.jsx`
@@ -38,10 +39,11 @@ rest of the frontend (no backend is connected yet).
   - `SubjectToppers.jsx`
   - `ClasswiseResults.jsx`
   - `GrowthChart.jsx`
-  - `TopperGallery.jsx`
   - `SuccessStories.jsx`
+  - `TopperGallery.jsx`
   - `Testimonials.jsx`
   - `FinalCTA.jsx`
+  - `AchieverCard.jsx` — shared card used by TopAchievers/NinetyPlusAchievers/EightyPlusAchievers
 - `Frontend/src/components/ui/InitialsAvatar.jsx` — reusable avatar component,
   `<InitialsAvatar name="Rahul Patil" size="lg" />`. Deterministic background
   color chosen from a small fixed palette via a hash of the name string.
@@ -53,9 +55,11 @@ rest of the frontend (no backend is connected yet).
 ## 4. Section-by-section content
 
 1. **ResultsHero** — heading "Our Results, Our Pride", subtitle, background
-   treatment consistent with `HeroSection.jsx` (gradient/glass over an
-   achievement-themed image), CTA button "View Our Achievers" that smooth-scrolls
-   to the Top Achievers section.
+   treatment consistent with `Home.jsx`'s hero section (lines 33-76: Material-3
+   tokens, `glass-panel`, gradient text — **not** the unused `HeroSection.jsx`,
+   which uses a different, orphaned design system and isn't imported anywhere).
+   CTA button "View Our Achievers" that smooth-scrolls to `TopAchievers`, which
+   must expose `id="top-achievers"` for the anchor to target.
 2. **OverallStats** — 5 large stat cards: 95%+ Pass Rate, 500+ Students Scored
    80%+, 100+ Students Scored 90%+, School/College Toppers count, Years of
    Consistent Results. Same stat-card pattern used in `Home.jsx`'s About section.
@@ -65,21 +69,26 @@ rest of the frontend (no backend is connected yet).
    name, class, year) plus a grid of the next several top achievers.
 5. **NinetyPlusAchievers** — grid of student cards: `InitialsAvatar`, name, %,
    class, batch, school/board.
-6. **EightyPlusAchievers** — larger grid, same card shape, with filter controls
-   (Year, Class, % range, Stream) implemented as plain styled `<select>`s driving
-   client-side filtering of `resultsData.ACHIEVERS_80_PLUS`.
+6. **EightyPlusAchievers** — larger grid, with filter controls (Year, Class, %
+   range, Stream) implemented as plain styled `<select>`s driving client-side
+   filtering of `resultsData.ACHIEVERS_80_PLUS`. Card layout is visually
+   consistent with the 90+ cards but renders whichever fields that section's
+   data provides (see §5 — 80+ cards show year/stream, not batch/school).
 7. **SubjectToppers** — table/grid of Subject → Student → Marks (e.g.
    Mathematics, Science/Physics/Chemistry/Biology, English).
 8. **ClasswiseResults** — cards for Class 8–12: appeared, pass %, highest score,
    80%+ count.
-9. **GrowthChart** — `recharts` bar or line chart of pass % (or avg %) across
-   2022→2026, single series, simple tooltip.
-10. **TopperGallery** — "premium gallery" grid of category tiles (School
+9. **GrowthChart** — `recharts` bar or line chart of pass % across the 4
+   academic years, single series, simple tooltip. Data is derived directly from
+   `RESULTS_BY_YEAR` (mapping `{ year, passPercentage }`) rather than a separate
+   dataset, so the chart can never disagree with the Year-wise Results section
+   for the same year.
+10. **SuccessStories** — 3 detailed stories, each: Student → Challenge →
+    Preparation → Result, in a card/timeline layout.
+11. **TopperGallery** — "premium gallery" grid of category tiles (School
     Toppers, Class Toppers, Subject Toppers, Prize Distribution) using
     gradient/icon tiles rather than fabricated event photos, since no real
     photos exist.
-11. **SuccessStories** — 3 detailed stories, each: Student → Challenge →
-    Preparation → Result, in a card/timeline layout.
 12. **Testimonials** — short quote cards from students/parents (reuses
     `InitialsAvatar` for attribution).
 13. ~~Result Verification~~ — **omitted** (see §2).
@@ -87,11 +96,18 @@ rest of the frontend (no backend is connected yet).
     with Wakhare Classes today." with **Explore Courses** and **Enroll Now**
     buttons linking to `/#courses` and `/#enroll` respectively.
 
-Visual order matches the "Best visual flow" given in the original request: Hero →
-Overall Statistics → Year-wise Results → Top Achievers → 90%+ Achievers → 80%+
-Achievers → Subject Toppers → Class-wise Results → Growth Chart → Success
-Stories → Gallery → Testimonials → Final CTA. (Gallery is placed after Success
-Stories per that ordering, ahead of Testimonials.)
+This order (Hero → Stats → Year-wise → Top Achievers → 90%+ → 80%+ → Subject
+Toppers → Class-wise → Growth Chart → Success Stories → Gallery → Testimonials →
+Final CTA) matches the "Best visual flow" from the original request and is the
+single source of truth for both the file list in §3 and the render order in
+`ResultsPage.jsx` — no other ordering appears elsewhere in this doc.
+
+All three achiever sections (TopAchievers, NinetyPlusAchievers,
+EightyPlusAchievers) render through one shared `AchieverCard` component
+(`Results/sections/AchieverCard.jsx`) that accepts `{ name, percentage, class,
+...rest }` and displays whichever optional fields (`batch`, `school`, `year`,
+`stream`) are present, so the visual language stays identical without forcing a
+single rigid schema.
 
 ## 5. Mock data shape (`resultsData.js`)
 
@@ -124,11 +140,6 @@ export const SUBJECT_TOPPERS = [
 
 export const CLASSWISE_RESULTS = [
   { class: 'Class 10', appeared, passPercentage, highestScore, eightyPlusCount },
-];
-
-export const GROWTH_DATA = [
-  { year: '2022', passPercentage },
-  // ...through 2026
 ];
 
 export const SUCCESS_STORIES = [
