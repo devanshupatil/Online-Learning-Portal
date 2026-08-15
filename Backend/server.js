@@ -6,6 +6,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS = process.env.KEYFILENAME;
 const port = process.env.PORT || 4000; // You can use any port number
 
 const supabase = require('./config/supabaseDB');
+const langMiddleware = require('./middleware/lang-middleware');
 const teacherRoutes = require('./routes/teachers-routes');
 const leranerRoutes = require('./routes/leraner-routes');
 const adminRoutes = require('./routes/admin-routes');
@@ -42,7 +43,7 @@ app.use(cors({
     // process.env.BACKEND__LOCALHOST_URL,
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Lang'],
   credentials: true,
   preflightContinue: false
 }));
@@ -60,6 +61,8 @@ app.get('/api/health', (req, res) => {
 // app.options('*', cors());
 
 app.use(express.json());
+
+app.use(langMiddleware);
 
 // // Routes
 // app.use('/api', router);
