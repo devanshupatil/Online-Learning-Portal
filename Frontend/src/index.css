@@ -69,6 +69,16 @@ body {
   --color-tertiary-container: #996100;
   --color-background: #f7f9fb;
   --color-on-background: #191c1e;
+
+  --color-primary-container: #2563eb;
+  --color-on-primary-container: #eeefff;
+  --color-secondary-fixed: #e2dfff;
+  --color-on-secondary-fixed: #0f0069;
+  --color-primary-fixed: #dbe1ff;
+  --color-on-primary-fixed: #00174b;
+  --color-surface-variant: #e0e3e5;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-bright: #f7f9fb;
 }
 
 .material-symbols-outlined {
