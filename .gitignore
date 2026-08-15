@@ -40,6 +40,9 @@ crash.*.log
 # Git worktrees (isolated implementation workspaces)
 .worktrees/
 
+# Jest transform cache (created in repo root by bunx jest)
+jest_rs/
+
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json
