@@ -162,23 +162,26 @@ async function translateRows(rows, fields, targetLang, concurrency = 5) {
   — just one `translateFields`/`translateRows` call in the relevant
   controller.
 
-**Cache warming on write** (avoids cold-cache latency on read): when
-translatable content is created or updated (course saved, announcement
-posted, remarks entered), the controller fires `translateText` for `hi` and
-`mr` in the background, without awaiting it in the response cycle:
+**Cache warming on write** (avoids cold-cache latency on read) — like the
+rest of this section, this is a pattern to apply once a real create/update
+controller exists; it is not wired into anything in v1 since Courses and
+similar content still run on mock data. When that wiring happens, the
+pattern is: the controller fires `translateText` for `hi` and `mr` in the
+background, without awaiting it in the response cycle:
 
 ```js
-// after saving `course` in the create/update controller:
+// illustrative — inside a *future* real course create/update controller:
 res.json(course); // respond immediately, don't block on translation
 translateFields({ ...course }, ['description'], 'hi').catch(() => {});
 translateFields({ ...course }, ['description'], 'mr').catch(() => {});
 ```
 
 This means the common case (many reads, few writes) almost always hits a
-warm cache. The synchronous on-read path in `translateText`/`translateRows`
-still exists as a fallback for content created before this feature shipped,
-or in the rare case a read races ahead of the background warm-up — it will
-simply pay the one-time Gemini latency for that specific string, once.
+warm cache once wired up. The synchronous on-read path in
+`translateText`/`translateRows` still exists as a fallback for content
+created before this pattern was applied to a given endpoint, or in the rare
+case a read races ahead of the background warm-up — it will simply pay the
+one-time Gemini latency for that specific string, once.
 
 **Request flow (infrastructure only — not wired into any endpoint in v1, per
 the scope note above)**:
@@ -203,11 +206,17 @@ the scope note above)**:
 
 - A dropdown/toggle component (in the header/nav, near where the hamburger
   menu lives) with the three languages.
-- On change: calls `i18next.changeLanguage(lang)`, writes `lang` to
-  `localStorage`, and updates the `X-Lang` header used by the API client for
-  subsequent requests (e.g. via an axios/fetch interceptor reading from the
-  same localStorage key).
+- On change: calls `i18next.changeLanguage(lang)` and writes `lang` to
+  `localStorage`. This alone drives all static-text translation (v1's actual
+  scope) with no backend involvement.
 - On app load: reads `localStorage`, falls back to `'en'` if unset.
+- **Deferred, matching the backend scope note above**: attaching `X-Lang` to
+  API requests requires a shared API client (there is none today — no
+  `axios.create`, no central fetch wrapper) to add an interceptor to. Since
+  v1 has no real endpoint that reads `X-Lang` either, building that
+  interceptor now would be speculative infrastructure with nothing to
+  consume it. It's built alongside the first real endpoint that needs
+  dynamic-content translation, not in this v1.
 
 ## Data Flow Summary
 
@@ -232,14 +241,20 @@ API calls now send X-Lang: hi
 
 ## Testing
 
+Since v1's dynamic-content service has no real controller to attach to yet
+(see Constraints), the service-level tests below call `translateText` /
+`translateFields` / `translateRows` directly with synthetic objects — they
+do not go through a live HTTP create/edit/view flow.
+
 - Unit test `translateText`: cache hit path, cache miss path (mocked Gemini
   call), and fallback-to-English on error.
 - Unit test `translateRows` bounded concurrency (e.g. 20 rows, concurrency 5,
   mocked Gemini calls — verify all rows get translated and no more than 5
   calls are in flight at once).
-- Verify write-time background warming: after creating/updating content,
-  confirm a `translations` row appears for `hi`/`mr` without a subsequent
-  read ever needing to call Gemini synchronously.
+- Unit test the write-time cache-warming pattern in isolation: call
+  `translateFields` in "fire and forget" style on a synthetic object and
+  confirm a `translations` row appears for `hi`/`mr`, and that a subsequent
+  `translateText` call for the same string is a cache hit (no Gemini call).
 - Manual pass through each major page (Home, About, Results, Courses,
   Contact, Admin/Teacher/Parent dashboards) in all three languages to catch
   missing i18next keys and layout issues from longer Hindi/Marathi strings.
