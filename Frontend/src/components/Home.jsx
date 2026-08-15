@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import bgImage from "../assets/bgImage.png";
 import studentImage from "../assets/student.jpg";
 import { SiteNav, SiteFooter } from "./SiteChrome";
@@ -59,17 +60,17 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <a
-              className="px-8 py-4 rounded-[1.25rem] gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center"
+              className="inline-flex items-center justify-center px-6 py-[6px] rounded-full gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
               href="#enroll"
             >
               Enroll Now
             </a>
-            <a
-              className="px-8 py-4 rounded-[1.25rem] border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all text-center"
-              href="#courses"
+            <Link
+              className="inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all text-center h-9"
+              to="/login"
             >
-              Explore Courses
-            </a>
+              Login
+            </Link>
           </div>
         </div>
       </section>
@@ -128,7 +129,7 @@ const Home = () => {
                 ))}
               </div>
               <a
-                className="inline-flex items-center justify-center px-8 py-4 rounded-[1.25rem] gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1"
+                className="inline-flex items-center justify-center px-6 py-[6px] rounded-full gradient-btn text-white font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
                 href="#courses"
               >
                 Explore Our Courses
