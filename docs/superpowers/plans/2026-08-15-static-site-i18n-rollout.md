@@ -555,8 +555,8 @@ Apply this procedure once per directory below, in order. Each is its own task/co
 **Directories to migrate, in this order** (`Frontend/src/components/`):
 
 - [ ] **Task 5:** Root-level pages: `Home.jsx`, `AboutPage.jsx`
-- [ ] **Task 6:** `Contact/` (all `.jsx` files)
-- [ ] **Task 7:** `Courses/` (all `.jsx` files)
+- [ ] **Task 6:** `Contact/` (all `.jsx` files, including `Contact/sections/`)
+- [ ] **Task 7:** `Courses/` (all `.jsx` files, including `Courses/sections/`)
 - [ ] **Task 8:** `Results/` (all `.jsx` files, including `Results/sections/`)
 - [ ] **Task 9:** `Auth/` (all `.jsx` files)
 - [ ] **Task 10:** `Parents/` (all `.jsx` files)

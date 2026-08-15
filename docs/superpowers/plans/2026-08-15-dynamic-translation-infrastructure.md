@@ -226,20 +226,7 @@ Add to `Backend/services/translate.test.js` (inside the existing `describe('tran
       getGenerativeModel: () => ({ generateContent }),
     }));
 
-    // translate.js caches its genAI client at module load time, so re-require
-    // fresh for this test after setting up the mock implementation.
-    jest.resetModules();
-    jest.mock('../config/supabaseDB');
-    jest.mock('@google/generative-ai');
-    const supabaseFresh = require('../config/supabaseDB');
-    supabaseFresh.from = jest.fn().mockReturnValue({ select, upsert });
-    const { GoogleGenerativeAI: GenAIFresh } = require('@google/generative-ai');
-    GenAIFresh.mockImplementation(() => ({
-      getGenerativeModel: () => ({ generateContent }),
-    }));
-    const { translateText: translateTextFresh } = require('./translate');
-
-    const result = await translateTextFresh('Hello', 'hi');
+    const result = await translateText('Hello', 'hi');
 
     expect(result).toBe('नमस्ते');
     expect(generateContent).toHaveBeenCalledTimes(1);
@@ -269,6 +256,8 @@ Add to `Backend/services/translate.test.js` (inside the existing `describe('tran
   });
 ```
 
+**Why these tests will actually work**: the implementation in Step 3 below constructs the `GoogleGenerativeAI` client *lazily, inside* `geminiTranslate` on each call — not once at module load. If it were constructed once at the top of the file (a module-level singleton), the singleton would be built from `@google/generative-ai`'s default automock (before any test's `.mockImplementation(...)` runs), and every test in this file would silently get that same stale, unconfigured client — no test would ever reach the real mock behavior it sets up. Constructing it fresh inside `geminiTranslate` avoids this entirely: each call to `new GoogleGenerativeAI(...)` picks up whatever `.mockImplementation(...)` the current test configured first.
+
 - [ ] **Step 2: Run tests to verify the new ones fail**
 
 Run: `cd "Backend" && npx jest services/translate.test.js`
@@ -283,13 +272,15 @@ const crypto = require('crypto');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const supabase = require('../config/supabaseDB');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 function hashText(text) {
   return crypto.createHash('sha256').update(text, 'utf8').digest('hex');
 }
 
+// Constructed fresh on every call, deliberately — see the note above Task 4's
+// tests for why this must not be a module-level singleton built once at
+// require time.
 async function geminiTranslate(text, targetLang) {
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   const model = genAI.getGenerativeModel({
     model: process.env.GEMINI_MODEL || 'gemini-1.5-pro',
   });
@@ -333,7 +324,7 @@ module.exports = { translateText, hashText, geminiTranslate };
 - [ ] **Step 4: Run tests to verify they pass**
 
 Run: `cd "Backend" && npx jest services/translate.test.js`
-Expected: PASS (3 tests). If the cache-miss test's re-require dance is flaky, simplify: since `translate.js` reads `GEMINI_API_KEY` and constructs `genAI` once at module load, and `jest.mock('@google/generative-ai')` auto-mocks the whole module before any `require`, the plain (non-"Fresh") `GoogleGenerativeAI.mockImplementation(...)` set before calling `translateText` is sufficient as long as `jest.mock(...)` calls are at the top of the test file (Jest hoists them above imports automatically) — if the simpler version passes, drop the `jest.resetModules()`/"Fresh" variable dance and keep the test simpler.
+Expected: PASS (3 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -606,7 +597,7 @@ git commit -m "Add X-Lang request middleware defaulting to English"
 ### Task 8: Wire the middleware into the Express app and allow the header through CORS
 
 **Files:**
-- Modify: `Backend/server.js:8` (add require), `Backend/server.js:44-48` (CORS `allowedHeaders`), `Backend/server.js:62` (app.use)
+- Modify: `Backend/server.js:8` (add require), `Backend/server.js:45` (CORS `allowedHeaders`), `Backend/server.js:62` (app.use) — line numbers as of this writing; use the anchor text in each step below to locate them if the file has shifted
 
 - [ ] **Step 1: Add the require**
 
