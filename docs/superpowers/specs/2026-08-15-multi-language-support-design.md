@@ -66,7 +66,19 @@ Two independent mechanisms, both backed by Gemini:
 
 ### 2. Dynamic content (generic translation cache)
 
-**Table** (Postgres):
+**DB access note**: this codebase's live DB access path is the **Supabase JS
+client** (`Backend/config/supabaseDB.js`, used by `server.js`,
+`admin-controller.js`, `student-models.js`, `teacher-models.js`). The raw
+`pg`/Cloud SQL Connector pool in `Backend/postgresDB.js` is dead code —
+`student-models.js` has it commented out in favor of Supabase. The
+`translations` table is therefore created via the same manual-SQL convention
+already used in this repo (see the root `postgreSQL querys` file — schema is
+written there and run manually against the Supabase Postgres instance, there
+is no migration tool), and all reads/writes in `Backend/services/translate.js`
+go through `supabase.from('translations')...`, not `db.query(...)`.
+
+**Table** (append to the root `postgreSQL querys` file, run manually in the
+Supabase SQL editor, matching existing convention):
 
 ```sql
 CREATE TABLE translations (
@@ -106,23 +118,30 @@ async function geminiTranslate(text, targetLang) {
 **Backend helper** (`Backend/services/translate.js`):
 
 ```js
+const supabase = require('../config/supabaseDB');
+
 async function translateText(text, targetLang) {
   if (!text || targetLang === 'en') return text;
   const hash = sha256(text);
-  const cached = await db.query(
-    'SELECT translated_text FROM translations WHERE content_hash=$1 AND target_lang=$2',
-    [hash, targetLang]
-  );
-  if (cached.rows[0]) return cached.rows[0].translated_text;
+
+  const { data: cached } = await supabase
+    .from('translations')
+    .select('translated_text')
+    .eq('content_hash', hash)
+    .eq('target_lang', targetLang)
+    .maybeSingle();
+  if (cached) return cached.translated_text;
 
   try {
     const translated = await geminiTranslate(text, targetLang);
-    // ON CONFLICT DO NOTHING: benign if two concurrent requests race to
-    // translate the same new string — both succeed, one INSERT is dropped.
-    await db.query(
-      'INSERT INTO translations (content_hash, target_lang, translated_text) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
-      [hash, targetLang, translated]
-    );
+    // upsert with ignoreDuplicates: benign if two concurrent requests race
+    // to translate the same new string — both succeed, one insert is dropped.
+    await supabase
+      .from('translations')
+      .upsert(
+        { content_hash: hash, target_lang: targetLang, translated_text: translated },
+        { onConflict: 'content_hash,target_lang', ignoreDuplicates: true }
+      );
     return translated;
   } catch (err) {
     console.error('Translation failed, falling back to English:', err.message);
