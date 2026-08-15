@@ -5,7 +5,7 @@ html {
 }
 
 body {
-  font-family: 'Slabo 27px', serif;
+  font-family: 'Roboto', sans-serif;
   overflow-x: hidden;
 }
 
@@ -15,7 +15,8 @@ body {
 
 /* Tailwind CSS 4 Configuration */
 @theme {
-  --font-sans: 'Slabo 27px', serif;
+  --font-sans: 'Roboto', sans-serif;
+  --font-display: 'Slabo 27px', serif;
 
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
@@ -49,8 +50,17 @@ body {
   --spacing-32: 8rem;
 
   --color-primary: #004ac6;
+  --color-primary-foreground: #ffffff;
   --color-secondary: #4b41e1;
+  --color-secondary-foreground: #ffffff;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-accent: #e8f0fe;
+  --color-accent-foreground: #004ac6;
+  --color-ring: #004ac6;
+  --color-input: #c3c6d7;
   --color-on-surface: #191c1e;
+  --color-foreground: #191c1e;
   --color-on-surface-variant: #434655;
   --color-surface: #f7f9fb;
   --color-surface-container-lowest: #ffffff;
@@ -365,13 +375,6 @@ body {
 }
 
 /* Optimize font loading */
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2') format('woff2');
-}
 
 /* Optimize image loading */
 img {

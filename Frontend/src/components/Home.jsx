@@ -47,7 +47,7 @@ const Home = () => {
             <span className="material-symbols-outlined text-[16px]">school</span>
             ADMISSIONS OPEN FOR 2026-2027
           </span>
-          <h1 className="text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] font-extrabold text-on-surface mb-6 max-w-4xl mx-auto tracking-tight">
+          <h1 className="font-display text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] text-on-surface mb-6 max-w-4xl mx-auto tracking-tight">
             Building Bright Futures Through{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
               Quality Education
@@ -100,7 +100,7 @@ const Home = () => {
               <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary bg-primary/10 mb-4">
                 ABOUT US
               </span>
-              <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface font-bold mb-6 tracking-tight">
+              <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface mb-6 tracking-tight">
                 Committed to Nurturing Every Learner
               </h2>
               <p className="text-lg text-on-surface-variant mb-8">
@@ -145,7 +145,7 @@ const Home = () => {
             <span className="inline-block px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary bg-primary/10 mb-4">
               OUR PRIDE
             </span>
-            <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface font-bold mb-6 tracking-tight">
+            <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface mb-6 tracking-tight">
               Star Achievers 2025
             </h2>
             <p className="text-lg md:text-xl text-on-surface-variant max-w-2xl mx-auto">

@@ -712,8 +712,8 @@ const TestManager = () => {
       {/* Analysis Modal */}
       {showAnalysisModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100">
-          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto font-serif">
-            <h3 className="text-3xl font-extrabold text-gray-900 mb-6 text-center font-serif">Image Analysis Results</h3>
+          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto">
+            <h3 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">Image Analysis Results</h3>
             <div className="mb-6">
               <div className="space-y-6">
                 {Array.isArray(editingAnalysis.analysis.questions) && editingAnalysis.analysis.questions.length > 0 ? (
