@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import ButtonWithIcon from "./ui/button-witn-icon";
+import LanguageSwitcher from "./LanguageSwitcher";
 
+// `label` here is a stable English id used for route-active comparisons
+// (e.g. <SiteNav active="About" />) — it is NOT displayed directly.
+// Display text comes from navLabelKey via t(), so it can be translated
+// without breaking the active-page highlighting logic below.
 export const navLinks = [
-  { label: "Home", path: "/" },
-  { label: "About", path: "/about" },
-  { label: "Results", path: "/results" },
-  { label: "Courses", path: "/courses" },
-  { label: "Contact", path: "/contact" },
+  { label: "Home", path: "/", navLabelKey: "navHome" },
+  { label: "About", path: "/about", navLabelKey: "navAbout" },
+  { label: "Results", path: "/results", navLabelKey: "navResults" },
+  { label: "Courses", path: "/courses", navLabelKey: "navCourses" },
+  { label: "Contact", path: "/contact", navLabelKey: "navContact" },
 ];
 
 const NavItem = ({ path, className, children, onClick }) => {
@@ -28,6 +34,7 @@ const NavItem = ({ path, className, children, onClick }) => {
 export const SiteNav = ({ active = "Home" }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -47,18 +54,19 @@ export const SiteNav = ({ active = "Home" }) => {
                     : "font-bold text-on-surface-variant hover:text-primary transition-colors hover:opacity-90 transition-all duration-300"
                 }
               >
-                {link.label}
+                {t(link.navLabelKey)}
               </NavItem>
             ))}
           </div>
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
             <a
               className="inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
               href="/#enroll"
             >
-              Enroll Now
+              {t("navEnrollNow")}
             </a>
-            <ButtonWithIcon label="Login" onClick={() => navigate("/login")} />
+            <ButtonWithIcon label={t("navLogin")} onClick={() => navigate("/login")} />
           </div>
           <button
             className="md:hidden text-on-surface p-2"
@@ -86,7 +94,8 @@ export const SiteNav = ({ active = "Home" }) => {
             : "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-full transition-transform duration-300 ease-in-out"
         }
       >
-        <div className="flex justify-end items-center h-20 px-6 border-b border-outline-variant">
+        <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
+          <LanguageSwitcher />
           <button
             className="text-on-surface p-2"
             onClick={() => setMenuOpen(false)}
@@ -107,7 +116,7 @@ export const SiteNav = ({ active = "Home" }) => {
                   : "font-bold text-on-surface-variant hover:text-primary transition-colors py-3"
               }
             >
-              {link.label}
+              {t(link.navLabelKey)}
             </NavItem>
           ))}
           <a
@@ -115,10 +124,10 @@ export const SiteNav = ({ active = "Home" }) => {
             href="/#enroll"
             onClick={() => setMenuOpen(false)}
           >
-            Enroll Now
+            {t("navEnrollNow")}
           </a>
           <ButtonWithIcon
-            label="Login"
+            label={t("navLogin")}
             className="w-full"
             onClick={() => {
               setMenuOpen(false);
@@ -132,17 +141,16 @@ export const SiteNav = ({ active = "Home" }) => {
 };
 
 export const SiteFooter = () => {
+  const { t } = useTranslation();
   return (
     <footer className="relative w-full bg-surface-container-highest border-t border-outline-variant mt-[120px]">
       <div className="max-w-[1280px] mx-auto px-6 py-[120px] grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="col-span-1 md:col-span-1">
           <h3 className="font-display text-2xl text-primary mb-4">EduLearning Platform</h3>
-          <p className="text-on-surface-variant mb-6">
-            Excellence in Education since 2011. Building foundations for future leaders.
-          </p>
+          <p className="text-on-surface-variant mb-6">{t("footerTagline")}</p>
         </div>
         <div>
-          <h4 className="text-2xl text-on-surface mb-4">Quick Links</h4>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerQuickLinks")}</h4>
           <ul className="space-y-3">
             {navLinks.map((link) => (
               <li key={link.label}>
@@ -150,14 +158,14 @@ export const SiteFooter = () => {
                   path={link.path}
                   className="text-on-surface-variant hover:text-primary transition-colors hover:translate-x-1 transition-transform duration-200 inline-block"
                 >
-                  {link.label}
+                  {t(link.navLabelKey)}
                 </NavItem>
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h4 className="text-2xl text-on-surface mb-4">Contact Info</h4>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerContactInfo")}</h4>
           <ul className="space-y-3 text-on-surface-variant">
             <li className="flex items-start gap-2">
               <span className="material-symbols-outlined text-primary">location_on</span>
@@ -175,9 +183,7 @@ export const SiteFooter = () => {
         </div>
       </div>
       <div className="border-t border-outline-variant/30 py-6 text-center">
-        <p className="text-on-surface-variant">
-          © 2026 EduLearning Platform. Excellence in Education.
-        </p>
+        <p className="text-on-surface-variant">{t("footerCopyright")}</p>
       </div>
     </footer>
   );
