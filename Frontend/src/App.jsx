@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
+import AboutPage from './components/AboutPage'
 import LearnersPage from './components/Leraners/LearnersPage'
 import TeachersPage from './components/Teacher/TeachersPage'
 import ParentsPage from './components/Parents/ParentsPage'
@@ -24,6 +25,7 @@ function App() {
           <Routes>
             {/* Define your routes here */}
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<AuthPage />} />
             <Route path="/learners/*" element={<LearnersPage />} />
