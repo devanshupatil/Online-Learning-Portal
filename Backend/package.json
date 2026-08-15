@@ -30,5 +30,10 @@
   },
   "devDependencies": {
     "jest": "^30.4.2"
+  },
+  "jest": {
+    "setupFiles": [
+      "dotenv/config"
+    ]
   }
 }
