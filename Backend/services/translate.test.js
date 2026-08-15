@@ -147,3 +147,28 @@ describe('translateFields', () => {
     spy.mockRestore();
   });
 });
+
+describe('translateRows', () => {
+  it('translates every row and never exceeds the given concurrency', async () => {
+    const translate = require('./translate');
+    let inFlight = 0;
+    let maxInFlight = 0;
+
+    const spy = jest.spyOn(translate, 'translateText').mockImplementation(async (text) => {
+      inFlight += 1;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      inFlight -= 1;
+      return `translated:${text}`;
+    });
+
+    const rows = Array.from({ length: 20 }, (_, i) => ({ title: `row${i}` }));
+    await translate.translateRows(rows, ['title'], 'hi', 5);
+
+    expect(rows.every((r) => r.title.startsWith('translated:'))).toBe(true);
+    expect(maxInFlight).toBeLessThanOrEqual(5);
+    expect(spy).toHaveBeenCalledTimes(20);
+
+    spy.mockRestore();
+  });
+});

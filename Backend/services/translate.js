@@ -57,4 +57,16 @@ async function translateFields(obj, fields, targetLang) {
   return obj;
 }
 
-module.exports = { translateText, translateFields, hashText, geminiTranslate };
+async function translateRows(rows, fields, targetLang, concurrency = 5) {
+  const queue = [...rows];
+  const workers = Array.from({ length: concurrency }, async () => {
+    while (queue.length) {
+      const row = queue.shift();
+      await module.exports.translateFields(row, fields, targetLang);
+    }
+  });
+  await Promise.all(workers);
+  return rows;
+}
+
+module.exports = { translateText, translateFields, translateRows, hashText, geminiTranslate };
