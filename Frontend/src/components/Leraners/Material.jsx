@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { FileText, Video, Eye, CloudCog } from 'lucide-react';
-import { MaterialViewer, detectFileType, getFileTypeInfo } from './MaterialViewer';
+import { useTranslation } from 'react-i18next';
+import { MaterialViewer, detectFileType } from './MaterialViewer';
 import { mockFetch } from '../../mockData/mockFetch';
 
 const Material = () => {
+  const { t } = useTranslation();
 
   const URL = import.meta.env.VITE_BACKEND_URL;
   const [materials, setMaterials] = useState([]);
@@ -26,7 +27,6 @@ const Material = () => {
       }
 
       const data = await response.json();
-      // console.log('Fetched study materials:', data);
       if (data.studyMaterials) {
         setMaterials(data.studyMaterials);
       }
@@ -39,7 +39,7 @@ const Material = () => {
 
   useEffect(() => {
     fetchStudyMaterials();
-  } , []);
+  }, []);
 
   const handleViewMaterial = (material) => {
     if (material.url) {
@@ -54,46 +54,18 @@ const Material = () => {
     setSelectedMaterial(null);
   };
 
-
-
-  // Mock data for materials
-  const materialsData = [
-    {
-      id: 1,
-      title: 'Algebra Basics Notes',
-      type: 'document',
-      subject: 'Mathematics',
-      date: '2023-05-15'
-    },
-    {
-      id: 2,
-      title: 'Physics Lecture Video',
-      type: 'video',
-      subject: 'Physics',
-      date: '2023-05-18'
-    },
-    {
-      id: 3,
-      title: 'Chemistry Lab Manual',
-      type: 'document',
-      subject: 'Chemistry',
-      date: '2023-05-20'
-    }
-  ];
-
   const getIcon = (fileName) => {
     const fileType = detectFileType(fileName);
-    const fileTypeInfo = getFileTypeInfo(fileType);
 
     switch (fileType) {
       case 'pdf':
-        return <FileText className={`w-5 h-5 ${fileTypeInfo.color}`} />;
+        return 'picture_as_pdf';
       case 'image':
-        return <Eye className={`w-5 h-5 ${fileTypeInfo.color}`} />;
+        return 'image';
       case 'video':
-        return <Video className="w-5 h-5 text-red-500" />;
+        return 'smart_display';
       default:
-        return <FileText className="w-5 h-5 text-gray-500" />;
+        return 'description';
     }
   };
 
@@ -102,15 +74,16 @@ const Material = () => {
 
     switch (fileType) {
       case 'pdf':
-        return 'bg-red-50';
+        return 'bg-tertiary-container/10 text-tertiary-container';
       case 'image':
-        return 'bg-blue-50';
+        return 'bg-accent text-primary';
       case 'video':
-        return 'bg-red-50';
+        return 'bg-secondary/10 text-secondary';
       default:
-        return 'bg-gray-50';
+        return 'bg-surface-container-low text-on-surface-variant';
     }
   };
+
   const formatFileSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -119,53 +92,58 @@ const Material = () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
-      <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-        <div className="flex items-center">
-          <FileText className="w-5 h-5 text-green-600 mr-2" />
-          <h3 className="text-lg font-semibold text-gray-900">Material</h3>
-        </div>
+    <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+      <div className="px-6 py-4 border-b border-outline-variant flex items-center gap-2">
+        <span className="material-symbols-outlined text-[24px] text-primary">folder_open</span>
+        <h3 className="font-display text-2xl text-on-surface">{t('learnerMaterialTitle')}</h3>
       </div>
-      
-      <div className="p-4 space-y-4">
+
+      <div className="p-6 space-y-4">
         {loading ? (
-          <p className="text-center text-gray-500">Loading materials...</p>
+          <p className="text-center text-on-surface-variant">{t('learnerMaterialLoading')}</p>
         ) : materials.length > 0 ? (
           materials.map((item, index) => (
-            <div key={index} className="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-all duration-300 hover:border-green-300">
-              <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${getIconBg(item.name)}`}>
-                {getIcon(item.name)}
+            <div
+              key={index}
+              className="flex items-center p-4 bg-surface-container-lowest border border-outline-variant rounded-xl hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
+            >
+              <div
+                className={`flex items-center justify-center w-12 h-12 rounded-xl shrink-0 ${getIconBg(item.name)}`}
+              >
+                <span className="material-symbols-outlined text-[24px]">{getIcon(item.name)}</span>
               </div>
-              <div className="ml-4 flex-1">
-                <p className="font-medium text-gray-900">{item.name}</p>
-                <p className="text-sm text-gray-600 mt-1">Size: {formatFileSize(item.size)}</p>
-                <p className="text-xs text-gray-500 mt-1">Uploaded: {new Date(item.uploaded_at).toLocaleDateString()}</p>
+              <div className="ml-4 flex-1 min-w-0">
+                <p className="font-medium text-on-surface truncate">{item.name}</p>
+                <p className="text-sm text-on-surface-variant mt-1">
+                  {t('learnerMaterialSize', { size: formatFileSize(item.size) })}
+                </p>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  {t('learnerMaterialUploaded', {
+                    date: new Date(item.uploaded_at).toLocaleDateString()
+                  })}
+                </p>
               </div>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => handleViewMaterial(item)}
-                  className="cursor-pointer cta-button text-gray-400 hover:text-green-600 transition-colors duration-300 p-2 rounded-lg hover:bg-green-50"
-                  aria-label={`View ${item.name}`}
-                >
-                  <Eye className="w-5 h-5" />
-                </button>
-              </div>
+              <button
+                onClick={() => handleViewMaterial(item)}
+                className="cursor-pointer flex items-center justify-center p-2 rounded-lg border border-primary text-primary hover:bg-surface-container-low active:scale-95 transition-all shrink-0"
+                aria-label={`View ${item.name}`}
+              >
+                <span className="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No materials found.</p>
+          <p className="text-center text-on-surface-variant">{t('learnerMaterialEmpty')}</p>
         )}
       </div>
-      
-      <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-        <button className="w-full text-center text-sm font-medium text-green-600 hover:text-green-800 transition-colors duration-300">
-          View All Materials
+
+      <div className="px-6 py-4 bg-surface-container-low border-t border-outline-variant">
+        <button className="w-full text-center text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer">
+          {t('learnerMaterialViewAll')}
         </button>
       </div>
 
-      {/* Material Viewer Modal */}
       {selectedMaterial && (
         <MaterialViewer
           fileUrl={selectedMaterial.url}

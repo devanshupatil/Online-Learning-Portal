@@ -1,27 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BookOpen, TrendingUp, User, Users } from 'lucide-react';
-import Header from '../Header';
+import { useTranslation } from 'react-i18next';
+import { SiteFooter } from '../SiteChrome';
+import LearnerNavbar from './LearnerNavbar';
+import LearnerOverview from './LearnerOverview';
 import UserProfileCard from './UserProfileCard';
 import CoursesList from './CoursesList';
 import Material from './Material';
-import Sidebar from './Sidebar';
 import AddCourseModal from './AddCourseModal';
 import EditProfileModal from './EditProfileModal';
 import WeeklyStreakIndicator from './WeeklyStreakIndicator';
 import Test from './Tests';
 import TestResults from './TestResults';
 import ProgressTracking from './ProgressTracking';
-import BackNavigation from '../BackNavigation';
-import ResponsiveSidebar from '../ResponsiveSidebar';
-import { useSidebar } from '../SidebarProvider';
+
+const initialCourses = [
+  {
+    id: 1,
+    title: 'Advanced Algorithms & Data Structures',
+    category: 'Computer Science',
+    description: 'Master complex algorithms, optimization techniques, and advanced data structures for software engineering.',
+    instructor: 'Dr. Alan Turing',
+    instructorInitials: 'AT',
+    progress: 68,
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBGmnaWQvIPKEKP3NbRLOVon0_DCL9UCEudtRwTWEbdHKtLcGe6qlOYGlSguQiypQyRGJYZSNvxMXRs77d4_s93iG5nbc75FIZjcbjhwo_98yNb2XWTtZ5OUeX2hECyd5J1pqdwsari32pcKuTfiM3Gv9Wv9eQ1CgNGrzandPrwDHJt_RTUboLX41K0Cgjeio6SAHn16IrMYk2Ud0LYXxlmxDrJ6p0xyH-VykKBNsnmZrDj6Vkvn5jXHA'
+  },
+  {
+    id: 2,
+    title: 'Macroeconomic Principles II',
+    category: 'Economics',
+    description: 'An in-depth analysis of global economic trends, fiscal policies, and monetary systems.',
+    instructor: 'Prof. Sarah Jenkins',
+    instructorInitials: 'SJ',
+    progress: 32,
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2Cx12sJqioVKmY1Ry0OtopEybMOnWKPom3WVU75NkxAtTHnzF9E9LJ9g8HAYr-GzrEJQSzF0BEdibho7LZVAIpzFJ1vMYJo_-TUvEySmzY7rpafNiPnGaxPFw2d9LKUqlfm0uIQI41ZoDJ5-zt-6-7G4DIjrrj5ARl6zhMoazgHUAMyeqdQ0D7Ek1t0jCGrdCggqrxqf6d23KGQJKxpdr7XMzYa48O4Bjglda3GiG6s3mMjtAMGospg'
+  },
+  {
+    id: 3,
+    title: 'UX Research & Interaction Design',
+    category: 'Design',
+    description: 'Learn the fundamentals of user-centered design, usability testing, and crafting intuitive interfaces.',
+    instructor: 'David Chen',
+    instructorInitials: 'DC',
+    progress: 89,
+    thumbnail: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCP0Kz1vjJIKaeHvYNAbiNEvaJztTQ7PTm7qnw0HteE3WsBu9oGkE_-rkiT38ouylwlgEJa3zT0kZyX3MLCAttmVI2LDfXLCJQceWc7yQzdruday8xNF37oO2ZMVCOBKJK-_0iQE2UGv3kEUnyy05h5OQHmdox4RCm3p-Smfmq2sAvoMoYhnSEvCtV7PYTYH-LprlV0f86VTS3sKIadZDtLUDpvZxznmGT63Oj7pKdHV_Z1GHIBYovfuA'
+  }
+];
 
 const NewLearnerDashboard = () => {
+  const { t } = useTranslation();
   const location = useLocation();
-  const [activeSection, setActiveSection] = useState('syllabus');
+  const [activeSection, setActiveSection] = useState('dashboard');
+  const [courses, setCourses] = useState(initialCourses);
   const [isAddCourseModalOpen, setIsAddCourseModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
-  const { isMobile, isTablet } = useSidebar();
   const [testTab, setTestTab] = useState('Test');
 
   useEffect(() => {
@@ -42,13 +74,22 @@ const NewLearnerDashboard = () => {
   });
 
   const handleAddCourse = (courseData) => {
-    console.log('Adding new course:', courseData);
-    // In a real app, this would add the course to the user's enrolled courses
-  };
-
-  const handleEditCourses = () => {
-    console.log('Editing courses');
-    // In a real app, this would open the course editing interface
+    const newCourse = {
+      id: Date.now(),
+      title: courseData.title || 'Untitled Course',
+      category: courseData.category || 'General',
+      description: courseData.description || '',
+      instructor: courseData.instructor || 'Unknown',
+      instructorInitials: (courseData.instructor || 'Unknown')
+        .split(' ')
+        .map((word) => word[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase(),
+      progress: 0,
+      thumbnail: courseData.thumbnail || ''
+    };
+    setCourses((prev) => [...prev, newCourse]);
   };
 
   const handleEditProfile = () => {
@@ -57,111 +98,92 @@ const NewLearnerDashboard = () => {
 
   const handleSaveProfile = (updatedProfileData) => {
     setProfileData(updatedProfileData);
-    console.log('Profile updated:', updatedProfileData);
-    // In a real app, this would send the data to a server
   };
 
+  const handleViewAllResults = () => {
+    setTestTab('Test Results');
+    setActiveSection('test');
+  };
+
+  const testTabItems = [
+    { id: 'Test', labelKey: 'learnerTestTab' },
+    { id: 'Test Results', labelKey: 'learnerTestResultsTab' }
+  ];
+
   return (
-    <div>
-      <Header />
+    <div className="bg-background text-on-background font-sans antialiased overflow-x-hidden min-h-screen">
+      <LearnerNavbar activeSection={activeSection} onSectionChange={setActiveSection} />
 
-      {/* Mobile Slide-out Sidebar */}
-      {(isMobile || isTablet) && (
-        <ResponsiveSidebar>
-          <Sidebar
-            activeSection={activeSection}
-            onSectionChange={setActiveSection}
-            isMobile={isMobile || isTablet}
-          />
-        </ResponsiveSidebar>
-      )}
+      <main className="pt-20 px-6 pb-12 flex flex-col min-h-screen max-w-[1440px] mx-auto w-full">
+        <div>
+          {activeSection === 'dashboard' && (
+            <LearnerOverview
+              courses={courses}
+              profileName={profileData.name}
+              streak={profileData.streak}
+            />
+          )}
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Dashboard Header */}
-          <div className="mb-8">
-            <div className="flex items-center mb-2">
-              <BackNavigation className='cursor-pointer' />
-              <h1 className="text-3xl font-bold text-gray-900">Learner Dashboard</h1>
+          {activeSection === 'syllabus' && (
+            <div className="space-y-6">
+              <CoursesList
+                courses={courses}
+                onAddCourse={() => setIsAddCourseModalOpen(true)}
+              />
             </div>
-            <p className="text-gray-600">Welcome back, {profileData.name}! Here's your personalized learning overview.</p>
-          </div>
+          )}
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar Navigation - Desktop Only */}
-            <div className="lg:w-1/4 sticky top-25 self-start hidden lg:block">
-              <Sidebar activeSection={activeSection} onSectionChange={setActiveSection} />
+          {activeSection === 'material' && (
+            <div className="space-y-6">
+              <Material />
             </div>
+          )}
 
-            {/* Main Content Area */}
-            <div className="lg:w-3/4">
-              {activeSection === 'syllabus' && (
-                <div className="space-y-6">
-                  <CoursesList
-                    onAddCourse={() => setIsAddCourseModalOpen(true)}
-                    onEditCourses={handleEditCourses}
-                  />
-                </div>
-              )}
+          {activeSection === 'progress' && (
+            <div className="space-y-6">
+              <ProgressTracking onViewAllResults={handleViewAllResults} />
+            </div>
+          )}
 
-              {activeSection === 'material' && (
-                <div className="space-y-6">
-                  <Material />
-                </div>
-              )}
+          {activeSection === 'profile' && (
+            <div className="space-y-6">
+              <UserProfileCard onEditProfile={handleEditProfile} />
+              <WeeklyStreakIndicator streak={profileData.streak} />
+            </div>
+          )}
 
-              {activeSection === 'progress' && (
-                <div className="space-y-6">
-                  <ProgressTracking />
-                </div>
-              )}
-
-              {activeSection === 'profile' && (
-                <div className="space-y-6">
-                  <UserProfileCard onEditProfile={handleEditProfile} />
-                  <WeeklyStreakIndicator streak={profileData.streak} />
-                </div>
-              )}
-
-
-
-              {activeSection === 'test' && (
-                <div className="space-y-6">
-                  <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-                    <div className="p-6 border-b border-gray-200">
-                      <div className="flex justify-center space-x-1">
-                        <button
-                          onClick={() => setTestTab('Test')}
-                          className={`cursor-pointer flex items-center px-5 py-3 rounded-lg transition-colors duration-200 ${testTab === 'Test'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
-                            } text-xl font-bold`}
-                        >
-                          Test
-                        </button>
-                        <button
-                          onClick={() => setTestTab('Test Results')}
-                          className={`cursor-pointer flex items-center px-5 py-3 rounded-lg transition-colors duration-200 ${testTab === 'Test Results'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
-                            } text-xl font-bold`}
-                        >
-                          Test Results
-                        </button>
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      {testTab === 'Test' && <Test />}
-                      {testTab === 'Test Results' && <TestResults />}
-                    </div>
+          {activeSection === 'test' && (
+            <div className="space-y-6">
+              <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div className="p-6 border-b border-outline-variant">
+                  <div className="inline-flex bg-surface-container-high rounded-full p-1 gap-1">
+                    {testTabItems.map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setTestTab(tab.id)}
+                        className={`cursor-pointer flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                          testTab === tab.id
+                            ? 'bg-surface-container-lowest text-primary shadow-sm'
+                            : 'text-on-surface-variant hover:bg-surface-container-lowest/50'
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[18px]">
+                          {tab.id === 'Test' ? 'quiz' : 'fact_check'}
+                        </span>
+                        <span className="font-sans">{t(tab.labelKey)}</span>
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
-
+                <div className="p-6">
+                  {testTab === 'Test' && <Test />}
+                  {testTab === 'Test Results' && <TestResults />}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-      </div>
+      </main>
 
       {/* Modals */}
       <AddCourseModal
@@ -176,6 +198,8 @@ const NewLearnerDashboard = () => {
         profileData={profileData}
         onSave={handleSaveProfile}
       />
+
+      <SiteFooter />
     </div>
   );
 };

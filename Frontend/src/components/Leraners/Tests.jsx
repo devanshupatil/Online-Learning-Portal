@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FileCheck, Clock, Calendar, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import TestResults from './TestResults';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { mockFetch } from '../../mockData/mockFetch';
 
-
 const Tests = () => {
+  const { t } = useTranslation();
   const URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [analysisData, setAnalysisData] = useState(null);
@@ -16,20 +15,16 @@ const Tests = () => {
   }, []);
 
   const geAllImageAnalysis = async () => {
-
     try {
       const getImageResponse = await mockFetch(`${URL}/api/textAnalysis`);
 
       if (getImageResponse.ok) {
-        // Some endpoints may return empty body (204) — handle that gracefully
         const text = await getImageResponse.text();
 
         if (text) {
-
           let existingAnalysis = null;
 
           try {
-
             const analysisStart = text.indexOf('{');
             if (analysisStart !== -1) {
               const cleanedText = text.slice(analysisStart);
@@ -39,19 +34,13 @@ const Tests = () => {
             }
 
             existingAnalysis = JSON.parse(text);
-
           } catch (parseErr) {
             console.warn('Failed to parse analysis JSON from server:', parseErr);
             toast.error('Failed to load existing text analysis data.');
           }
 
           if (existingAnalysis && Object.keys(existingAnalysis).length > 0) {
-
-
             setAnalysisData(existingAnalysis.textAnalyses);
-
-            // // console.log('Fetched existing analysis from server:', existingAnalysis.textAnalyses
-            // );
           }
         }
       }
@@ -59,96 +48,59 @@ const Tests = () => {
       console.warn('Error fetching existing analysis from server:', err);
       toast.error('Error fetching existing text analysis data from server.');
     }
-
   };
-
-
-  // Mock data for tests
-  // const testsData = [
-  //   {
-  //     id: 1,
-  //     title: 'Algebra Fundamentals Quiz',
-  //     subject: 'Mathematics',
-  //     dueDate: '2023-05-25',
-  //     status: 'pending',
-  //     timeLimit: '30 min'
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Physics Midterm Exam',
-  //     subject: 'Physics',
-  //     dueDate: '2023-06-01',
-  //     status: 'upcoming',
-  //     timeLimit: '2 hours'
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Chemistry Lab Report',
-  //     subject: 'Chemistry',
-  //     dueDate: '2023-05-30',
-  //     status: 'in-progress',
-  //     timeLimit: 'N/A'
-  //   }
-  // ];
-
-  // const getStatusColor = (status) => {
-  //   switch (status) {
-  //     case 'completed':
-  //       return 'bg-green-100 text-green-800';
-  //     case 'in-progress':
-  //       return 'bg-yellow-100 text-yellow-800';
-  //     case 'upcoming':
-  //       return 'bg-blue-100 text-blue-800';
-  //     case 'pending':
-  //       return 'bg-red-100 text-red-800';
-  //     default:
-  //       return 'bg-gray-100 text-gray-800';
-  //   }
-  // };
-
-  const [testTab, setTestTab] = useState('Test');
 
   const handleStartTest = (test) => {
-    // Mock questions - in real app, fetch from backend
-  
-
-    // Navigate to test taking page with test data
     navigate('/test-taking', { state: { test } });
   };
-
 
   return (
     <div className="space-y-4">
       {analysisData && analysisData.length > 0 ? (
         analysisData.map((test) => (
-          <div key={test.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300">
-            <div className="flex justify-between items-start">
-              <p className="font-medium text-gray-900">{test.test_name}</p>
+          <div
+            key={test.id}
+            className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
+          >
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-accent text-primary shrink-0">
+                  <span className="material-symbols-outlined text-[22px]">quiz</span>
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium text-on-surface">{test.test_name}</p>
+                  <p className="text-sm text-on-surface-variant mt-1">{test.course}</p>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mt-2">{test.course}</p>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 text-sm text-gray-500 gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 text-sm text-on-surface-variant gap-3">
               <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
                 <div className="flex items-center">
-                  <Calendar className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="material-symbols-outlined text-[18px] mr-1 flex-shrink-0">
+                    calendar_today
+                  </span>
                   <span className="truncate">{new Date(test.updated_at).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center">
-                  <Clock className="w-4 h-4 mr-1 flex-shrink-0" />
+                  <span className="material-symbols-outlined text-[18px] mr-1 flex-shrink-0">
+                    schedule
+                  </span>
                   <span className="truncate">{new Date(test.updated_at).toLocaleTimeString()}</span>
                 </div>
               </div>
               <button
                 onClick={() => handleStartTest(test)}
-                className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex-shrink-0 self-start sm:self-auto"
+                className="cursor-pointer flex items-center justify-center gap-1 px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 active:scale-95 transition-all shrink-0 self-start sm:self-auto"
               >
-                Start Test
+                <span className="material-symbols-outlined text-[18px]">play_arrow</span>
+                {t('learnerStartTest')}
               </button>
             </div>
           </div>
         ))
       ) : (
-        <div className="text-center text-gray-500 py-8">
-          {analysisData === null ? 'Loading tests...' : 'No tests available'}
+        <div className="text-center text-on-surface-variant py-10 bg-surface-container-lowest border border-outline-variant rounded-2xl">
+          {analysisData === null ? t('learnerTestsLoading') : t('learnerTestsEmpty')}
         </div>
       )}
     </div>
