@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useAdminAuth } from './AdminAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const AdminLogin = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,13 +20,13 @@ const AdminLogin = () => {
       const result = await login(email, password);
 
       if (result.success) {
-        toast.success('Admin login successful!');
+        toast.success(t('adminLoginSuccessToast'));
         navigate('/admin');
       } else {
-        toast.error(result.error || 'Login failed');
+        toast.error(result.error || t('adminLoginFailedToast'));
       }
     } catch (error) {
-      toast.error('An error occurred during login');
+      toast.error(t('adminLoginErrorToast'));
     } finally {
       setIsLoading(false);
     }
@@ -35,17 +37,17 @@ const AdminLogin = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Admin Login
+            {t('adminLoginTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to access the admin dashboard
+            {t('adminLoginSubtitle')}
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
-                Email address
+                {t('adminLoginEmailSrLabel')}
               </label>
               <input
                 id="email"
@@ -54,14 +56,14 @@ const AdminLogin = () => {
                 autoComplete="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
+                placeholder={t('adminLoginEmailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                {t('adminLoginPasswordSrLabel')}
               </label>
               <input
                 id="password"
@@ -70,7 +72,7 @@ const AdminLogin = () => {
                 autoComplete="current-password"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder={t('adminLoginPasswordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -83,13 +85,13 @@ const AdminLogin = () => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('adminLoginSigningIn') : t('adminLoginSubmitBtn')}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Default credentials: admin@example.com / admin123
+              {t('adminLoginDefaultCreds')}
             </p>
           </div>
         </form>

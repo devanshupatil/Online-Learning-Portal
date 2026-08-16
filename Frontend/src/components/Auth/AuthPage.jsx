@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 
 const AuthPage = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const [isLogin, setIsLogin] = useState(location.pathname === '/login');
   const [isLoaded, setIsLoaded] = useState(false);
@@ -28,13 +30,10 @@ const AuthPage = () => {
           <div className="lg:w-1/2 p-8 lg:p-12">
             <div className={`mb-8 ${isLoaded ? 'fade-in-up' : ''}`}>
               <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-                {isLogin ? 'Welcome Back' : 'Join Our Learning Community'}
+                {isLogin ? t('authWelcomeBackTitle') : t('authJoinTitle')}
               </h1>
               <p className="text-gray-600">
-                {isLogin
-                  ? 'Sign in to continue your learning journey'
-                  : 'Create your account to start learning today'
-                }
+                {isLogin ? t('authWelcomeBackSubtitle') : t('authJoinSubtitle')}
               </p>
             </div>
 
@@ -48,7 +47,7 @@ const AuthPage = () => {
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                Sign In
+                {t('authSignInTab')}
               </button>
               <button
                 onClick={() => setIsLogin(false)}
@@ -58,7 +57,7 @@ const AuthPage = () => {
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                Sign Up
+                {t('authSignUpTab')}
               </button>
             </div>
 
@@ -78,11 +77,10 @@ const AuthPage = () => {
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
                 <h2 className="text-2xl lg:text-3xl font-bold mb-4">
-                  Empower Your Learning Journey
+                  {t('authPromoTitle')}
                 </h2>
                 <p className="text-indigo-100 text-lg">
-                  Access thousands of courses, connect with expert instructors,
-                  and achieve your educational goals with our comprehensive platform.
+                  {t('authPromoSubtitle')}
                 </p>
               </div>
 
@@ -94,7 +92,7 @@ const AuthPage = () => {
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                   </div>
-                  <span className="text-sm">Interactive Learning Tools</span>
+                  <span className="text-sm">{t('authFeatureInteractive')}</span>
                 </div>
                 <div className={`flex items-center space-x-3 ${isLoaded ? 'fade-in-up stagger-3' : ''}`}>
                   <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -102,7 +100,7 @@ const AuthPage = () => {
                       <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                   </div>
-                  <span className="text-sm">Expert Instructors</span>
+                  <span className="text-sm">{t('authFeatureExpert')}</span>
                 </div>
                 <div className={`flex items-center space-x-3 ${isLoaded ? 'fade-in-up stagger-4' : ''}`}>
                   <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -110,7 +108,7 @@ const AuthPage = () => {
                       <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                   </div>
-                  <span className="text-sm">Fast & Secure Platform</span>
+                  <span className="text-sm">{t('authFeatureSecure')}</span>
                 </div>
               </div>
             </div>

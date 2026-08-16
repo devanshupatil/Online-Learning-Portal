@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import i18n from '../../i18n';
 
 const AdminAuthContext = createContext();
 
@@ -41,7 +42,7 @@ export const AdminAuthProvider = ({ children }) => {
     await new Promise((resolve) => setTimeout(resolve, 400));
 
     if (email !== DEMO_ADMIN_EMAIL || password !== DEMO_ADMIN_PASSWORD) {
-      return { success: false, error: 'Invalid email or password' };
+      return { success: false, error: i18n.t('adminAuthInvalidCredentials') };
     }
 
     const demoAdmin = { id: 1, name: 'Admin', email: DEMO_ADMIN_EMAIL };
