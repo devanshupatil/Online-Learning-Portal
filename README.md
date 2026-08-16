@@ -2,23 +2,26 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-18+-blue.svg)](https://reactjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue.svg)](https://reactjs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8.svg)](https://tailwindcss.com/)
 
-A comprehensive full-stack online learning platform built with React frontend and Node.js backend. Supports role-based access for admins, teachers, learners, and parents. Features include course management, interactive materials, testing, progress tracking, attendance reports, and communication tools. Integrates multiple LLMs (OpenAI GPT-4o, Claude, Gemini, Perplexity) for document processing and question extraction. Deployable via Docker and Terraform.
+A comprehensive full-stack online learning platform built with React frontend and Node.js backend. Supports role-based access for admins, teachers, learners, and parents. Features include course management, interactive materials, testing, progress tracking, attendance reports, communication tools, and multi-language support. Integrates multiple LLMs (OpenAI GPT-4o, Claude, Gemini, Perplexity) for document processing and question extraction. Deployable via Docker and Terraform.
 
 ## 🚀 Features
 
 - **Role-Based Access Control**: Separate dashboards for admins, teachers, learners, and parents
-- **Course Management**: Create, manage, and enroll in courses
-- **Interactive Materials**: Support for PDFs, images, and multimedia content
-- **Testing & Assessment**: Automated test creation and grading
-- **Progress Tracking**: Detailed analytics and progress reports
-- **Attendance Management**: Track and report student attendance
-- **Communication Tools**: Built-in messaging and support system
+- **Course Management**: Create, manage, and enroll in courses with foundation programs
+- **Interactive Materials**: Support for PDFs, images, and multimedia content with MaterialViewer
+- **Testing & Assessment**: Automated test creation, grading, and image-based question extraction via LLMs
+- **Progress Tracking**: Detailed analytics, streak tracking, and progress reports
+- **Attendance Management**: Track and report student attendance with reports
+- **Results & Achievers**: Year-wise, class-wise, subject toppers, and growth charts
+- **Communication Tools**: Built-in messaging, support helpdesk, and contact forms
+- **Multi-Language Support**: English, Hindi, Marathi with i18n (react-i18next)
 - **LLM Integration**: AI-powered document processing for question extraction
-- **Responsive Design**: Mobile-friendly interface
-- **Docker Deployment**: Containerized for easy deployment
+- **Responsive Design**: Mobile-friendly interface with slide-out drawer navigation
+- **Docker Deployment**: Containerized with bun for fast installs
 
 ## 🤖 AI/LLM Integration
 
@@ -38,12 +41,19 @@ The platform integrates multiple Large Language Models (OpenAI GPT-4o, Anthropic
 
 This AI-powered feature transforms traditional educational workflows, making the platform not just a learning management system, but an intelligent educational assistant.
 
+## 🌐 Multi-Language Support (i18n)
+
+- **Languages**: English (en), Hindi (hi), Marathi (mr)
+- **Implementation**: react-i18next with namespaced translations
+- **Language Switcher**: Persistent UI component in header and mobile drawer
+- **Dynamic Loading**: Translations loaded on-demand per locale
+
 ## 🎓 Educational Benefits
 
 ### For Students
 - **Personalized Learning**: Access courses tailored to individual learning pace and style
 - **Interactive Content**: Engage with multimedia materials and interactive assessments
-- **Progress Tracking**: Monitor learning journey with detailed analytics and feedback
+- **Progress Tracking**: Monitor learning journey with detailed analytics, streaks, and feedback
 - **Flexible Access**: Learn anytime, anywhere with responsive mobile-friendly interface
 - **Instant Feedback**: Receive immediate results and explanations for assessments
 
@@ -64,22 +74,27 @@ This project demonstrates expertise in:
 - **UI/UX Design**: Creating responsive, user-friendly interfaces for diverse user roles
 - **Security Best Practices**: JWT authentication and secure API design
 - **Agile Development**: Modular architecture supporting role-based features
+- **Internationalization**: Multi-language support with react-i18next
 
 ## 🛠 Tech Stack & Why We Use Them
 
-### Frontend (React + Vite)
-- **React**: Component-based architecture for maintainable, scalable UI
-- **Vite**: Fast development server and optimized production builds
-- **CSS Modules**: Scoped styling for consistent, conflict-free designs
+### Frontend (React + Vite + Tailwind CSS v4)
+- **React 19**: Component-based architecture with concurrent features
+- **Vite 7**: Fast development server and optimized production builds
+- **Tailwind CSS v4**: Utility-first styling with CSS-first configuration (`@theme`)
+- **react-router-dom v7**: File-based routing with data loading
+- **react-i18next**: Internationalization framework
+- **lucide-react**: Consistent icon system
+- **sonner**: Accessible toast notifications
+- **react-hook-form**: Performant form handling
+- **react-pdf**: PDF rendering and viewing
+- **shadcn/ui pattern**: Accessible, composable component library (Button, etc.)
 
-### Backend (Node.js + Express)
-- **Node.js**: JavaScript runtime for unified full-stack development
+### Backend (Node.js + Express + bun)
+- **bun**: Fast JavaScript runtime and package manager
 - **Express.js**: Lightweight, flexible web framework for robust APIs
-
-### Database (PostgreSQL)
-- **Reliability**: ACID compliance ensures data integrity for educational records
-- **Scalability**: Handles growing student and course data efficiently
-- **SQL Power**: Complex queries for analytics and reporting
+- **PostgreSQL / Supabase**: Reliable relational database
+- **JWT Authentication**: Secure token-based auth
 
 ### AI/ML Integration
 - **Multiple LLMs**: Redundancy and choice of best model for specific tasks
@@ -89,17 +104,24 @@ This project demonstrates expertise in:
 ### DevOps (Docker + Terraform)
 - **Docker**: Consistent deployment across development and production
 - **Terraform**: Infrastructure as code for reproducible cloud setups
+- **Google Cloud Platform**: Target deployment environment
 
-## 🛠 Tech Stack
+## 🛠 Tech Stack Summary
 
 ### Frontend
-- React 18+
-- Vite
-- CSS Modules
-- Responsive Design
+- React 19
+- Vite 7
+- Tailwind CSS v4
+- react-router-dom v7
+- react-i18next
+- lucide-react
+- sonner
+- react-hook-form
+- react-pdf / pdfjs-dist
+- shadcn/ui component pattern
 
 ### Backend
-- Node.js
+- Node.js (bun runtime)
 - Express.js
 - PostgreSQL / Supabase
 - JWT Authentication
@@ -118,7 +140,7 @@ This project demonstrates expertise in:
 ## 📦 Installation
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 18+ (or **bun** recommended)
 - Docker & Docker Compose
 - PostgreSQL
 
@@ -133,16 +155,16 @@ This project demonstrates expertise in:
 2. **Backend Setup**
    ```bash
    cd Backend
-   npm install
+   bun install           # or npm install
    cp .env.example .env  # Configure your environment variables
-   npm run dev
+   bun run dev           # or npm run dev
    ```
 
 3. **Frontend Setup**
    ```bash
    cd ../Frontend
-   npm install
-   npm run dev
+   bun install           # or npm install
+   bun run dev           # or npm run dev
    ```
 
 4. **Database Setup**
@@ -192,14 +214,23 @@ OPENAI_API_KEY=your_openai_key
 ANTHROPIC_API_KEY=your_anthropic_key
 GOOGLE_API_KEY=your_google_key
 PERPLEXITY_API_KEY=your_perplexity_key
+
+# Frontend (if needed)
+VITE_API_URL=http://localhost:3000/api
+```
+
+### Frontend Environment
+Create `.env` in Frontend if needed:
+```env
+VITE_API_URL=http://localhost:3000/api
 ```
 
 ## 📖 Usage
 
-1. **Admin**: Manage users, courses, and system settings
-2. **Teacher**: Upload materials, create tests, track attendance
-3. **Learner**: Access courses, take tests, view progress
-4. **Parent**: Monitor child's progress and attendance
+1. **Admin** (`/admin/*`): Manage users, courses, system settings, and view analytics
+2. **Teacher** (`/teachers/*`): Upload materials, create tests (including LLM extraction), track attendance, view student directory
+3. **Learner** (`/learners/*`): Access courses, take tests, view progress/streaks, interactive resources, grades
+4. **Parent** (`/parents/*`): Monitor child's progress, attendance, and communicate with teachers
 
 ## 🤝 Contributing
 
