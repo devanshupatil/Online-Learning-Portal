@@ -308,5 +308,15 @@
   "parentDashboardTableMarks": "गुण",
   "parentDashboardTableGrade": "श्रेणी",
   "parentDashboardAverageScore": "सरासरी गुण",
-  "parentDashboardAcrossTests": "{{count}} अलीकडील चाचण्यांमध्ये"
+  "parentDashboardAcrossTests": "{{count}} अलीकडील चाचण्यांमध्ये",
+  "adminPageLoading": "लोड होत आहे...",
+  "adminSidebarTitle": "अ‍ॅडमिन पॅनेल",
+  "adminSidebarDashboard": "डॅशबोर्ड विहंगावलोकन",
+  "adminSidebarUsers": "वापरकर्ता व्यवस्थापन",
+  "adminSidebarCourses": "कोर्स व्यवस्थापन",
+  "adminSidebarContent": "कंटेंट व्यवस्थापन",
+  "adminSidebarAnalytics": "अ‍ॅनालिटिक्स आणि अहवाल",
+  "adminSidebarSettings": "सिस्टम सेटिंग्ज",
+  "adminSidebarLogout": "लॉगआउट",
+  "buttonWithIconDefaultLabel": "चला सहकार्य करूया"
 }

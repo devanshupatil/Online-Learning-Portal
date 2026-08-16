@@ -308,5 +308,15 @@
   "parentDashboardTableMarks": "Marks",
   "parentDashboardTableGrade": "Grade",
   "parentDashboardAverageScore": "Average Score",
-  "parentDashboardAcrossTests": "across {{count}} recent tests"
+  "parentDashboardAcrossTests": "across {{count}} recent tests",
+  "adminPageLoading": "Loading...",
+  "adminSidebarTitle": "ADMIN PANEL",
+  "adminSidebarDashboard": "Dashboard Overview",
+  "adminSidebarUsers": "User Management",
+  "adminSidebarCourses": "Course Management",
+  "adminSidebarContent": "Content Management",
+  "adminSidebarAnalytics": "Analytics & Reports",
+  "adminSidebarSettings": "System Settings",
+  "adminSidebarLogout": "Logout",
+  "buttonWithIconDefaultLabel": "Let's Collaborate"
 }

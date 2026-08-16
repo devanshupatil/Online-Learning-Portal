@@ -308,5 +308,15 @@
   "parentDashboardTableMarks": "अंक",
   "parentDashboardTableGrade": "ग्रेड",
   "parentDashboardAverageScore": "औसत स्कोर",
-  "parentDashboardAcrossTests": "{{count}} हालिया परीक्षणों में"
+  "parentDashboardAcrossTests": "{{count}} हालिया परीक्षणों में",
+  "adminPageLoading": "लोड हो रहा है...",
+  "adminSidebarTitle": "एडमिन पैनल",
+  "adminSidebarDashboard": "डैशबोर्ड अवलोकन",
+  "adminSidebarUsers": "उपयोगकर्ता प्रबंधन",
+  "adminSidebarCourses": "कोर्स प्रबंधन",
+  "adminSidebarContent": "सामग्री प्रबंधन",
+  "adminSidebarAnalytics": "एनालिटिक्स और रिपोर्ट",
+  "adminSidebarSettings": "सिस्टम सेटिंग्स",
+  "adminSidebarLogout": "लॉगआउट",
+  "buttonWithIconDefaultLabel": "आइए सहयोग करें"
 }

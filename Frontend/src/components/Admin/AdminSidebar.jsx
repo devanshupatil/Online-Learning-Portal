@@ -1,14 +1,16 @@
 import React, { memo } from 'react';
 import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, Settings, LogOut } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = false, logout }) => {
+  const { t } = useTranslation();
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
-    { id: 'users', label: 'User Management', icon: Users },
-    { id: 'courses', label: 'Course Management', icon: BookOpen },
-    { id: 'content', label: 'Content Management', icon: FileText },
-    { id: 'analytics', label: 'Analytics & Reports', icon: BarChart3 },
-    { id: 'settings', label: 'System Settings', icon: Settings },
+    { id: 'dashboard', label: t('adminSidebarDashboard'), icon: LayoutDashboard },
+    { id: 'users', label: t('adminSidebarUsers'), icon: Users },
+    { id: 'courses', label: t('adminSidebarCourses'), icon: BookOpen },
+    { id: 'content', label: t('adminSidebarContent'), icon: FileText },
+    { id: 'analytics', label: t('adminSidebarAnalytics'), icon: BarChart3 },
+    { id: 'settings', label: t('adminSidebarSettings'), icon: Settings },
   ];
 
   // Handle section change and auto-close on mobile
@@ -21,7 +23,7 @@ const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile =
 
   return (
     <div className={`bg-white shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6 rounded-2xl'}`}>
-      <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>ADMIN PANEL</h3>
+      <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>{t('adminSidebarTitle')}</h3>
       <ul className={`${isMobile ? 'space-y-2' : 'space-y-1'}`}>
         {menuItems.map((item) => {
           const IconComponent = item.icon;
@@ -59,7 +61,7 @@ const AdminSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile =
           className="cursor-pointer w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
         >
           <LogOut className="w-5 h-5 mr-3" />
-          Logout
+          {t('adminSidebarLogout')}
         </button>
       </div>
       <style jsx>{`
