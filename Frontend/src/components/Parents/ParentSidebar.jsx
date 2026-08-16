@@ -1,11 +1,13 @@
 import React, { memo } from 'react';
 import { Calendar, CheckCircle, Award } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ParentSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile = false }) => {
+  const { t } = useTranslation();
   const menuItems = [
-    { id: 'schedule', label: 'Schedule', icon: Calendar },
-    { id: 'attendance', label: 'Attendance', icon: CheckCircle },
-    { id: 'marks', label: 'Test Marks', icon: Award },
+    { id: 'schedule', label: t('parentSidebarSchedule'), icon: Calendar },
+    { id: 'attendance', label: t('parentSidebarAttendance'), icon: CheckCircle },
+    { id: 'marks', label: t('parentSidebarMarks'), icon: Award },
   ];
 
   const handleSectionChange = (sectionId) => {
@@ -17,7 +19,7 @@ const ParentSidebar = memo(({ activeSection, onSectionChange, onClose, isMobile 
 
   return (
     <div className={`bg-white shadow-lg border border-gray-200 h-full ${isMobile ? 'p-4' : 'p-6 rounded-2xl'}`}>
-      <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>PARENT PORTAL</h3>
+      <h3 className={`text-sm font-bold text-gray-500 uppercase tracking-wider ${isMobile ? 'mb-4' : 'mb-3'}`}>{t('parentSidebarTitle')}</h3>
       <ul className={`${isMobile ? 'space-y-2' : 'space-y-1'}`}>
         {menuItems.map((item) => {
           const IconComponent = item.icon;

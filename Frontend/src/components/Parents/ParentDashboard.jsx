@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, User, CheckCircle, XCircle, Award, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Header from '../Header';
 import ParentSidebar from './ParentSidebar';
 import BackNavigation from '../BackNavigation';
@@ -29,6 +30,7 @@ const getAttendanceColor = (percentage) => {
 };
 
 const ParentDashboard = () => {
+  const { t } = useTranslation();
   const [activeSection, setActiveSection] = useState('schedule');
   const { isMobile, isTablet } = useSidebar();
 
@@ -59,10 +61,10 @@ const ParentDashboard = () => {
           <div className="mb-8">
             <div className="flex items-center mb-2">
               <BackNavigation className="cursor-pointer" />
-              <h1 className="text-3xl font-bold text-gray-900">Parent Dashboard</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('parentDashboardTitle')}</h1>
             </div>
             <p className="text-gray-600">
-              Welcome back, {PARENT_CHILD.parentName}! Here's how {PARENT_CHILD.name} is doing.
+              {t('parentDashboardWelcome', { parentName: PARENT_CHILD.parentName, childName: PARENT_CHILD.name })}
             </p>
           </div>
 
@@ -73,23 +75,23 @@ const ParentDashboard = () => {
             </div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
               <div>
-                <p className="text-sm text-gray-500">Student</p>
+                <p className="text-sm text-gray-500">{t('parentDashboardStudentLabel')}</p>
                 <p className="font-semibold text-gray-900">{PARENT_CHILD.name}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Stream</p>
+                <p className="text-sm text-gray-500">{t('parentDashboardStreamLabel')}</p>
                 <p className="font-semibold text-gray-900">{PARENT_CHILD.stream}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Grade</p>
+                <p className="text-sm text-gray-500">{t('parentDashboardGradeLabel')}</p>
                 <p className="font-semibold text-gray-900">{PARENT_CHILD.grade}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Roll No</p>
+                <p className="text-sm text-gray-500">{t('parentDashboardRollNoLabel')}</p>
                 <p className="font-semibold text-gray-900">{PARENT_CHILD.rollNo}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Institute</p>
+                <p className="text-sm text-gray-500">{t('parentDashboardInstituteLabel')}</p>
                 <p className="font-semibold text-gray-900">{PARENT_CHILD.institute}</p>
               </div>
             </div>
@@ -105,8 +107,8 @@ const ParentDashboard = () => {
                 <div className="space-y-6">
                   <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                      <h2 className="text-xl font-bold text-gray-900">Weekly Class Schedule</h2>
-                      <p className="text-sm text-gray-600 mt-1">{PARENT_CHILD.name}'s timetable for the {PARENT_CHILD.stream} batch</p>
+                      <h2 className="text-xl font-bold text-gray-900">{t('parentDashboardScheduleTitle')}</h2>
+                      <p className="text-sm text-gray-600 mt-1">{t('parentDashboardScheduleSubtitle', { childName: PARENT_CHILD.name, stream: PARENT_CHILD.stream })}</p>
                     </div>
                     <div className="divide-y divide-gray-200">
                       {scheduleByDay.map(({ day, periods }) => (
@@ -150,9 +152,9 @@ const ParentDashboard = () => {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-                      <p className="text-sm font-medium text-gray-600">Overall Attendance</p>
+                      <p className="text-sm font-medium text-gray-600">{t('parentDashboardOverallAttendance')}</p>
                       <p className={`text-3xl font-bold mt-1 ${getAttendanceColor(overallPercentage)}`}>{overallPercentage}%</p>
-                      <p className="text-xs text-gray-500 mt-1">{overallAttended} of {overallTotal} classes attended</p>
+                      <p className="text-xs text-gray-500 mt-1">{t('parentDashboardClassesAttended', { attended: overallAttended, total: overallTotal })}</p>
                     </div>
                     {CHILD_ATTENDANCE_BY_SUBJECT.slice(0, 2).map((s) => {
                       const pct = Math.round((s.attended / s.totalClasses) * 100);
@@ -160,7 +162,7 @@ const ParentDashboard = () => {
                         <div key={s.subject} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                           <p className="text-sm font-medium text-gray-600">{s.subject}</p>
                           <p className={`text-3xl font-bold mt-1 ${getAttendanceColor(pct)}`}>{pct}%</p>
-                          <p className="text-xs text-gray-500 mt-1">{s.attended} of {s.totalClasses} classes</p>
+                          <p className="text-xs text-gray-500 mt-1">{t('parentDashboardClassesShort', { attended: s.attended, total: s.totalClasses })}</p>
                         </div>
                       );
                     })}
@@ -168,7 +170,7 @@ const ParentDashboard = () => {
 
                   <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                      <h2 className="text-xl font-bold text-gray-900">Attendance by Subject</h2>
+                      <h2 className="text-xl font-bold text-gray-900">{t('parentDashboardAttendanceBySubject')}</h2>
                     </div>
                     <div className="p-6 space-y-4">
                       {CHILD_ATTENDANCE_BY_SUBJECT.map((s) => {
@@ -193,7 +195,7 @@ const ParentDashboard = () => {
 
                   <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
                     <div className="p-6 border-b border-gray-200">
-                      <h2 className="text-xl font-bold text-gray-900">Recent Attendance</h2>
+                      <h2 className="text-xl font-bold text-gray-900">{t('parentDashboardRecentAttendance')}</h2>
                     </div>
                     <div className="p-6">
                       <div className="flex flex-wrap gap-3">
@@ -226,19 +228,19 @@ const ParentDashboard = () => {
                     <div className="p-6 border-b border-gray-200">
                       <h2 className="text-xl font-bold text-gray-900 flex items-center">
                         <Award className="w-5 h-5 mr-2 text-blue-600" />
-                        Test Marks
+                        {t('parentDashboardTestMarksTitle')}
                       </h2>
-                      <p className="text-sm text-gray-600 mt-1">Recent test results for {PARENT_CHILD.name}</p>
+                      <p className="text-sm text-gray-600 mt-1">{t('parentDashboardTestMarksSubtitle', { childName: PARENT_CHILD.name })}</p>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Test</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marks</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('parentDashboardTableTest')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('parentDashboardTableSubject')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('parentDashboardTableDate')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('parentDashboardTableMarks')}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('parentDashboardTableGrade')}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -265,15 +267,15 @@ const ParentDashboard = () => {
                   <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
                     <div className="flex items-center mb-2">
                       <TrendingUp className="w-5 h-5 mr-2 text-green-600" />
-                      <h3 className="font-semibold text-gray-900">Average Score</h3>
+                      <h3 className="font-semibold text-gray-900">{t('parentDashboardAverageScore')}</h3>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
                       {Math.round(
-                        CHILD_TEST_MARKS.reduce((sum, t) => sum + (t.marksObtained / t.totalMarks) * 100, 0) /
+                        CHILD_TEST_MARKS.reduce((sum, test) => sum + (test.marksObtained / test.totalMarks) * 100, 0) /
                           CHILD_TEST_MARKS.length
                       )}%
                     </p>
-                    <p className="text-sm text-gray-600 mt-1">across {CHILD_TEST_MARKS.length} recent tests</p>
+                    <p className="text-sm text-gray-600 mt-1">{t('parentDashboardAcrossTests', { count: CHILD_TEST_MARKS.length })}</p>
                   </div>
                 </div>
               )}
