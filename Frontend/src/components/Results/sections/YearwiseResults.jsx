@@ -1,16 +1,18 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { RESULTS_BY_YEAR } from "../../../mockData/resultsData";
 
 const YearwiseResults = () => {
+  const { t } = useTranslation();
   const [activeYear, setActiveYear] = useState(RESULTS_BY_YEAR[0].year);
   const active = RESULTS_BY_YEAR.find((r) => r.year === activeYear) ?? RESULTS_BY_YEAR[0];
 
   const metrics = [
-    { label: "Total Students", value: active.totalStudents },
-    { label: "Pass Percentage", value: `${active.passPercentage}%` },
-    { label: "80%+ Students", value: active.eightyPlusCount },
-    { label: "90%+ Students", value: active.ninetyPlusCount },
-    { label: "Highest Percentage", value: `${active.highestPercentage}%` },
+    { label: t("yearwiseResultsTotalStudentsLabel"), value: active.totalStudents },
+    { label: t("yearwiseResultsPassPercentageLabel"), value: `${active.passPercentage}%` },
+    { label: t("yearwiseResultsEightyPlusLabel"), value: active.eightyPlusCount },
+    { label: t("yearwiseResultsNinetyPlusLabel"), value: active.ninetyPlusCount },
+    { label: t("yearwiseResultsHighestPercentageLabel"), value: `${active.highestPercentage}%` },
   ];
 
   return (
@@ -18,7 +20,7 @@ const YearwiseResults = () => {
       <div className="max-w-[1280px] mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-10">
           <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface tracking-tight mb-4">
-            Year-wise Results
+            {t("yearwiseResultsTitle")}
           </h2>
         </div>
         <div className="flex flex-wrap justify-center gap-3 mb-12">
