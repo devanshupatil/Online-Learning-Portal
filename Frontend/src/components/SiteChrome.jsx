@@ -181,6 +181,39 @@ export const SiteFooter = () => {
             </li>
           </ul>
         </div>
+        <div>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerPortals")}</h4>
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/admin/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+              <span>{t("footerAdminPortal")}</span>
+            </Link>
+            <Link
+              to="/teachers/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">school</span>
+              <span>{t("footerTeacherPortal")}</span>
+            </Link>
+            <Link
+              to="/learners/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-tertiary/10 text-tertiary hover:bg-tertiary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">person</span>
+              <span>{t("footerStudentPortal")}</span>
+            </Link>
+            <Link
+              to="/parents/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">family_restroom</span>
+              <span>{t("footerParentPortal")}</span>
+            </Link>
+          </div>
+        </div>
       </div>
       <div className="border-t border-outline-variant/30 py-6 text-center">
         <p className="text-on-surface-variant">{t("footerCopyright")}</p>
