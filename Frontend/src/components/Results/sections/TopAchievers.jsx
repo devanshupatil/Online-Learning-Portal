@@ -1,8 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import AchieverCard from "./AchieverCard";
 import { TOP_ACHIEVERS } from "../../../mockData/resultsData";
 
 const TopAchievers = () => {
+  const { t } = useTranslation();
   const featured = TOP_ACHIEVERS.find((a) => a.featured) ?? TOP_ACHIEVERS[0];
   const rest = TOP_ACHIEVERS.filter((a) => a !== featured);
 
@@ -11,10 +13,10 @@ const TopAchievers = () => {
       <div className="max-w-[1280px] mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface tracking-tight mb-4">
-            Top Achievers
+            {t("topAchieversTitle")}
           </h2>
           <p className="text-lg text-on-surface-variant">
-            Our highest scorers, leading from the front.
+            {t("topAchieversSubtitle")}
           </p>
         </div>
         <div className="max-w-md mx-auto mb-12">
