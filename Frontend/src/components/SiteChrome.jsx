@@ -51,7 +51,7 @@ export const SiteNav = ({ active = "Home" }) => {
                 className={
                   link.label === active
                     ? "font-bold text-primary border-b-2 border-primary pb-1"
-                    : "font-bold text-on-surface-variant hover:text-primary transition-colors hover:opacity-90 transition-all duration-300"
+                    : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover"
                 }
               >
                 {t(link.navLabelKey)}
@@ -112,8 +112,8 @@ export const SiteNav = ({ active = "Home" }) => {
               onClick={() => setMenuOpen(false)}
               className={
                 link.label === active
-                  ? "font-bold text-primary py-3 border-b-2 border-primary"
-                  : "font-bold text-on-surface-variant hover:text-primary transition-colors py-3"
+                  ? "relative inline-block font-bold text-primary py-3 border-b-2 border-primary"
+                  : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover py-3"
               }
             >
               {t(link.navLabelKey)}
