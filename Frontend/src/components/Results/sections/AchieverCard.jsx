@@ -1,16 +1,20 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import InitialsAvatar from "../../ui/InitialsAvatar";
 
 const AchieverCard = ({
   name,
   percentage,
-  class: studentClass,
+  classKey,
   featured = false,
-  batch,
+  batchKey,
   school,
   year,
-  stream,
+  streamKey,
 }) => {
+  const { t } = useTranslation();
+  const studentClass = classKey ? t(classKey) : "";
+
   if (featured) {
     return (
       <div className="glass-panel rounded-2xl p-8 text-center soft-shadow border-2 border-primary/30 relative overflow-hidden">
@@ -34,14 +38,14 @@ const AchieverCard = ({
       <h3 className="text-lg font-bold text-on-surface mb-1">{name}</h3>
       <div className="text-2xl font-bold text-primary mb-2">{percentage}%</div>
       <p className="text-sm text-on-surface-variant">{studentClass}</p>
-      {(batch || school) && (
+      {(batchKey || school) && (
         <p className="text-xs text-on-surface-variant mt-1">
-          {[batch, school].filter(Boolean).join(" · ")}
+          {[batchKey ? t(batchKey) : null, school].filter(Boolean).join(" · ")}
         </p>
       )}
-      {(year || stream) && (
+      {(year || streamKey) && (
         <p className="text-xs text-on-surface-variant mt-1">
-          {[year, stream].filter(Boolean).join(" · ")}
+          {[year, streamKey ? t(streamKey) : null].filter(Boolean).join(" · ")}
         </p>
       )}
     </div>
