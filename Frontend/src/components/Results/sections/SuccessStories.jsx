@@ -1,14 +1,16 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import InitialsAvatar from "../../ui/InitialsAvatar";
 import { SUCCESS_STORIES } from "../../../mockData/resultsData";
 
 const SuccessStories = () => {
+  const { t } = useTranslation();
   return (
     <section className="py-16 md:py-[120px] bg-surface-container-lowest" id="success-stories">
       <div className="max-w-[1280px] mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] text-on-surface tracking-tight mb-4">
-            Student Success Stories
+            {t("successStoriesTitle")}
           </h2>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -24,21 +26,21 @@ const SuccessStories = () => {
               <div className="space-y-4 text-sm">
                 <div>
                   <span className="text-primary font-bold uppercase tracking-wider text-xs">
-                    Challenge
+                    {t("successStoriesChallengeLabel")}
                   </span>
-                  <p className="text-on-surface-variant mt-1">{s.challenge}</p>
+                  <p className="text-on-surface-variant mt-1">{t(s.challengeKey)}</p>
                 </div>
                 <div>
                   <span className="text-primary font-bold uppercase tracking-wider text-xs">
-                    Preparation
+                    {t("successStoriesPreparationLabel")}
                   </span>
-                  <p className="text-on-surface-variant mt-1">{s.preparation}</p>
+                  <p className="text-on-surface-variant mt-1">{t(s.preparationKey)}</p>
                 </div>
                 <div>
                   <span className="text-primary font-bold uppercase tracking-wider text-xs">
-                    Result
+                    {t("successStoriesResultLabel")}
                   </span>
-                  <p className="text-on-surface-variant mt-1">{s.result}</p>
+                  <p className="text-on-surface-variant mt-1">{t(s.resultKey)}</p>
                 </div>
               </div>
             </div>
