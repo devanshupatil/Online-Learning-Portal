@@ -59,11 +59,14 @@ body {
   --color-accent-foreground: #004ac6;
   --color-ring: #004ac6;
   --color-input: #c3c6d7;
+  --color-outline: #737685;
   --color-on-surface: #191c1e;
   --color-foreground: #191c1e;
   --color-on-surface-variant: #434655;
   --color-surface: #f7f9fb;
   --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f4f6;
+  --color-surface-container-high: #e7e7f2;
   --color-surface-container-highest: #e0e3e5;
   --color-outline-variant: #c3c6d7;
   --color-tertiary-container: #996100;

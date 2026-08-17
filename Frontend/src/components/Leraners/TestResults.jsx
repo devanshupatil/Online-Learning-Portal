@@ -1,8 +1,6 @@
 import React from 'react';
-import { FileText, Calendar, Award } from 'lucide-react';
 
 const TestResults = () => {
-  // Mock data for test results
   const testResultsData = [
     {
       id: 1,
@@ -51,56 +49,57 @@ const TestResults = () => {
     }
   ];
 
+  const getBarColor = (percentage) => {
+    if (percentage >= 90) return 'bg-primary';
+    if (percentage >= 80) return 'bg-secondary';
+    if (percentage >= 70) return 'bg-tertiary-container';
+    return 'bg-destructive';
+  };
+
   const getGradeColor = (percentage) => {
-    if (percentage >= 90) return 'text-green-600';
-    if (percentage >= 80) return 'text-blue-600';
-    if (percentage >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (percentage >= 90) return 'text-primary';
+    if (percentage >= 80) return 'text-secondary';
+    if (percentage >= 70) return 'text-tertiary-container';
+    return 'text-destructive';
   };
 
   return (
-    <>
-      <div className="space-y-4">
-        {testResultsData.map((test) => (
-          <div
-            key={test.id}
-            className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow duration-300"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-gray-900">{test.testName}</h3>
-                <p className="text-sm text-gray-600 mt-1">{test.subject}</p>
-              </div>
-              <div className="flex flex-col items-end">
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  <span>{test.date}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-lg font-bold text-gray-900">
-                    {test.marks}/{test.totalMarks}
-                  </span>
-                  <span className={`ml-3 text-lg font-bold ${getGradeColor(test.percentage)}`}>
-                    {test.percentage}%
-                  </span>
-                </div>
-              </div>
+    <div className="space-y-4">
+      {testResultsData.map((test) => (
+        <div
+          key={test.id}
+          className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
+        >
+          <div className="flex justify-between items-start gap-4">
+            <div className="min-w-0">
+              <h3 className="font-semibold text-on-surface">{test.testName}</h3>
+              <p className="text-sm text-on-surface-variant mt-1">{test.subject}</p>
             </div>
-
-            <div className="mt-3 w-full bg-gray-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full ${
-                  test.percentage >= 90 ? 'bg-green-500' :
-                  test.percentage >= 80 ? 'bg-blue-500' :
-                  test.percentage >= 70 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${test.percentage}%` }}
-              ></div>
+            <div className="flex flex-col items-end shrink-0">
+              <div className="flex items-center text-sm text-on-surface-variant mb-2">
+                <span className="material-symbols-outlined text-[16px] mr-1">calendar_today</span>
+                <span>{test.date}</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-lg font-bold text-on-surface">
+                  {test.marks}/{test.totalMarks}
+                </span>
+                <span className={`ml-3 text-lg font-bold ${getGradeColor(test.percentage)}`}>
+                  {test.percentage}%
+                </span>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-    </>
+
+          <div className="mt-3 w-full bg-surface-container-highest rounded-full h-2 overflow-hidden">
+            <div
+              className={`h-2 rounded-full ${getBarColor(test.percentage)}`}
+              style={{ width: `${test.percentage}%` }}
+            ></div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 

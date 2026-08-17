@@ -1,23 +1,11 @@
 import React from 'react';
 
-import LearnersNavigation from './LearnersNavigation';
 import NewLearnerDashboard from './NewLearnerDashboard';
-import Footer from '../Footer';
 
+// LearnersPage: thin wrapper — NewLearnerDashboard renders its own
+// layout, navbar, and SiteFooter internally.
 const LearnersPage = () => {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Main Content */}
-      <div className="bg-white">
-        {/* Learners Navigation */}
-        {/* <LearnersNavigation /> */}
-
-        {/* New Learner Dashboard */}
-        <NewLearnerDashboard />
-      </div>
-      <Footer />
-    </div>
-  );
+  return <NewLearnerDashboard />;
 };
 
 export default LearnersPage;

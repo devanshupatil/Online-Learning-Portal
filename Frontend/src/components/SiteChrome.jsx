@@ -51,7 +51,7 @@ export const SiteNav = ({ active = "Home" }) => {
                 className={
                   link.label === active
                     ? "font-bold text-primary border-b-2 border-primary pb-1"
-                    : "font-bold text-on-surface-variant hover:text-primary transition-colors hover:opacity-90 transition-all duration-300"
+                    : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover"
                 }
               >
                 {t(link.navLabelKey)}
@@ -112,8 +112,8 @@ export const SiteNav = ({ active = "Home" }) => {
               onClick={() => setMenuOpen(false)}
               className={
                 link.label === active
-                  ? "font-bold text-primary py-3 border-b-2 border-primary"
-                  : "font-bold text-on-surface-variant hover:text-primary transition-colors py-3"
+                  ? "relative inline-block font-bold text-primary py-3 border-b-2 border-primary"
+                  : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover py-3"
               }
             >
               {t(link.navLabelKey)}
@@ -180,6 +180,39 @@ export const SiteFooter = () => {
               <span>info@edulearningplatform.com</span>
             </li>
           </ul>
+        </div>
+        <div>
+          <h4 className="text-2xl text-on-surface mb-4">{t("footerPortals")}</h4>
+          <div className="flex flex-col gap-3">
+            <Link
+              to="/admin/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+              <span>{t("footerAdminPortal")}</span>
+            </Link>
+            <Link
+              to="/teachers/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-secondary/10 text-secondary hover:bg-secondary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">school</span>
+              <span>{t("footerTeacherPortal")}</span>
+            </Link>
+            <Link
+              to="/learners/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-tertiary/10 text-tertiary hover:bg-tertiary/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">person</span>
+              <span>{t("footerStudentPortal")}</span>
+            </Link>
+            <Link
+              to="/parents/dashboard"
+              className="inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/10 text-accent hover:bg-accent/20 transition-colors font-semibold"
+            >
+              <span className="material-symbols-outlined text-xl">family_restroom</span>
+              <span>{t("footerParentPortal")}</span>
+            </Link>
+          </div>
         </div>
       </div>
       <div className="border-t border-outline-variant/30 py-6 text-center">

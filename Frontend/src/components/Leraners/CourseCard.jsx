@@ -1,49 +1,62 @@
 import React from 'react';
-import { Book, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const CourseCard = ({ course, onStart }) => {
+  const { t } = useTranslation();
+
   return (
-    <div className="card-hover border border-gray-200 rounded-xl p-3 sm:p-4 lg:p-6 hover:border-blue-300 transition-all duration-300 bg-white shadow-sm hover:shadow-lg">
-      <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="flex items-start gap-3">
-          <div className="bg-blue-100 p-2 sm:p-3 rounded-lg flex-shrink-0">
-            <Book className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-gray-900 text-base sm:text-lg lg:text-xl leading-tight mb-1 truncate">
-              {course.title}
-            </h3>
-            <div className="flex items-center text-xs sm:text-sm text-gray-600">
-              <User className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
-              <span className="truncate">{course.instructor}</span>
-            </div>
-          </div>
+    <article className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+      <div className="w-full h-40 rounded-xl mb-4 overflow-hidden bg-surface-container-low relative">
+        <img
+          alt={course.title}
+          className="w-full h-full object-cover"
+          src={course.thumbnail}
+        />
+        <div className="absolute top-3 right-3 bg-surface-variant text-on-surface-variant px-2 py-1 rounded-md text-xs font-semibold border border-outline-variant shadow-sm">
+          {course.category}
         </div>
-
-        <div className="flex flex-wrap gap-2">
-          <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
-            {course.category}
-          </span>
-          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-800 rounded-full font-medium">
-            {course.progress}% complete
-          </span>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3">
-          <div
-            className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 sm:h-3 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${course.progress}%` }}
-          ></div>
-        </div>
-
-        <button
-          onClick={onStart}
-          className="cta-button cta-primary w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-sm hover:shadow-md text-sm sm:text-base font-medium whitespace-nowrap min-h-[40px] flex items-center justify-center"
-        >
-          Start Course
-        </button>
       </div>
-    </div>
+
+      <div className="flex-1 flex flex-col">
+        <h3 className="font-display text-2xl text-on-surface mb-1 leading-tight">
+          {course.title}
+        </h3>
+        <p className="text-base text-on-surface-variant mb-4 line-clamp-2">
+          {course.description}
+        </p>
+
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden shrink-0 border border-outline-variant flex items-center justify-center">
+            <span className="text-xs font-bold text-primary">
+              {course.instructorInitials}
+            </span>
+          </div>
+          <span className="text-sm text-on-surface-variant">{course.instructor}</span>
+        </div>
+
+        <div className="mt-auto">
+          <div className="flex justify-between items-end mb-1">
+            <span className="text-xs text-on-surface-variant">
+              {t('learnerCourseProgressLabel')}
+            </span>
+            <span className="text-xs font-bold text-primary">{course.progress}%</span>
+          </div>
+          <div className="w-full bg-surface-container-highest rounded-full h-2 mb-4 overflow-hidden">
+            <div
+              className="bg-primary h-2 rounded-full"
+              style={{ width: `${course.progress}%` }}
+            ></div>
+          </div>
+          <button
+            onClick={onStart}
+            className="w-full py-2 px-4 border border-primary text-primary text-sm rounded-lg hover:bg-surface-container-low active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+          >
+            {t('learnerCourseResumeBtn')}
+            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+    </article>
   );
 };
 
