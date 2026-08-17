@@ -79,6 +79,8 @@ body {
   --color-on-secondary-fixed: #0f0069;
   --color-primary-fixed: #dbe1ff;
   --color-on-primary-fixed: #00174b;
+  --color-tertiary-fixed: #ffdbd0;
+  --color-on-tertiary-fixed: #3a0b00;
   --color-surface-variant: #e0e3e5;
   --color-surface-container-low: #f2f4f6;
   --color-surface-bright: #f7f9fb;
