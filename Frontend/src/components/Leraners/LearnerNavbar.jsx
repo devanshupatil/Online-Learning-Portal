@@ -55,8 +55,8 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
         onClick={() => handleSelect(item.id)}
         className={
           isActive
-            ? "text-primary border-b-2 border-primary pb-1 font-bold text-base transition-colors whitespace-nowrap cursor-pointer"
-            : "text-on-surface-variant hover:text-primary font-bold text-base transition-colors whitespace-nowrap cursor-pointer"
+            ? "text-primary border-b-2 border-primary pb-1 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer"
+            : "text-on-surface-variant hover:text-primary font-bold text-sm transition-colors whitespace-nowrap cursor-pointer"
         }
       >
         {t(item.labelKey)}
