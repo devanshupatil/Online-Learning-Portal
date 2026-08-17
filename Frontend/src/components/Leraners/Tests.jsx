@@ -54,50 +54,85 @@ const Tests = () => {
     navigate('/test-taking', { state: { test } });
   };
 
+  const BADGE_STYLES = [
+    'bg-primary-fixed text-on-primary-fixed',
+    'bg-secondary-fixed text-on-secondary-fixed',
+    'bg-tertiary-fixed text-on-tertiary-fixed'
+  ];
+
+  const getDueMeta = (dueAt) => {
+    const dueDate = new Date(dueAt);
+    const diffDays = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+    const urgent = diffDays <= 1;
+    const label =
+      diffDays <= 0
+        ? t('learnerTestDueDate', { date: 'Today' })
+        : diffDays === 1
+        ? t('learnerTestDueDate', { date: 'Tomorrow' })
+        : t('learnerTestDueDate', { date: dueDate.toLocaleDateString() });
+    return { label, urgent };
+  };
+
   return (
-    <div className="space-y-4">
+    <div>
       {analysisData && analysisData.length > 0 ? (
-        analysisData.map((test) => (
-          <div
-            key={test.id}
-            className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
-          >
-            <div className="flex justify-between items-start gap-4">
-              <div className="flex items-start gap-3 min-w-0">
-                <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-accent text-primary shrink-0">
-                  <span className="material-symbols-outlined text-[22px]">quiz</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="font-medium text-on-surface">{test.test_name}</p>
-                  <p className="text-sm text-on-surface-variant mt-1">{test.course}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 text-sm text-on-surface-variant gap-3">
-              <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-                <div className="flex items-center">
-                  <span className="material-symbols-outlined text-[18px] mr-1 flex-shrink-0">
-                    calendar_today
-                  </span>
-                  <span className="truncate">{new Date(test.updated_at).toLocaleDateString()}</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="material-symbols-outlined text-[18px] mr-1 flex-shrink-0">
-                    schedule
-                  </span>
-                  <span className="truncate">{new Date(test.updated_at).toLocaleTimeString()}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => handleStartTest(test)}
-                className="cursor-pointer flex items-center justify-center gap-1 px-5 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 active:scale-95 transition-all shrink-0 self-start sm:self-auto"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {analysisData.map((test, index) => {
+            const due = test.due_at ? getDueMeta(test.due_at) : null;
+            const isResume = test.status === 'in_progress';
+            return (
+              <div
+                key={test.id}
+                className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300 flex flex-col h-full"
               >
-                <span className="material-symbols-outlined text-[18px]">play_arrow</span>
-                {t('learnerStartTest')}
-              </button>
-            </div>
-          </div>
-        ))
+                <div className="flex justify-between items-start mb-4">
+                  <span
+                    className={`inline-block font-medium text-sm px-3 py-1 rounded-full ${BADGE_STYLES[index % BADGE_STYLES.length]}`}
+                  >
+                    {test.course}
+                  </span>
+                  <span className="material-symbols-outlined text-outline">more_vert</span>
+                </div>
+
+                <h3 className="font-medium text-on-surface mb-4 line-clamp-2">{test.test_name}</h3>
+
+                <div className="space-y-3 mb-6 flex-grow">
+                  {typeof test.question_count === 'number' && (
+                    <div className="flex items-center text-on-surface-variant text-sm">
+                      <span className="material-symbols-outlined text-[18px] mr-2">format_list_bulleted</span>
+                      {t('learnerTestQuestionsCount', { count: test.question_count })}
+                    </div>
+                  )}
+                  {typeof test.duration_minutes === 'number' && (
+                    <div className="flex items-center text-on-surface-variant text-sm">
+                      <span className="material-symbols-outlined text-[18px] mr-2">schedule</span>
+                      {t('learnerTestDurationMinutes', { count: test.duration_minutes })}
+                    </div>
+                  )}
+                  {due && (
+                    <div
+                      className={`flex items-center text-sm ${due.urgent ? 'text-destructive' : 'text-on-surface-variant'}`}
+                    >
+                      <span className="material-symbols-outlined text-[18px] mr-2">event</span>
+                      {due.label}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => handleStartTest(test)}
+                  className={
+                    isResume
+                      ? 'cursor-pointer w-full h-[48px] border-2 border-primary text-primary bg-transparent rounded-lg font-medium hover:bg-surface-container-low transition-colors active:scale-[0.98]'
+                      : 'cursor-pointer w-full h-[48px] bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors shadow-sm active:scale-[0.98]'
+                  }
+                >
+                  {isResume ? t('learnerResumeTest') : t('learnerStartTest')}
+                </button>
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <div className="text-center text-on-surface-variant py-10 bg-surface-container-lowest border border-outline-variant rounded-2xl">
           {analysisData === null ? t('learnerTestsLoading') : t('learnerTestsEmpty')}

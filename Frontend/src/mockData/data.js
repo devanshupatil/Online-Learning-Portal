@@ -9,6 +9,12 @@ const isoDaysAgo = (n) => {
 
 const dateDaysAgo = (n) => isoDaysAgo(n).split('T')[0];
 
+const isoDaysFromNow = (n) => {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString();
+};
+
 export const STREAM_CLASSES = ['JEE', 'NEET', 'CET (PCM)', 'CET (PCB)'];
 
 // Students grouped by coaching stream — used by attendance features.
@@ -83,10 +89,10 @@ export const LEARNER_MATERIALS = [
 
 // Tests shown on the learner's dashboard.
 export const LEARNER_TESTS = [
-  { id: 1, test_name: 'JEE Mock Test - Physics Mechanics', course: 'Physics', updated_at: isoDaysAgo(1) },
-  { id: 2, test_name: 'NEET Practice Test - Human Physiology', course: 'Biology', updated_at: isoDaysAgo(3) },
-  { id: 3, test_name: 'CET Mock Test - Organic Chemistry', course: 'Chemistry', updated_at: isoDaysAgo(5) },
-  { id: 4, test_name: 'JEE Mock Test - Algebra & Calculus', course: 'Mathematics', updated_at: isoDaysAgo(7) },
+  { id: 1, test_name: 'JEE Mock Test - Physics Mechanics', course: 'Physics', updated_at: isoDaysAgo(1), question_count: 25, duration_minutes: 45, due_at: isoDaysFromNow(1), status: 'not_started' },
+  { id: 2, test_name: 'NEET Practice Test - Human Physiology', course: 'Biology', updated_at: isoDaysAgo(3), question_count: 40, duration_minutes: 60, due_at: isoDaysFromNow(6), status: 'not_started' },
+  { id: 3, test_name: 'CET Mock Test - Organic Chemistry', course: 'Chemistry', updated_at: isoDaysAgo(5), question_count: 15, duration_minutes: 20, due_at: isoDaysFromNow(9), status: 'in_progress' },
+  { id: 4, test_name: 'JEE Mock Test - Algebra & Calculus', course: 'Mathematics', updated_at: isoDaysAgo(7), question_count: 30, duration_minutes: 50, due_at: isoDaysFromNow(4), status: 'not_started' },
 ];
 
 // Sample AI-analysis result returned when a teacher "converts" a scanned test image.

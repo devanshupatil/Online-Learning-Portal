@@ -359,9 +359,15 @@
   "learnerMaterialEmpty": "साहित्य सापडले नाही.",
   "learnerMaterialSize": "आकार: {{size}}",
   "learnerMaterialUploaded": "अपलोड: {{date}}",
+  "learnerTestsPageTitle": "चाचण्या",
+  "learnerTestsPageSubtitle": "तुमच्या कामगिरीचा मागोवा घ्या आणि नवीन चाचण्या द्या.",
   "learnerTestsLoading": "चाचण्या लोड होत आहेत...",
   "learnerTestsEmpty": "कोणतीही चाचणी उपलब्ध नाही",
   "learnerStartTest": "चाचणी सुरू करा",
+  "learnerResumeTest": "चाचणी पुन्हा सुरू करा",
+  "learnerTestQuestionsCount": "{{count}} प्रश्न",
+  "learnerTestDurationMinutes": "{{count}} मिनिटे",
+  "learnerTestDueDate": "अंतिम तारीख: {{date}}",
   "learnerProgressOverall": "एकूण प्रगती",
   "learnerProgressOverallAverage": "एकूण सरासरी",
   "learnerProgressLabel": "प्रगती",
@@ -378,6 +384,6 @@
   "learnerProfileLevel": "स्तर {{level}}",
   "learnerProfileWeeklyStreak": "साप्ताहिक स्ट्रीक",
   "learnerProfileStreakDays": "{{count}} दिवस",
-  "learnerTestTab": "चाचणी",
-  "learnerTestResultsTab": "चाचणी निकाल"
+  "learnerTestTab": "उपलब्ध चाचण्या",
+  "learnerTestResultsTab": "निकाल"
 }

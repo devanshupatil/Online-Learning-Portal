@@ -153,33 +153,36 @@ const NewLearnerDashboard = () => {
           )}
 
           {activeSection === 'test' && (
-            <div className="space-y-6">
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
-                <div className="p-6 border-b border-outline-variant">
-                  <div className="inline-flex bg-surface-container-high rounded-full p-1 gap-1">
-                    {testTabItems.map((tab) => (
-                      <button
-                        key={tab.id}
-                        onClick={() => setTestTab(tab.id)}
-                        className={`cursor-pointer flex items-center gap-1.5 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                          testTab === tab.id
-                            ? 'bg-surface-container-lowest text-primary shadow-sm'
-                            : 'text-on-surface-variant hover:bg-surface-container-lowest/50'
-                        }`}
-                      >
-                        <span className="material-symbols-outlined text-[18px]">
-                          {tab.id === 'Test' ? 'quiz' : 'fact_check'}
-                        </span>
-                        <span className="font-sans">{t(tab.labelKey)}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="p-6">
-                  {testTab === 'Test' && <Test />}
-                  {testTab === 'Test Results' && <TestResults />}
-                </div>
+            <div>
+              {/* Page Header */}
+              <div className="mb-8 mt-4 lg:mt-8">
+                <h2 className="font-display text-[32px] leading-[40px] text-on-surface">
+                  {t('learnerTestsPageTitle')}
+                </h2>
+                <p className="text-base text-on-surface-variant mt-1">
+                  {t('learnerTestsPageSubtitle')}
+                </p>
               </div>
+
+              {/* Tabs */}
+              <div className="flex gap-8 border-b border-outline-variant mb-8 overflow-x-auto no-scrollbar">
+                {testTabItems.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setTestTab(tab.id)}
+                    className={`text-sm font-medium pb-3 px-1 whitespace-nowrap transition-colors cursor-pointer ${
+                      testTab === tab.id
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-on-surface-variant hover:text-primary'
+                    }`}
+                  >
+                    {t(tab.labelKey)}
+                  </button>
+                ))}
+              </div>
+
+              {testTab === 'Test' && <Test />}
+              {testTab === 'Test Results' && <TestResults />}
             </div>
           )}
         </div>
