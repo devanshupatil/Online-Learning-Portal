@@ -5,7 +5,7 @@ const CourseCard = ({ course, onStart }) => {
   const { t } = useTranslation();
 
   return (
-    <article className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 flex flex-col shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300">
+    <article className="card-base card-hover-lift p-6 flex flex-col">
       <div className="w-full h-40 rounded-xl mb-4 overflow-hidden bg-surface-container-low relative">
         <img
           alt={course.title}
@@ -43,7 +43,7 @@ const CourseCard = ({ course, onStart }) => {
           </div>
           <div className="w-full bg-surface-container-highest rounded-full h-2 mb-4 overflow-hidden">
             <div
-              className="bg-primary h-2 rounded-full"
+              className="bg-primary h-2 rounded-full progress-fill"
               style={{ width: `${course.progress}%` }}
             ></div>
           </div>

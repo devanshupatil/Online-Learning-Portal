@@ -5,20 +5,16 @@ const WeeklyStreakIndicator = ({ streak = 0 }) => {
   const { t } = useTranslation();
   const days = Array(7).fill(false);
   for (let i = 7 - streak; i < 7; i++) {
-    if (i >= 0) {
-      days[i] = true;
-    }
+    if (i >= 0) days[i] = true;
   }
 
-  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const dayKeys = ['learnerDayMon', 'learnerDayTue', 'learnerDayWed', 'learnerDayThu', 'learnerDayFri', 'learnerDaySat', 'learnerDaySun'];
 
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[24px] text-tertiary-container">
-            local_fire_department
-          </span>
+          <span className="material-symbols-outlined text-[24px] text-tertiary-container">local_fire_department</span>
           <h3 className="font-display text-2xl text-on-surface">{t('learnerWeeklyStreak')}</h3>
         </div>
         <div className="flex items-baseline gap-1">
@@ -28,11 +24,11 @@ const WeeklyStreakIndicator = ({ streak = 0 }) => {
       </div>
 
       <div className="flex justify-between mb-3">
-        {dayLabels.map((day, index) => (
+        {dayKeys.map((key, index) => (
           <div key={index} className="flex flex-col items-center gap-1">
-            <span className="text-xs text-on-surface-variant">{day}</span>
+            <span className="text-xs text-on-surface-variant">{t(key)}</span>
             <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center ${
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${
                 days[index]
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-surface-container-low border border-outline-variant'

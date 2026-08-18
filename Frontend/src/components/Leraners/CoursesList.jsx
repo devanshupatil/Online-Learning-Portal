@@ -9,7 +9,8 @@ const CoursesList = ({ onAddCourse, courses }) => {
   const filteredCourses = courses.filter(
     (course) =>
       course.title.toLowerCase().includes(search.toLowerCase()) ||
-      course.category.toLowerCase().includes(search.toLowerCase())
+      course.category.toLowerCase().includes(search.toLowerCase()) ||
+      course.instructor.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -58,9 +59,11 @@ const CoursesList = ({ onAddCourse, courses }) => {
             <CourseCard key={course.id} course={course} />
           ))
         ) : (
-          <p className="text-on-surface-variant col-span-full text-center py-12">
-            No courses found for "{search}".
-          </p>
+          <div className="col-span-full text-center py-12">
+            <span className="material-symbols-outlined text-[64px] text-outline mb-4 block">search_off</span>
+            <p className="text-lg font-semibold text-on-surface mb-2">{t('learnerCoursesEmpty')}</p>
+            <p className="text-sm text-on-surface-variant">{t('learnerCoursesEmptyHint', { query: search })}</p>
+          </div>
         )}
       </div>
     </div>

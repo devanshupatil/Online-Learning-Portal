@@ -13,15 +13,30 @@ const Header = () => {
   const isLearnerOrTeacherSection = location.pathname.startsWith('/learners') || location.pathname.startsWith('/teachers') || location.pathname.startsWith('/admin');
 
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white sticky top-0 z-50">
+    <header className="bg-white dark:bg-surface border-b border-gray-200 dark:border-outline-variant sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-3">
             {/* Logo and Title */}
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
-              <GraduationCap className="text-blue-600 w-4 h-4 sm:w-6 sm:h-6" />
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+              <GraduationCap className="text-white w-6 h-6" />
             </div>
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">EduLearn Platform</h1>
+            <div className="flex flex-col text-left">
+              <h1 className="text-lg sm:text-xl font-bold leading-tight font-display tracking-tight text-primary">
+                EduLearning
+              </h1>
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 leading-tight">
+                {location.pathname.startsWith('/teachers')
+                  ? 'Teacher Portal'
+                  : location.pathname.startsWith('/admin')
+                    ? 'Admin Portal'
+                    : location.pathname.startsWith('/parents')
+                      ? 'Parent Portal'
+                      : location.pathname.startsWith('/learners')
+                        ? 'Student Portal'
+                        : 'Learning Portal'}
+              </span>
+            </div>
           </div>
 
           {/* Right side CTA buttons */}
@@ -32,7 +47,7 @@ const Header = () => {
                 <HamburgerIcon
                   isOpen={isSidebarOpen}
                   onClick={toggleSidebar}
-                  className="text-white hamburger-mobile-only"
+                  className="text-gray-700 dark:text-white hamburger-mobile-only"
                 />
               </div>
             )}

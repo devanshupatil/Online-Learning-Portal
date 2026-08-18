@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Download, Trash2, Eye, Edit, FileType, NutOffIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { mockFetch } from '../../mockData/mockFetch';
 
 const TestManager = () => {
+  const { t } = useTranslation();
   const [testMaterials, setTestMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -15,12 +16,11 @@ const TestManager = () => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadMessage, setDownloadMessage] = useState('');
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
-  const [analysisData, setAnalysisData] = useState({});
   const [editingAnalysis, setEditingAnalysis] = useState({});
   const [currentMaterialId, setCurrentMaterialId] = useState(null);
 
   const URL = import.meta.env.VITE_BACKEND_URL;
-  const teacherId = 'teacher123'; // Placeholder teacherId
+  const teacherId = 'teacher123';
   const selectedModel = localStorage.getItem('selectedModel') || 'openAI';
 
   useEffect(() => {
@@ -50,10 +50,9 @@ const TestManager = () => {
     setDownloading(true);
     setDownloadingId(materialId);
     setDownloadProgress(0);
-    setDownloadMessage('Preparing download...');
+    setDownloadMessage(t('testManager.preparingDownload'));
 
     try {
-      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setDownloadProgress(prev => {
           if (prev >= 90) {
@@ -64,20 +63,17 @@ const TestManager = () => {
         });
       }, 100);
 
-      // Fetch the file through backend API
       const response = await mockFetch(`${URL}/api/downloadTestMaterial/${materialId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Get the blob from response
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
 
       setDownloadProgress(100);
-      setDownloadMessage('Download complete!');
+      setDownloadMessage(t('testManager.downloadComplete'));
 
-      // Create download link
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = fileName;
@@ -85,25 +81,22 @@ const TestManager = () => {
       link.click();
       document.body.removeChild(link);
 
-      // Clean up
       window.URL.revokeObjectURL(downloadUrl);
 
-      // Reset after success
       setTimeout(() => {
         setDownloading(false);
         setDownloadingId(null);
         setDownloadProgress(0);
         setDownloadMessage('');
       }, 2000);
-
     } catch (error) {
       console.error('Download failed:', error);
-      setDownloadMessage('Download failed. Please try again.');
+      setDownloadMessage(t('testManager.downloadFailed'));
+      toast.error(t('testManager.downloadFailed'));
       setDownloading(false);
       setDownloadingId(null);
       setDownloadProgress(0);
 
-      // Reset error message after 3 seconds
       setTimeout(() => {
         setDownloadMessage('');
       }, 3000);
@@ -111,27 +104,25 @@ const TestManager = () => {
   };
 
   const handleDelete = async (fileName) => {
-    if (!confirm('Are you sure you want to delete this test material?')) return;
+    if (!window.confirm(t('testManager.confirmDelete'))) return;
 
     try {
       const response = await mockFetch(`${URL}/api/deleteTestsMaterials`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ fileName }),
       });
 
       if (response.ok) {
         setTestMaterials(prev => prev.filter(material => material.name !== fileName));
-        alert('Test material deleted successfully!');
+        toast.success(t('testManager.deleteSuccess'));
       } else {
         const errorData = await response.json();
-        alert('Failed to delete test material: ' + errorData.message);
+        toast.error(`${t('testManager.deleteFailed')}: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Error deleting test material:', error);
-      alert('Error deleting test material');
+      toast.error(t('testManager.deleteError'));
     }
   };
 
@@ -152,16 +143,14 @@ const TestManager = () => {
 
   const saveEdit = async () => {
     if (!editFileName.trim() || !editCourse.trim()) {
-      alert('Please fill in all fields.');
+      toast.error(t('testManager.fillAllFields'));
       return;
     }
 
     try {
       const response = await mockFetch(`${URL}/api/updateTestMaterial/${editingMaterial.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: editingMaterial.id,
           fileName: editFileName,
@@ -170,7 +159,6 @@ const TestManager = () => {
       });
 
       if (response.ok) {
-        // Update the local state
         setTestMaterials(prev => prev.map(material =>
           material.id === editingMaterial.id
             ? { ...material, course: editCourse, name: `/${editCourse}/${editFileName}` }
@@ -178,182 +166,61 @@ const TestManager = () => {
         ));
         setShowEditModal(false);
         setEditingMaterial(null);
-        toast.success('Test material updated successfully!');
+        toast.success(t('testManager.updateSuccess'));
       } else {
         const errorData = await response.json();
-        alert('Failed to update test material: ' + errorData.message);
+        toast.error(`${t('testManager.updateFailed')}: ${errorData.message}`);
       }
     } catch (error) {
       console.error('Error updating test material:', error);
-      alert('Error updating test material');
+      toast.error(t('testManager.updateError'));
     }
   };
 
   const handleConvert = async (material) => {
     try {
-      // Check if the material is an image
-      // const isImage = material.mime_type && material.mime_type.startsWith('image/');
-      // if (!isImage) {
-      //   toast.error('Only image files can be analyzed.');
-      //   return;
-      // }
-
-      // Check if there is cached analysis for this material in localStorage
-
-
       if (!material.id) {
-        toast.error('Invalid material for analysis.');
+        toast.error(t('testManager.invalidMaterial'));
         return;
       }
 
-      // Show loading state
-      toast.loading('Analyzing image...', { id: 'analyze' });
+      toast.loading(t('testManager.analyzingImage'), { id: 'analyze' });
 
-      // try {
-      //   const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
-      //   if (cached) {
-      //     let parsed = null;
-      //     try {
-      //       parsed = JSON.parse(cached);
-      //     } catch (parseErr) {
-      //       // Attempt to recover JSON if there's a non-JSON prefix (e.g. "json\n{...}")
-      //       const firstBrace = cached.indexOf('{');
-      //       const firstBracket = cached.indexOf('[');
-      //       let start = -1;
-      //       if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
-      //       else if (firstBracket !== -1) start = firstBracket;
-      //       if (start !== -1) {
-      //         try {
-      //           parsed = JSON.parse(cached.slice(start));
-      //         } catch (parseErr2) {
-      //           console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
-      //         }
-      //       } else {
-      //         console.warn('Cached analysis does not contain JSON:', parseErr);
-      //       }
-      //     }
+      try {
+        const getImageResponse = await mockFetch(`${URL}/api/getImageAnalysis/${material.id}`);
+        if (getImageResponse.ok) {
+          const text = await getImageResponse.text();
+          if (text) {
+            let existingAnalysis = null;
+            try {
+              const analysisStart = text.indexOf('{');
+              if (analysisStart !== -1) {
+                const cleanedText = text.slice(analysisStart);
+                existingAnalysis = JSON.parse(cleanedText);
+              } else {
+                throw new Error('Invalid analysis data format');
+              }
 
-      //     if (parsed) {
-      //       // If cached data exists for same id, use it and open modal instead of calling API
-      //       setAnalysisData(parsed);
-      //       setEditingAnalysis({ ...parsed });
-      //       setShowAnalysisModal(true);
-      //       setCurrentMaterialId(material.id);
-      //       toast.dismiss('analyze');
-
-      //       toast.success('Loaded cached analysis for this image.');
-      //       return;
-      //     } else {
-      //       // If cached exists but couldn't be parsed, continue to call analyze API
-      //       console.warn('Cached analysis found but could not be parsed, proceeding with fresh analysis.');
-      //     }
-      //   }
-      // } catch (err) {
-      //   // If accessing localStorage fails (e.g., private mode), just continue with analysis
-      //   console.warn('Failed to read cached analysis:', err);
-      //   // continue without returning so we attempt fresh analysis
-      // }
-
-
-      // Fetch the image as blob
-      // const imageResponse = await fetch(material.url);
-      // if (!imageResponse.ok) {
-      //   throw new Error('Failed to fetch image');
-      // }
-
-      // const imageBlob = await imageResponse.blob();
-
-      // Create FormData and append the image
-     
-     
-    // First try to load cached analysis from localStorage
-    // try {
-    //   const cached = localStorage.getItem(`imageAnalysis_${material.id}`);
-    //   if (cached) {
-    //     let parsed = null;
-    //     try {
-    //       parsed = JSON.parse(cached);
-    //     } catch (parseErr) {
-    //       // Attempt to recover JSON if there's a prefix or corruption
-    //       const firstBrace = cached.indexOf('{');
-    //       const firstBracket = cached.indexOf('[');
-    //       let start = -1;
-    //       if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) start = firstBrace;
-    //       else if (firstBracket !== -1) start = firstBracket;
-    //       if (start !== -1) {
-    //         try {
-    //           parsed = JSON.parse(cached.slice(start));
-    //         } catch (parseErr2) {
-    //           console.warn('Failed to parse cached analysis after cleanup:', parseErr2);
-    //         }
-    //       } else {
-    //         console.warn('Cached analysis does not contain JSON:', parseErr);
-    //       }
-    //     }
-
-    //     if (parsed && Object.keys(parsed).length > 0) {
-    //       setAnalysisData(parsed);
-    //       setEditingAnalysis({ ...parsed });
-    //       setCurrentMaterialId(material.id);
-    //       setShowAnalysisModal(true);
-    //       toast.dismiss('analyze');
-    //       toast.success('Loaded cached analysis for this image.');
-    //       return;
-    //     }
-    //   }
-    // } catch (err) {
-    //   console.warn('Failed to read cached analysis from localStorage:', err);
-    // }
-
-    // If no cached analysis, check backend for existing analysis
-    try {
-      const getImageResponse = await mockFetch(`${URL}/api/getImageAnalysis/${material.id}`);
-      if (getImageResponse.ok) {
-        // Some endpoints may return empty body (204) — handle that gracefully
-        const text = await getImageResponse.text();
-        if (text) {
-          let existingAnalysis = null;
-          try {
-
-            const analysisStart = text.indexOf('{');
-            if (analysisStart !== -1) {
-              const cleanedText = text.slice(analysisStart);
-              existingAnalysis = JSON.parse(cleanedText);
-            } else {
-              throw new Error('Invalid analysis data format');
+              if (existingAnalysis && existingAnalysis.analysis && existingAnalysis.analysis.analysis) {
+                existingAnalysis = { analysis: existingAnalysis.analysis.analysis };
+              }
+            } catch (parseErr) {
+              console.warn('Failed to parse analysis JSON from server:', parseErr);
             }
 
-            // Flatten nested analysis structure if present
-            if (existingAnalysis && existingAnalysis.analysis && existingAnalysis.analysis.analysis) {
-              existingAnalysis = { analysis: existingAnalysis.analysis.analysis };
+            if (existingAnalysis && Object.keys(existingAnalysis).length > 0) {
+              setEditingAnalysis(existingAnalysis);
+              setCurrentMaterialId(material.id);
+              setShowAnalysisModal(true);
+              toast.dismiss('analyze');
+              setTimeout(() => toast.success(t('testManager.loadedCachedAnalysis')), 100);
+              return;
             }
-          } catch (parseErr) {
-            console.warn('Failed to parse analysis JSON from server:', parseErr);
-          }
-
-          if (existingAnalysis && Object.keys(existingAnalysis).length > 0 ) {
-            // Cache server result locally for faster subsequent loads
-            // try {
-            //   localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(existingAnalysis));
-            // } catch (e) {
-            //   console.warn('Failed to cache analysis in localStorage:', e);
-            // }
-
-            setAnalysisData(existingAnalysis);
-            setEditingAnalysis(existingAnalysis);
-            setCurrentMaterialId(material.id);
-            setShowAnalysisModal(true);
-            toast.dismiss('analyze');
-            setTimeout(() => toast.success('Loaded existing analysis for this image.'), 100);
-            return;
           }
         }
+      } catch (err) {
+        console.warn('Error fetching existing analysis from server:', err);
       }
-    } catch (err) {
-      console.warn('Error fetching existing analysis from server:', err);
-    }
-
-
 
       const formData = new FormData();
       formData.append('id', material.id);
@@ -363,7 +230,6 @@ const TestManager = () => {
         modelName: selectedModel,
       });
 
-      // Call the analyze API
       const analyzeResponse = await mockFetch(`${URL}/api/analyzeImage?${queryParams}`, {
         method: 'POST',
       });
@@ -375,29 +241,22 @@ const TestManager = () => {
 
       const result = await analyzeResponse.json();
 
-      // Store the analysis result in browser's local storage
       localStorage.setItem(`imageAnalysis_${material.id}`, JSON.stringify(result));
 
       toast.dismiss('analyze');
+      setTimeout(() => toast.success(t('testManager.analysisSuccess'), { id: 'analyze' }), 100);
 
-      // Show success with analysis result
-      setTimeout(() => toast.success('Image analyzed successfully!', { id: 'analyze' }), 100);
-
-      // Set analysis data and show modal
-      setAnalysisData(result);
       setEditingAnalysis(result);
       setCurrentMaterialId(material.id);
       setShowAnalysisModal(true);
-
     } catch (error) {
       console.error('Error analyzing image:', error);
-      toast.error(`Analysis failed: ${error.message}`, { id: 'analyze' });
+      toast.error(`${t('testManager.analysisFailed')}: ${error.message}`, { id: 'analyze' });
     }
   };
 
   const handleSaveAnalysis = async () => {
-
-    toast.loading('Saving analysis image data...', { id: 'saveAnalysis' });
+    toast.loading(t('testManager.savingAnalysis'), { id: 'saveAnalysis' });
 
     try {
       if (!currentMaterialId) {
@@ -405,37 +264,31 @@ const TestManager = () => {
         throw new Error('No material ID available. Please try analyzing the image again.');
       }
 
-     
       const requestBody = {
         materialId: currentMaterialId,
-        analysis: editingAnalysis, // Changed from analysisData to analysis to match backend expectation
+        analysis: editingAnalysis,
         material: testMaterials.find(m => m.id === currentMaterialId),
       };
 
       const response = await mockFetch(`${URL}/api/saveImageAnalysis`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to save analysis data');
-        toast.error(`Failed to save analysis: ${errorData.message}`, { id: 'saveAnalysis' });
       }
 
-      // Update local state and cache
-      setAnalysisData(editingAnalysis);
       localStorage.setItem(`imageAnalysis_${currentMaterialId}`, JSON.stringify(editingAnalysis));
 
       setShowAnalysisModal(false);
       toast.dismiss('saveAnalysis');
-      setTimeout(() => toast.success('Analysis data saved successfully!'), 100);
+      setTimeout(() => toast.success(t('testManager.saveSuccess')), 100);
     } catch (error) {
       console.error('Error saving analysis data:', error);
-      toast.error(`Failed to save analysis: ${error.message}`);
+      toast.error(`${t('testManager.saveFailed')}: ${error.message}`);
     }
   };
 
@@ -473,101 +326,28 @@ const TestManager = () => {
     return { ...obj };
   };
 
-
-
-  const renderJsonValue = (key, value, path = '', level = 0) => {
-    const currentPath = path ? `${path}.${key}` : key;
-    const indent = '  '.repeat(level);
-
-    if (Array.isArray(value)) {
-      return (
-        <div key={currentPath} className="mb-4">
-          <div className="font-medium text-gray-800 mb-2">{indent}{key}:</div>
-          {value.map((item, index) => (
-            <div key={`${currentPath}[${index}]`} className="ml-4 border-l-2 border-gray-200 pl-4 mb-2">
-              <div className="text-sm text-gray-600 mb-1">Item {index + 1}:</div>
-              {typeof item === 'object' ? (
-                Object.entries(item).map(([subKey, subValue]) =>
-                  renderJsonValue(subKey, subValue, `${currentPath}[${index}]`, level + 1)
-                )
-              ) : (
-                renderJsonValue(`item_${index}`, item, `${currentPath}[${index}]`, level + 1)
-              )}
-            </div>
-          ))}
-        </div>
-      );
-    } else if (typeof value === 'object' && value !== null) {
-      return (
-        <div key={currentPath} className="mb-4">
-          <div className="font-medium text-gray-800 mb-2">{indent}{key}:</div>
-          <div className="ml-4 border-l-2 border-gray-200 pl-4">
-            {Object.entries(value).map(([subKey, subValue]) =>
-              renderJsonValue(subKey, subValue, currentPath, level + 1)
-            )}
-          </div>
-        </div>
-      );
-    } else {
-      return (
-        <div key={currentPath} className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {indent}{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-          </label>
-          {typeof value === 'boolean' ? (
-            <select
-              value={value ? 'true' : 'false'}
-              onChange={(e) => handleAnalysisChange(currentPath, e.target.value === 'true')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
-          ) : typeof value === 'number' ? (
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => handleAnalysisChange(currentPath, parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          ) : (
-            <textarea
-              value={value || ''}
-              onChange={(e) => handleAnalysisChange(currentPath, e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={value && value.length > 50 ? 3 : 1}
-            />
-          )}
-        </div>
-      );
-    }
-  };
-
-
   return (
     <div className="space-y-6">
       {/* Test Materials Section */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Test Materials ({testMaterials.length})</h3>
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom border border-surface-variant">
+        <div className="p-6 border-b border-surface-variant">
+          <h3 className="text-lg font-semibold text-on-surface">{t('testManager.title')} ({testMaterials.length})</h3>
         </div>
         {loading ? (
-          <div className="p-6 text-center text-gray-500">Loading test materials...</div>
+          <div className="p-6 text-center text-on-surface-variant">{t('testManager.loading')}</div>
         ) : testMaterials.length === 0 ? (
-          <div className="p-6 text-center text-gray-500">No test materials found. Upload some test materials first.</div>
+          <div className="p-6 text-center text-on-surface-variant">{t('testManager.noMaterials')}</div>
         ) : (
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-surface-variant">
             {testMaterials.map((material) => {
               const pathParts = material.name.split('/');
               const course = material.course || 'Unknown';
               const fileName = pathParts.slice(2).join('/') || material.name;
-              const fileType = material.mime_type.split('.').pop()?.toUpperCase() || 'FILE';
+              const fileType = fileName.split('.').pop()?.toUpperCase() || 'FILE';
 
-              // Format the creation date and time
               const createdDate = material.uploaded_at ? new Date(material.uploaded_at).toLocaleDateString() : 'N/A';
               const createdTime = material.uploaded_at ? new Date(material.uploaded_at).toLocaleTimeString() : 'N/A';
 
-              // Format file size
               const formatSize = (bytes) => {
                 if (!bytes) return 'N/A';
                 const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -576,65 +356,66 @@ const TestManager = () => {
               };
 
               return (
-                <div key={material.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
-                  <div className="flex flex-wrap  items-center justify-between">
+                <div key={material.id} className="p-6 hover:bg-surface-container-low transition-colors duration-200">
+                  <div className="flex flex-wrap items-center justify-between">
                     <div className="flex items-center flex-1">
-                      <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                        <FileText className="w-6 h-6 text-blue-600" />
+                      <div className="bg-primary-container p-3 rounded-xl mr-4">
+                        <span className="material-symbols-outlined text-primary text-2xl">description</span>
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900">{fileName}</h4>
-                        <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-600">
+                        <h4 className="font-semibold text-on-surface">{fileName}</h4>
+                        <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-on-surface-variant">
                           <span>{course}</span>
                           <span>{fileType}</span>
                           <span>{formatSize(material.size)}</span>
                         </div>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
-                          <span>Uploaded: {createdDate} at {createdTime}</span>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-on-surface-variant">
+                          <span>{t('testManager.uploaded')}: {createdDate} {t('testManager.at')} {createdTime}</span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleView(material.url)}
-                        className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                        title="View"
+                        className="p-2 text-primary hover:text-primary/80 hover:bg-primary-container/30 rounded-xl transition-colors duration-200"
+                        title={t('testManager.view')}
                       >
-                        <Eye className="cursor-pointer w-5 h-5" />
+                        <span className="material-symbols-outlined text-xl cursor-pointer">visibility</span>
                       </button>
                       <button
                         onClick={() => handleEdit(material)}
-                        className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors duration-200"
-                        title="Edit"
+                        className="p-2 text-secondary hover:text-secondary/80 hover:bg-secondary-container/30 rounded-xl transition-colors duration-200"
+                        title={t('testManager.edit')}
                       >
-                        <Edit className="cursor-pointer w-5 h-5" />
+                        <span className="material-symbols-outlined text-xl cursor-pointer">edit</span>
                       </button>
                       <button
                         onClick={() => handleConvert(material)}
-                        className="p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-lg transition-colors duration-200"
-                        title="Convert"
+                        className="p-2 text-tertiary hover:text-tertiary/80 hover:bg-tertiary-container/30 rounded-xl transition-colors duration-200"
+                        title={t('testManager.convert')}
                       >
-                        <FileType className="cursor-pointer w-5 h-5" />
+                        <span className="material-symbols-outlined text-xl cursor-pointer">analytics</span>
                       </button>
                       <div className="relative">
                         <button
                           onClick={() => handleDownload(material.id, fileName)}
-                          className={`p-2 rounded-lg transition-all duration-300 ${downloading && downloadingId === material.id
-                              ? 'text-green-600 bg-green-50 scale-110 rotate-12'
-                              : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50 hover:scale-105'
+                          className={`p-2 rounded-xl transition-all duration-300 ${downloading && downloadingId === material.id
+                              ? 'text-primary bg-primary-container/30 scale-110 rotate-12'
+                              : 'text-primary hover:text-primary/80 hover:bg-primary-container/30 hover:scale-105'
                             }`}
-                          title={downloading && downloadingId === material.id ? "Downloading..." : "Download"}
+                          title={downloading && downloadingId === material.id ? t('testManager.downloading') : t('testManager.download')}
                           disabled={downloading && downloadingId === material.id}
                         >
-                          <Download className={`cursor-pointer w-5 h-5 transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''
-                            }`} />
+                          <span className={`material-symbols-outlined text-xl cursor-pointer transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''}`}>
+                            download
+                          </span>
                         </button>
                         {downloading && downloadingId === material.id && (
-                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                            {downloadMessage || `Downloading... ${downloadProgress}%`}
-                            <div className="w-16 bg-gray-600 rounded-full h-1 mt-1">
+                          <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                            {downloadMessage || `${t('testManager.downloading')}... ${downloadProgress}%`}
+                            <div className="w-16 bg-inverse-surface/50 rounded-full h-1 mt-1">
                               <div
-                                className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                                className="bg-primary h-1 rounded-full transition-all duration-300"
                                 style={{ width: `${downloadProgress}%` }}
                               ></div>
                             </div>
@@ -643,10 +424,10 @@ const TestManager = () => {
                       </div>
                       <button
                         onClick={() => handleDelete(material.name)}
-                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                        title="Delete"
+                        className="p-2 text-error hover:text-error/80 hover:bg-error-container/30 rounded-xl transition-colors duration-200"
+                        title={t('testManager.delete')}
                       >
-                        <Trash2 className="cursor-pointer w-5 h-5" />
+                        <span className="material-symbols-outlined text-xl cursor-pointer">delete</span>
                       </button>
                     </div>
                   </div>
@@ -659,32 +440,32 @@ const TestManager = () => {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 modal-3d-enter">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Test Material</h3>
+        <div className="fixed inset-0 bg-shadow/50 flex items-center justify-center z-50">
+          <div className="bg-surface-container-lowest rounded-xl p-6 max-w-md w-full mx-4 modal-3d-enter">
+            <h3 className="text-lg font-semibold text-on-surface mb-4">{t('testManager.editMaterial')}</h3>
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">File Name</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">{t('testManager.fileName')}</label>
                 <input
                   type="text"
                   value={editFileName}
                   onChange={(e) => setEditFileName(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter file name"
+                  className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                  placeholder={t('testManager.enterFileName')}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">{t('testManager.course')}</label>
                 <select
                   value={editCourse}
                   onChange={(e) => setEditCourse(e.target.value)}
-                  className="cursor-pointer w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="cursor-pointer w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                  <option value="">Select Course</option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="Physics">Physics</option>
-                  <option value="Chemistry">Chemistry</option>
-                  <option value="Biology">Biology</option>
+                  <option value="">{t('testManager.selectCourse')}</option>
+                  <option value="Mathematics">{t('courses.mathematics')}</option>
+                  <option value="Physics">{t('courses.physics')}</option>
+                  <option value="Chemistry">{t('courses.chemistry')}</option>
+                  <option value="Biology">{t('courses.biology')}</option>
                 </select>
               </div>
             </div>
@@ -694,15 +475,15 @@ const TestManager = () => {
                   setShowEditModal(false);
                   setEditingMaterial(null);
                 }}
-                className="cursor-pointer px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="cursor-pointer px-4 py-2 text-on-surface-variant hover:text-on-surface"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={saveEdit}
-                className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="cursor-pointer px-4 py-2 bg-primary text-on-primary rounded-xl hover:bg-primary/90"
               >
-                Save Changes
+                {t('testManager.saveChanges')}
               </button>
             </div>
           </div>
@@ -711,41 +492,40 @@ const TestManager = () => {
 
       {/* Analysis Modal */}
       {showAnalysisModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100">
-          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto">
-            <h3 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">Image Analysis Results</h3>
+        <div className="fixed inset-0 bg-shadow/50 flex items-center justify-center z-100">
+          <div className="bg-surface-container-lowest rounded-xl p-6 max-w-4xl w-full mx-4 modal-3d-enter max-h-[90vh] overflow-y-auto">
+            <h3 className="text-3xl font-extrabold text-on-surface mb-6 text-center">{t('testManager.analysisResults')}</h3>
             <div className="mb-6">
               <div className="space-y-6">
                 {Array.isArray(editingAnalysis.analysis.questions) && editingAnalysis.analysis.questions.length > 0 ? (
                   editingAnalysis.analysis.questions.map((item, index) => (
-                    <div key={item.id || index} className="border-b border-gray-200 pb-4 last:border-b-0">
+                    <div key={item.id || index} className="border-b border-surface-variant pb-4 last:border-b-0">
                       <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-md font-semibold text-gray-800">Question {index + 1}</h4>
+                        <h4 className="text-md font-semibold text-on-surface">{t('testManager.question')} {index + 1}</h4>
                         <button
                           onClick={() => handleDeleteQuestion(index)}
-                          className="cursor-pointer p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                          title="Delete Question"
+                          className="cursor-pointer p-1 text-error hover:text-error/80 hover:bg-error-container/30 rounded-xl transition-colors duration-200"
+                          title={t('testManager.deleteQuestion')}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <span className="material-symbols-outlined text-lg">delete</span>
                         </button>
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Question
+                        <label className="block text-sm font-medium text-on-surface-variant mb-2">
+                          {t('testManager.questionLabel')}
                         </label>
                         <textarea
                           value={item.question || ''}
                           onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.question`, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                           rows={3}
                         />
                       </div>
 
-                      {/* Options Section: show only if options exist */}
                       {Array.isArray(item.options) && item.options.length > 0 && (
                         <div className="mb-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Options
+                          <label className="block text-sm font-medium text-on-surface-variant mb-2">
+                            {t('testManager.optionsLabel')}
                           </label>
                           <div className="space-y-2">
                             {item.options.map((opt, optIdx) => (
@@ -754,12 +534,12 @@ const TestManager = () => {
                                   type="text"
                                   value={opt || ''}
                                   onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.options.${optIdx}`, e.target.value)}
-                                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                  placeholder={`Option ${optIdx + 1}`}
+                                  className="flex-1 px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
+                                  placeholder={`${t('testManager.option')} ${optIdx + 1}`}
                                 />
                                 <button
                                   type="button"
-                                  className="cursor-pointer px-2 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg"
+                                  className="cursor-pointer px-2 py-2 text-error hover:text-error/80 hover:bg-error-container/30 rounded-xl"
                                   onClick={() => {
                                     setEditingAnalysis(prev => {
                                       const next = { ...prev, analysis: { ...prev.analysis } };
@@ -771,16 +551,16 @@ const TestManager = () => {
                                       return next;
                                     });
                                   }}
-                                  title="Remove Option"
+                                  title={t('testManager.removeOption')}
                                 >
-                                  Remove
+                                  {t('testManager.remove')}
                                 </button>
                               </div>
                             ))}
                           </div>
                           <button
                             type="button"
-                            className="cursor-pointer mt-2 px-3 py-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg"
+                            className="cursor-pointer mt-2 px-3 py-2 text-primary hover:text-primary/80 hover:bg-primary-container/30 rounded-xl"
                             onClick={() => {
                               setEditingAnalysis(prev => {
                                 const next = { ...prev, analysis: { ...prev.analysis } };
@@ -792,27 +572,27 @@ const TestManager = () => {
                               });
                             }}
                           >
-                            + Add Option
+                            + {t('testManager.addOption')}
                           </button>
                         </div>
                       )}
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Answer
+                        <label className="block text-sm font-medium text-on-surface-variant mb-2">
+                          {t('testManager.answerLabel')}
                         </label>
                         <textarea
                           value={item.answer || ''}
                           onChange={(e) => handleAnalysisChange(`analysis.questions.${index}.answer`, e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
                           rows={3}
                         />
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-gray-500 py-8">
-                    No questions and answers found in the analysis data.
+                  <div className="text-center text-on-surface-variant py-8">
+                    {t('testManager.noQuestionsFound')}
                   </div>
                 )}
               </div>
@@ -821,18 +601,17 @@ const TestManager = () => {
               <button
                 onClick={() => {
                   setShowAnalysisModal(false);
-                  setAnalysisData({});
                   setEditingAnalysis({});
                 }}
-                className="cursor-pointer px-4 py-2 text-gray-600 hover:text-gray-800"
+                className="cursor-pointer px-4 py-2 text-on-surface-variant hover:text-on-surface"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleSaveAnalysis}
-                className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="cursor-pointer px-4 py-2 bg-primary text-on-primary rounded-xl hover:bg-primary/90"
               >
-                Save Changes
+                {t('testManager.saveChanges')}
               </button>
             </div>
           </div>

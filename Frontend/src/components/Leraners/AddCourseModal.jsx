@@ -1,114 +1,108 @@
-import React, { useState } from 'react';
-import { X, BookOpen, User, Tag } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 const AddCourseModal = ({ isOpen, onClose, onAddCourse }) => {
+  const { t } = useTranslation();
+  const titleRef = useRef(null);
   const [courseData, setCourseData] = useState({
     title: '',
     category: '',
     instructor: ''
   });
 
+  useEffect(() => {
+    if (isOpen && titleRef.current) {
+      titleRef.current.focus();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (isOpen) {
+      document.addEventListener('keydown', handleEsc);
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, onClose]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourseData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setCourseData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onAddCourse) {
-      onAddCourse(courseData);
-    }
-    // Reset form
-    setCourseData({
-      title: '',
-      category: '',
-      instructor: ''
-    });
+    if (onAddCourse) onAddCourse(courseData);
+    toast.success(t('addCourseSuccess'));
+    setCourseData({ title: '', category: '', instructor: '' });
     onClose();
   };
 
   if (!isOpen) return null;
 
+  const fields = [
+    { name: 'title', icon: 'menu_book', labelKey: 'addCourseTitleLabel', placeholderKey: 'addCourseTitlePlaceholder', required: true, type: 'text' },
+    { name: 'category', icon: 'tag', labelKey: 'addCourseCategoryLabel', placeholderKey: 'addCourseCategoryPlaceholder', required: true, type: 'text' },
+    { name: 'instructor', icon: 'person', labelKey: 'addCourseInstructorLabel', placeholderKey: 'addCourseInstructorPlaceholder', required: true, type: 'text' }
+  ];
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto">
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">Add New Course</h2>
+    <div
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-surface-container-lowest rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] w-full max-w-md mx-auto border border-outline-variant">
+        <div className="flex items-center justify-between p-6 border-b border-outline-variant">
+          <h2 className="font-display text-xl text-on-surface">{t('addCourseModalTitle')}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 transition-colors duration-300 p-1"
+            className="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
           >
-            <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="material-symbols-outlined text-[24px]">close</span>
           </button>
         </div>
-        
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6">
+
+        <form onSubmit={handleSubmit} className="p-6">
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                <BookOpen className="w-4 h-4 mr-2 text-blue-600 flex-shrink-0" />
-                Course Title
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={courseData.title}
-                onChange={handleChange}
-                required
-                className="input-focus w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm sm:text-base"
-                placeholder="Enter course title"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                <Tag className="w-4 h-4 mr-2 text-green-600 flex-shrink-0" />
-                Category
-              </label>
-              <input
-                type="text"
-                name="category"
-                value={courseData.category}
-                onChange={handleChange}
-                required
-                className="input-focus w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm sm:text-base"
-                placeholder="e.g., Mathematics, Physics"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                <User className="w-4 h-4 mr-2 text-purple-600 flex-shrink-0" />
-                Instructor
-              </label>
-              <input
-                type="text"
-                name="instructor"
-                value={courseData.instructor}
-                onChange={handleChange}
-                required
-                className="input-focus w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-sm sm:text-base"
-                placeholder="Instructor name"
-              />
-            </div>
+            {fields.map((field) => (
+              <div key={field.name}>
+                <label className="block text-sm font-medium text-on-surface mb-2 flex items-center">
+                  <span className="material-symbols-outlined text-[18px] mr-2 text-primary">{field.icon}</span>
+                  {t(field.labelKey)}
+                </label>
+                <input
+                  ref={field.name === 'title' ? titleRef : undefined}
+                  type={field.type}
+                  name={field.name}
+                  value={courseData[field.name]}
+                  onChange={handleChange}
+                  required={field.required}
+                  className="w-full px-4 py-3 border border-outline-variant rounded-xl bg-surface-container-lowest text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 transition-all text-sm"
+                  placeholder={t(field.placeholderKey)}
+                />
+              </div>
+            ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-3 mt-6 sm:mt-8">
+          <div className="flex justify-end gap-3 mt-8">
             <button
               type="button"
               onClick={onClose}
-              className="cta-button cta-secondary px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-300 min-h-[44px] w-full sm:w-auto"
+              className="px-5 py-2.5 text-on-surface bg-surface-container-low rounded-xl hover:bg-surface-container-high transition-colors min-h-[44px] cursor-pointer font-medium"
             >
-              Cancel
+              {t('addCourseCancel')}
             </button>
             <button
               type="submit"
-              className="cta-button cta-primary px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-sm hover:shadow-md min-h-[44px] w-full sm:w-auto"
+              className="px-5 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 active:scale-95 transition-all min-h-[44px] font-medium shadow-sm cursor-pointer"
             >
-              Add Course
+              {t('addCourseSubmit')}
             </button>
           </div>
         </form>

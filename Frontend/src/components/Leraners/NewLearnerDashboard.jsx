@@ -76,11 +76,11 @@ const NewLearnerDashboard = () => {
   const handleAddCourse = (courseData) => {
     const newCourse = {
       id: Date.now(),
-      title: courseData.title || 'Untitled Course',
-      category: courseData.category || 'General',
+      title: courseData.title || t('addCourseUntitled'),
+      category: courseData.category || t('addCourseGeneral'),
       description: courseData.description || '',
-      instructor: courseData.instructor || 'Unknown',
-      instructorInitials: (courseData.instructor || 'Unknown')
+      instructor: courseData.instructor || t('addCourseUnknown'),
+      instructorInitials: (courseData.instructor || 'U')
         .split(' ')
         .map((word) => word[0])
         .join('')
@@ -115,7 +115,7 @@ const NewLearnerDashboard = () => {
       <LearnerNavbar activeSection={activeSection} onSectionChange={setActiveSection} />
 
       <main className="pt-20 px-6 pb-12 flex flex-col min-h-screen max-w-[1440px] mx-auto w-full">
-        <div>
+        <div className="section-fade-in" key={activeSection}>
           {activeSection === 'dashboard' && (
             <LearnerOverview
               courses={courses}

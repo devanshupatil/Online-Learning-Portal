@@ -1,65 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { mockTestResults, getBarColor, getGradeColor, getGrade } from './testData';
 
 const ProgressTracking = ({ onViewAllResults }) => {
   const { t } = useTranslation();
 
-  const testResultsData = [
-    {
-      id: 1,
-      testName: 'Algebra Fundamentals Quiz',
-      subject: 'Mathematics',
-      date: '2023-05-20',
-      marks: 42,
-      totalMarks: 50,
-      percentage: 84
-    },
-    {
-      id: 2,
-      testName: 'Physics Midterm Exam',
-      subject: 'Physics',
-      date: '2023-05-15',
-      marks: 78,
-      totalMarks: 100,
-      percentage: 78
-    },
-    {
-      id: 3,
-      testName: 'Chemistry Lab Test',
-      subject: 'Chemistry',
-      date: '2023-05-10',
-      marks: 28,
-      totalMarks: 30,
-      percentage: 93
-    },
-    {
-      id: 4,
-      testName: 'Biology Quarterly Assessment',
-      subject: 'Biology',
-      date: '2023-05-05',
-      marks: 85,
-      totalMarks: 100,
-      percentage: 85
-    },
-    {
-      id: 5,
-      testName: 'English Literature Quiz',
-      subject: 'English',
-      date: '2023-04-28',
-      marks: 18,
-      totalMarks: 20,
-      percentage: 90
-    }
-  ];
-
-  const totalMarksObtained = testResultsData.reduce((sum, test) => sum + test.marks, 0);
-  const totalMarksPossible = testResultsData.reduce((sum, test) => sum + test.totalMarks, 0);
+  const totalMarksObtained = mockTestResults.reduce((sum, test) => sum + test.marks, 0);
+  const totalMarksPossible = mockTestResults.reduce((sum, test) => sum + test.totalMarks, 0);
   const overallPercentage = Math.round((totalMarksObtained / totalMarksPossible) * 100);
 
-  const testsBySubject = testResultsData.reduce((acc, test) => {
-    if (!acc[test.subject]) {
-      acc[test.subject] = [];
-    }
+  const testsBySubject = mockTestResults.reduce((acc, test) => {
+    if (!acc[test.subject]) acc[test.subject] = [];
     acc[test.subject].push(test);
     return acc;
   }, {});
@@ -68,30 +19,10 @@ const ProgressTracking = ({ onViewAllResults }) => {
     const tests = testsBySubject[subject];
     const totalObtained = tests.reduce((sum, test) => sum + test.marks, 0);
     const totalPossible = tests.reduce((sum, test) => sum + test.totalMarks, 0);
-    const average = Math.round((totalObtained / totalPossible) * 100);
-
-    return {
-      subject,
-      average,
-      tests: tests.length
-    };
+    return { subject, average: Math.round((totalObtained / totalPossible) * 100), tests: tests.length };
   });
 
-  const recentTests = testResultsData.slice(0, 3);
-
-  const getBarColor = (percentage) => {
-    if (percentage >= 90) return 'bg-primary';
-    if (percentage >= 80) return 'bg-secondary';
-    if (percentage >= 70) return 'bg-tertiary-container';
-    return 'bg-destructive';
-  };
-
-  const getGradeColor = (percentage) => {
-    if (percentage >= 90) return 'text-primary';
-    if (percentage >= 80) return 'text-secondary';
-    if (percentage >= 70) return 'text-tertiary-container';
-    return 'text-destructive';
-  };
+  const recentTests = mockTestResults.slice(0, 3);
 
   const SectionCard = ({ icon, title, children }) => (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] overflow-hidden">
@@ -119,7 +50,7 @@ const ProgressTracking = ({ onViewAllResults }) => {
             </div>
             <div className="w-full bg-surface-container-highest rounded-full h-4 overflow-hidden">
               <div
-                className={`h-4 rounded-full ${getBarColor(overallPercentage)}`}
+                className={`h-4 rounded-full transition-all duration-700 ease-out ${getBarColor(overallPercentage)}`}
                 style={{ width: `${overallPercentage}%` }}
               ></div>
             </div>
@@ -132,7 +63,7 @@ const ProgressTracking = ({ onViewAllResults }) => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-surface-container-low p-3 rounded-xl text-center">
-            <div className="text-lg font-bold text-on-surface">{testResultsData.length}</div>
+            <div className="text-lg font-bold text-on-surface">{mockTestResults.length}</div>
             <div className="text-sm text-on-surface-variant">{t('learnerProgressTestsTaken')}</div>
           </div>
           <div className="bg-surface-container-low p-3 rounded-xl text-center">
@@ -148,7 +79,7 @@ const ProgressTracking = ({ onViewAllResults }) => {
             <div className="text-sm text-on-surface-variant">{t('learnerProgressAvgScore')}</div>
           </div>
           <div className="bg-surface-container-low p-3 rounded-xl text-center">
-            <div className="text-lg font-bold text-on-surface">A</div>
+            <div className="text-lg font-bold text-on-surface">{getGrade(overallPercentage)}</div>
             <div className="text-sm text-on-surface-variant">{t('learnerProgressGradeLevel')}</div>
           </div>
         </div>
@@ -165,14 +96,12 @@ const ProgressTracking = ({ onViewAllResults }) => {
                 </span>
               </div>
               <div className="flex justify-between text-sm text-on-surface-variant mb-2">
-                <span>
-                  {subject.tests} {t('learnerProgressTestsLabel')}
-                </span>
+                <span>{subject.tests} {t('learnerProgressTestsLabel')}</span>
                 <span>{t('learnerProgressAvgScore')}</span>
               </div>
               <div className="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden">
                 <div
-                  className={`h-2 rounded-full ${getBarColor(subject.average)}`}
+                  className={`h-2 rounded-full transition-all duration-700 ease-out ${getBarColor(subject.average)}`}
                   style={{ width: `${subject.average}%` }}
                 ></div>
               </div>
@@ -192,10 +121,8 @@ const ProgressTracking = ({ onViewAllResults }) => {
                 </div>
                 <div className="flex flex-col items-end shrink-0">
                   <div className="flex items-center text-sm text-on-surface-variant mb-1">
-                    <span className="material-symbols-outlined text-[16px] mr-1">
-                      calendar_today
-                    </span>
-                    <span>{test.date}</span>
+                    <span className="material-symbols-outlined text-[16px] mr-1">calendar_today</span>
+                    <span>{new Date(test.date).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center">
                     <span className="text-sm font-bold text-on-surface">
@@ -210,7 +137,7 @@ const ProgressTracking = ({ onViewAllResults }) => {
 
               <div className="mt-2 w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
                 <div
-                  className={`h-1.5 rounded-full ${getBarColor(test.percentage)}`}
+                  className={`h-1.5 rounded-full transition-all duration-700 ease-out ${getBarColor(test.percentage)}`}
                   style={{ width: `${test.percentage}%` }}
                 ></div>
               </div>

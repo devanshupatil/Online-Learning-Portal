@@ -1,8 +1,9 @@
 import React from 'react';
-import { Users, Mail, Phone, Calendar, TrendingUp, BookOpen, MessageSquare, Award, Target } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const StudentProfileView = ({ student, onClose }) => {
-  // Mock detailed data for the student
+  const { t } = useTranslation();
+
   const studentDetails = {
     ...student,
     address: '123 Main St, Springfield, IL 62701',
@@ -48,42 +49,40 @@ const StudentProfileView = ({ student, onClose }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'present': return 'bg-green-100 text-green-800';
-      case 'absent': return 'bg-red-100 text-red-800';
-      case 'late': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'present': return 'bg-primary-container text-on-primary-container';
+      case 'absent': return 'bg-error-container text-on-error-container';
+      case 'late': return 'bg-secondary-fixed text-on-secondary-fixed';
+      default: return 'bg-surface-container-highest text-on-surface-variant';
     }
   };
 
   const getGradeColor = (grade) => {
-    if (grade.startsWith('A')) return 'text-green-600 bg-green-100';
-    if (grade.startsWith('B')) return 'text-blue-600 bg-blue-100';
-    if (grade.startsWith('C')) return 'text-yellow-600 bg-yellow-100';
-    return 'text-red-600 bg-red-100';
+    if (grade.startsWith('A')) return 'bg-primary-container text-on-primary-container';
+    if (grade.startsWith('B')) return 'bg-secondary-fixed text-on-secondary-fixed';
+    if (grade.startsWith('C')) return 'bg-tertiary-fixed text-on-tertiary-fixed';
+    return 'bg-error-container text-on-error-container';
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-shadow/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface-container-lowest rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-surface-variant">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                <Users className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 bg-primary-container rounded-full flex items-center justify-center mr-4">
+                <span className="material-symbols-outlined text-[32px] text-primary">person</span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{studentDetails.name}</h2>
-                <p className="text-gray-600">Roll No: {studentDetails.rollNo} • {studentDetails.class} • {studentDetails.grade}</p>
+                <h2 className="text-2xl font-bold text-on-surface">{studentDetails.name}</h2>
+                <p className="text-on-surface-variant">{t('studentProfile.rollNo')}: {studentDetails.rollNo} &bull; {studentDetails.class} &bull; {studentDetails.grade}</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-on-surface-variant hover:text-on-surface"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <span className="material-symbols-outlined">close</span>
             </button>
           </div>
         </div>
@@ -92,61 +91,61 @@ const StudentProfileView = ({ student, onClose }) => {
           {/* Basic Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-on-surface">{t('studentProfile.basicInformation')}</h3>
               <div className="space-y-2">
                 <div className="flex items-center text-sm">
-                  <Mail className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-gray-600">Email:</span>
+                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant mr-2">mail</span>
+                  <span className="text-on-surface-variant">{t('studentProfile.email')}:</span>
                   <span className="ml-2">{studentDetails.email}</span>
                 </div>
                 <div className="flex items-center text-sm">
-                  <Phone className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-gray-600">Phone:</span>
+                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant mr-2">phone</span>
+                  <span className="text-on-surface-variant">{t('studentProfile.phone')}:</span>
                   <span className="ml-2">{studentDetails.phone}</span>
                 </div>
                 <div className="flex items-center text-sm">
-                  <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-gray-600">Date of Birth:</span>
+                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant mr-2">calendar_today</span>
+                  <span className="text-on-surface-variant">{t('studentProfile.dateOfBirth')}:</span>
                   <span className="ml-2">{studentDetails.dateOfBirth}</span>
                 </div>
                 <div className="flex items-center text-sm">
-                  <Calendar className="w-4 h-4 text-gray-500 mr-2" />
-                  <span className="text-gray-600">Enrollment Date:</span>
+                  <span className="material-symbols-outlined text-[18px] text-on-surface-variant mr-2">calendar_today</span>
+                  <span className="text-on-surface-variant">{t('studentProfile.enrollmentDate')}:</span>
                   <span className="ml-2">{studentDetails.enrollmentDate}</span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Parent/Guardian Information</h3>
+              <h3 className="text-lg font-semibold text-on-surface">{t('studentProfile.parentGuardianInformation')}</h3>
               <div className="space-y-2">
-                <p className="text-sm"><span className="text-gray-600">Name:</span> {studentDetails.parentName}</p>
-                <p className="text-sm"><span className="text-gray-600">Phone:</span> {studentDetails.parentPhone}</p>
-                <p className="text-sm"><span className="text-gray-600">Email:</span> {studentDetails.parentEmail}</p>
-                <p className="text-sm"><span className="text-gray-600">Emergency:</span> {studentDetails.emergencyContact}</p>
+                <p className="text-sm"><span className="text-on-surface-variant">{t('studentProfile.name')}:</span> {studentDetails.parentName}</p>
+                <p className="text-sm"><span className="text-on-surface-variant">{t('studentProfile.phone')}:</span> {studentDetails.parentPhone}</p>
+                <p className="text-sm"><span className="text-on-surface-variant">{t('studentProfile.email')}:</span> {studentDetails.parentEmail}</p>
+                <p className="text-sm"><span className="text-on-surface-variant">{t('studentProfile.emergency')}:</span> {studentDetails.emergencyContact}</p>
               </div>
             </div>
           </div>
 
           {/* Academic Performance */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Academic Performance</h3>
+            <h3 className="text-lg font-semibold text-on-surface mb-4">{t('studentProfile.academicPerformance')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {progressData.map((subject, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg p-4">
+                <div key={index} className="bg-surface-container-low rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-gray-900">{subject.subject}</h4>
+                    <h4 className="font-medium text-on-surface">{subject.subject}</h4>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getGradeColor(subject.grade)}`}>
                       {subject.grade}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                  <div className="w-full bg-surface-container-highest rounded-full h-2 mb-2">
                     <div
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      className="bg-primary h-2 rounded-full transition-all duration-500"
                       style={{ width: `${subject.progress}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-gray-600">{subject.progress}% Complete</p>
+                  <p className="text-xs text-on-surface-variant">{subject.progress}% {t('studentProfile.complete')}</p>
                 </div>
               ))}
             </div>
@@ -154,24 +153,24 @@ const StudentProfileView = ({ student, onClose }) => {
 
           {/* Recent Test Results */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Test Results</h3>
+            <h3 className="text-lg font-semibold text-on-surface mb-4">{t('studentProfile.recentTestResults')}</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-surface-container-low">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Test</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                    <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-on-surface-variant uppercase">{t('studentProfile.subject')}</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-on-surface-variant uppercase">{t('studentProfile.test')}</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-on-surface-variant uppercase">{t('studentProfile.score')}</th>
+                    <th className="px-4 py-2 text-left text-xs font-medium text-on-surface-variant uppercase">{t('studentProfile.date')}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-surface-variant">
                   {testResults.map((test, index) => (
                     <tr key={index}>
-                      <td className="px-4 py-2 text-sm text-gray-900">{test.subject}</td>
-                      <td className="px-4 py-2 text-sm text-gray-900">{test.test}</td>
-                      <td className="px-4 py-2 text-sm text-gray-900">{test.score}/{test.maxScore}</td>
-                      <td className="px-4 py-2 text-sm text-gray-500">{test.date}</td>
+                      <td className="px-4 py-2 text-sm text-on-surface">{test.subject}</td>
+                      <td className="px-4 py-2 text-sm text-on-surface">{test.test}</td>
+                      <td className="px-4 py-2 text-sm text-on-surface">{test.score}/{test.maxScore}</td>
+                      <td className="px-4 py-2 text-sm text-on-surface-variant">{test.date}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -181,14 +180,14 @@ const StudentProfileView = ({ student, onClose }) => {
 
           {/* Attendance Records */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Attendance</h3>
+            <h3 className="text-lg font-semibold text-on-surface mb-4">{t('studentProfile.recentAttendance')}</h3>
             <div className="grid grid-cols-7 gap-2">
               {attendanceRecords.map((record, index) => (
                 <div key={index} className="text-center">
                   <div className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(record.status)}`}>
-                    {record.status}
+                    {t(`studentProfile.${record.status}`)}
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">{record.date.split('-')[2]}</p>
+                  <p className="text-xs text-on-surface-variant mt-1">{record.date.split('-')[2]}</p>
                 </div>
               ))}
             </div>
@@ -196,17 +195,17 @@ const StudentProfileView = ({ student, onClose }) => {
 
           {/* Communication History */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Communication History</h3>
+            <h3 className="text-lg font-semibold text-on-surface mb-4">{t('studentProfile.communicationHistory')}</h3>
             <div className="space-y-3">
               {communicationHistory.map((comm, index) => (
-                <div key={index} className="flex items-start p-3 bg-gray-50 rounded-lg">
-                  <MessageSquare className="w-5 h-5 text-blue-600 mr-3 mt-0.5" />
+                <div key={index} className="flex items-start p-3 bg-surface-container-low rounded-xl">
+                  <span className="material-symbols-outlined text-primary mr-3 mt-0.5">chat</span>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-900">{comm.type}</span>
-                      <span className="text-xs text-gray-500">{comm.date}</span>
+                      <span className="text-sm font-medium text-on-surface">{t(`studentProfile.commType.${comm.type}`)}</span>
+                      <span className="text-xs text-on-surface-variant">{comm.date}</span>
                     </div>
-                    <p className="text-sm text-gray-600">{comm.message}</p>
+                    <p className="text-sm text-on-surface-variant">{comm.message}</p>
                   </div>
                 </div>
               ))}

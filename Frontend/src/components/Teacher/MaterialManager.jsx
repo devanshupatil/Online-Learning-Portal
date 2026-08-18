@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FileText, Eye, Download, Edit, Trash2, Search, Filter } from 'lucide-react';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { mockFetch } from '../../mockData/mockFetch';
 
 const MaterialManager = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('');
@@ -17,16 +18,12 @@ const MaterialManager = () => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadMessage, setDownloadMessage] = useState('');
 
-
-
   const getStudyMaterials = async () => {
     setLoading(true);
     try {
-      const response = await mockFetch(`${URL}/api/getStudyMaterials/teacher123`); // Placeholder teacherId
+      const response = await mockFetch(`${URL}/api/getStudyMaterials/teacher123`);
       const data = await response.json();
       if (response.ok) {
-        console.log('Materials fetched successfully:', data.materials);
-        // Transform backend data to match frontend structure
         const transformedMaterials = (data.materials || []).map((material, index) => {
           const pathParts = material.name.split('/');
           const category = material.category || 'Unknown';
@@ -34,11 +31,9 @@ const MaterialManager = () => {
           const fileName = pathParts.slice(2).join('/') || material.name;
           const fileType = fileName.split('.').pop()?.toUpperCase() || 'FILE';
 
-          // Format the creation date and time
           const createdDate = material.uploaded_at ? new Date(material.uploaded_at).toLocaleDateString() : 'N/A';
           const createdTime = material.uploaded_at ? new Date(material.uploaded_at).toLocaleTimeString() : 'N/A';
 
-          // Format file size
           const formatSize = (bytes) => {
             if (!bytes) return 'N/A';
             const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -55,7 +50,7 @@ const MaterialManager = () => {
             uploadDate: createdDate,
             uploadTime: createdTime,
             size: formatSize(material.size),
-            downloads: 0, // Backend doesn't provide this
+            downloads: 0,
             url: material.url
           };
         });
@@ -76,7 +71,6 @@ const MaterialManager = () => {
     getStudyMaterials();
   }, [selectedCategory, selectedCourse]);
 
-
   const categories = ['All', 'Lectures', 'Assignments', 'Resources', 'Exams', 'Projects'];
   const courses = ['All', 'Mathematics', 'Science', 'English', 'History', 'Computer Science'];
 
@@ -88,11 +82,6 @@ const MaterialManager = () => {
   });
 
   const handleDelete = async (title, id, category, course) => {
-
-    if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
-      return;
-    }
-
     try {
       const response = await mockFetch(`${URL}/api/deleteStudyMaterial`, {
         method: 'DELETE',
@@ -101,53 +90,30 @@ const MaterialManager = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        const promise = () => new Promise((resolve) => setTimeout(() => resolve({ name: 'Sonner' }), 2000));
-
-        toast.promise(promise, {
-          loading: 'Loading...',
-          success: (data) => {
-            return `${data.name} deleted "${title}" successfully!`;
-          },
-          error: 'Error',
-        });        // Refresh the materials list
+        toast.success(t('materials.deleteSuccess', { title }));
         getStudyMaterials();
       } else {
-        toast.error(`Failed to delete "${title}": ${data.message}`);
+        toast.error(t('materials.deleteFailed', { title, message: data.message }));
       }
     } catch (error) {
       console.error('Error deleting material:', error);
-      toast.error(`An error occurred while deleting "${title}". Please try again.`);
+      toast.error(t('materials.deleteError', { title }));
     }
-
-
   };
 
   const handleEdit = (id) => {
-    // In a real app, this would open an edit modal
-    toast(`Edit material with ID: ${id}`);
+    toast(t('materials.editPlaceholder', { id }));
   };
 
-  // const handleDownload = (material) => {
-  //   if (material.url) {
-  //     const link = document.createElement('a');
-  //     link.href = material.url;
-  //     link.download = material.title;
-  //     link.click();
-  //   } else {
-  //     toast.error(`Download link not available for ${material.title}`);
-  //   }
-  // };
-
-    const handleDownload = async (materialId, fileName) => {
+  const handleDownload = async (materialId, fileName) => {
     if (downloading) return;
 
     setDownloading(true);
     setDownloadingId(materialId);
     setDownloadProgress(0);
-    setDownloadMessage('Preparing download...');
+    setDownloadMessage(t('materials.preparingDownload'));
 
     try {
-      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setDownloadProgress(prev => {
           if (prev >= 90) {
@@ -158,20 +124,17 @@ const MaterialManager = () => {
         });
       }, 100);
 
-      // Fetch the file through backend API
       const response = await mockFetch(`${URL}/api/downloadTestMaterial/${materialId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Get the blob from response
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
 
       setDownloadProgress(100);
-      setDownloadMessage('Download complete!');
+      setDownloadMessage(t('materials.downloadComplete'));
 
-      // Create download link
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = fileName;
@@ -179,10 +142,8 @@ const MaterialManager = () => {
       link.click();
       document.body.removeChild(link);
 
-      // Clean up
       window.URL.revokeObjectURL(downloadUrl);
 
-      // Reset after success
       setTimeout(() => {
         setDownloading(false);
         setDownloadingId(null);
@@ -192,12 +153,11 @@ const MaterialManager = () => {
 
     } catch (error) {
       console.error('Download failed:', error);
-      setDownloadMessage('Download failed. Please try again.');
+      setDownloadMessage(t('materials.downloadFailed'));
       setDownloading(false);
       setDownloadingId(null);
       setDownloadProgress(0);
 
-      // Reset error message after 3 seconds
       setTimeout(() => {
         setDownloadMessage('');
       }, 3000);
@@ -209,19 +169,19 @@ const MaterialManager = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="section-fade-in space-y-6">
       {/* Filters and Search */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <span className="material-symbols-outlined w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-on-surface-variant">search</span>
               <input
                 type="text"
-                placeholder="Search materials..."
+                placeholder={t('materials.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
               />
             </div>
           </div>
@@ -229,7 +189,7 @@ const MaterialManager = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {categories.map(cat => (
                 <option key={cat} value={cat === 'All' ? '' : cat}>{cat}</option>
@@ -238,7 +198,7 @@ const MaterialManager = () => {
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {courses.map(course => (
                 <option key={course} value={course === 'All' ? '' : course}>{course}</option>
@@ -249,31 +209,31 @@ const MaterialManager = () => {
       </div>
 
       {/* Materials List */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">Uploaded Materials ({filteredMaterials.length})</h3>
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom border border-surface-variant">
+        <div className="p-6 border-b border-surface-variant">
+          <h3 className="text-lg font-semibold text-on-surface">{t('materials.title', { count: filteredMaterials.length })}</h3>
         </div>
-        <div className="divide-y divide-gray-200">
+        <div className="divide-y divide-surface-variant">
           {loading ? (
-            <div className="p-6 text-center text-gray-500">
-              Loading materials...
+            <div className="p-6 text-center text-on-surface-variant">
+              {t('materials.loading')}
             </div>
           ) : filteredMaterials.length === 0 ? (
-            <div className="p-6 text-center text-gray-500">
-              No materials found matching your criteria.
+            <div className="p-6 text-center text-on-surface-variant">
+              {t('materials.noResults')}
             </div>
           ) : (
             filteredMaterials.map((material) => (
-              <div key={material.id} className="p-6 hover:bg-gray-50 transition-colors duration-200">
+              <div key={material.id} className="p-6 hover:bg-surface-container-low transition-colors duration-200">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center flex-1">
-                    <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                      <FileText className="w-6 h-6 text-blue-600" />
+                    <div className="bg-primary-container p-3 rounded-xl mr-4">
+                      <span className="material-symbols-outlined w-6 h-6 text-primary">description</span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">{material.title}</h4>
-                      <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-gray-600">
-                        <span className="px-2 py-1 bg-gray-100 rounded-full">{material.type}</span>
+                      <h4 className="font-semibold text-on-surface">{material.title}</h4>
+                      <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-on-surface-variant">
+                        <span className="px-2 py-1 bg-surface-container-low rounded-full">{material.type}</span>
                         <span>{material.category}</span>
                         <span>{material.course}</span>
                         <span>{material.uploadDate}</span>
@@ -285,37 +245,37 @@ const MaterialManager = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleView(material.url)}
-                      className="p-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg transition-colors duration-200"
-                      title="View"
+                      className="p-2 text-primary hover:text-primary hover:bg-primary-container/30 rounded-xl transition-colors duration-200"
+                      title={t('materials.view')}
                     >
-                      <Eye className="w-5 h-5" />
+                      <span className="material-symbols-outlined w-5 h-5">visibility</span>
                     </button>
                     <button
                       onClick={() => handleEdit(material.id)}
-                      className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-lg transition-colors duration-200"
-                      title="Edit"
+                      className="p-2 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded-xl transition-colors duration-200"
+                      title={t('materials.edit')}
                     >
-                      <Edit className="w-5 h-5" />
+                      <span className="material-symbols-outlined w-5 h-5">edit</span>
                     </button>
                     <div className="relative">
                       <button
-                        onClick={() => handleDownload(material.id, material.fileName)}
-                        className={`p-2 rounded-lg transition-all duration-300 ${downloading && downloadingId === material.id
-                          ? 'text-green-600 bg-green-50 scale-110 rotate-12'
-                          : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50 hover:scale-105'
+                        onClick={() => handleDownload(material.id, material.title)}
+                        className={`p-2 rounded-xl transition-all duration-300 ${downloading && downloadingId === material.id
+                          ? 'text-primary bg-primary-container/30 scale-110 rotate-12'
+                          : 'text-primary hover:text-primary hover:bg-primary-container/30 hover:scale-105'
                           }`}
-                        title={downloading && downloadingId === material.id ? "Downloading..." : "Download"}
+                        title={downloading && downloadingId === material.id ? t('materials.downloading') : t('materials.download')}
                         disabled={downloading && downloadingId === material.id}
                       >
-                        <Download className={`cursor-pointer w-5 h-5 transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''
-                          }`} />
+                        <span className={`material-symbols-outlined cursor-pointer w-5 h-5 transition-transform duration-300 ${downloading && downloadingId === material.id ? 'animate-pulse' : ''
+                          }`}>download</span>
                       </button>
                       {downloading && downloadingId === material.id && (
-                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
-                          {downloadMessage || `Downloading... ${downloadProgress}%`}
-                          <div className="w-16 bg-gray-600 rounded-full h-1 mt-1">
+                        <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-surface-container-low text-on-surface text-xs px-2 py-1 rounded-xl whitespace-nowrap z-10">
+                          {downloadMessage || `${t('materials.downloading')}... ${downloadProgress}%`}
+                          <div className="w-16 bg-surface-variant rounded-full h-1 mt-1">
                             <div
-                              className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                              className="bg-primary h-1 rounded-xl transition-all duration-300"
                               style={{ width: `${downloadProgress}%` }}
                             ></div>
                           </div>
@@ -323,10 +283,11 @@ const MaterialManager = () => {
                       )}
                     </div>
                     <button
-                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                      title="Delete"
+                      onClick={() => handleDelete(material.title, material.id, material.category, material.course)}
+                      className="p-2 text-error hover:text-error hover:bg-error-container/30 rounded-xl transition-colors duration-200"
+                      title={t('materials.delete')}
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <span className="material-symbols-outlined w-5 h-5">delete</span>
                     </button>
                   </div>
                 </div>

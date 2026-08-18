@@ -1,17 +1,10 @@
 import React from 'react';
-
 import TeacherDashboard from './TeacherDashboard';
-import Footer from '../Footer';
 
 const TeachersPage = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Main Content */}
-      <div className="bg-white">
-        {/* Teacher Dashboard */}
-        <TeacherDashboard />
-      </div>
-      <Footer />
+    <div className="min-h-screen bg-background text-on-background font-sans antialiased overflow-x-hidden">
+      <TeacherDashboard />
     </div>
   );
 };

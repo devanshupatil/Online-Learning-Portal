@@ -1,1 +1,94 @@
-Test image data
+We have to make the coaching classes website of teachers page. The UI of the website should be very attractive clean , modern and user-friendly. 
+
+The Teacher page UI will be very attractive clean , modern and user-friendly .
+
+Teacher Page - If the Teacher subject is maths, then show the student that taken the maths subject. If the Teacher subject is physics, then show the student that taken the physics subject. If the Teacher subject is chemistry, then show the student that taken the chemistry subject. Same way 
+
+ 1. Dashboard:- 
+    - On click of dashboard button we have to 
+    - show the total students of count.
+    - uploaded materials count
+    - tests count
+    - students attendance count & %
+    - today's classes schedule
+    - students assignments count
+
+  2. Syllabus:- 
+    - On click of syllabus button we have to show the syllabus in the form of list (chapter wise).
+    - show the topics name of chapter wise. When can mark topic as completed or not completed. Also we have to 
+    - show the percentage of completed syllabus.
+
+  3. Materials:- 
+    - On click of materials button we have to show the materials in the form of list (chapter wise).
+    - In materials section show the upload file button. When user clicks on upload file button, then we have to show the upload file dialog box.
+    - Upload file dialog box should have the following fields:-
+      - File name
+      - File type
+      - File size
+      - Upload file button
+      - Cancel button
+    - When user clicks on upload file button, then the file should be uploaded to the server.
+    - After upload, show the file in the list.
+
+  4. Tests:-
+    - On click of tests button we have to show the tests in the form of list (chapter wise).
+    - In tests section show the create test button. When user clicks on create test button, then we have to show the create test dialog box.
+    - Create test dialog box should have the following fields:-
+      - Test name
+      - Test type
+      - Test description
+      - Test start date
+      - Test end date
+      - Test start time
+      - Test end time
+      - Test duration
+      - Test total marks
+      - Test passing marks
+      - Create test button
+      - Cancel button
+    - When user clicks on create test button, then the test should be created.
+    - After create, show the test in the list.
+
+  5. Attendance:- 
+    - On click of attendance button we have to show the attendance of the students.
+    - Attendance should be in the form of table. Table should have the following columns:-
+      - Student name
+      - Attendance status
+      - Date
+    - In attendance section show the mark attendance button. When user clicks on mark attendance button, then we have to show the mark attendance page.
+    - Mark attendance page should have the following fields:-
+      - Student name
+      - Attendance status
+      - Date
+      - Mark attendance button
+      - Cancel button
+    - When user clicks on mark attendance button, then the attendance should be marked.
+    - After mark, show the attendance in the list.
+
+  6. Students List:- 
+    - On click of students list button we have to show the students list.
+    - Students list should be in the form of table. Table should have the following columns:-
+      - Student name
+      - Student email
+      - Student phone
+      - Student address
+      - Student city
+      - Student state
+      - Student zip
+      - Student country
+      - Student image
+      - Student actions
+    
+  
+
+  7. Progress:- 
+    - On click of progress button we have to show the progress of the students.
+    - Progress should be in the form of chart.
+
+  8. Profile:- 
+    - On click of profile button we have to show the profile of the students.
+    - Profile should be in the form of form.
+    
+
+    
+ 

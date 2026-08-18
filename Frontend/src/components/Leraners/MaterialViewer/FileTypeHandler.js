@@ -3,11 +3,13 @@
 export const SUPPORTED_FILE_TYPES = {
   PDF: 'pdf',
   IMAGE: 'image',
+  VIDEO: 'video',
   UNSUPPORTED: 'unsupported'
 };
 
 export const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
 export const PDF_EXTENSIONS = ['pdf'];
+export const VIDEO_EXTENSIONS = ['mp4', 'webm', 'mov', 'avi', 'mkv', 'ogg'];
 
 /**
  * Detects file type based on file extension or MIME type
@@ -28,6 +30,9 @@ export const detectFileType = (fileName, mimeType = '') => {
     if (mimeType.startsWith('image/')) {
       return SUPPORTED_FILE_TYPES.IMAGE;
     }
+    if (mimeType.startsWith('video/')) {
+      return SUPPORTED_FILE_TYPES.VIDEO;
+    }
   }
 
   // Check by file extension
@@ -37,6 +42,10 @@ export const detectFileType = (fileName, mimeType = '') => {
 
   if (IMAGE_EXTENSIONS.includes(extension)) {
     return SUPPORTED_FILE_TYPES.IMAGE;
+  }
+
+  if (VIDEO_EXTENSIONS.includes(extension)) {
+    return SUPPORTED_FILE_TYPES.VIDEO;
   }
 
   return SUPPORTED_FILE_TYPES.UNSUPPORTED;
@@ -86,6 +95,12 @@ export const getFileTypeInfo = (fileType) => {
         label: 'Image',
         icon: 'Image',
         color: 'text-blue-600'
+      };
+    case SUPPORTED_FILE_TYPES.VIDEO:
+      return {
+        label: 'Video',
+        icon: 'Video',
+        color: 'text-purple-600'
       };
     default:
       return {

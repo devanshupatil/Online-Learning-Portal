@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Users, TrendingUp, TrendingDown, BarChart3, PieChart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { mockFetch } from '../../mockData/mockFetch';
 
 const AttendanceReports = () => {
+  const { t } = useTranslation();
   const [selectedClass, setSelectedClass] = useState('JEE');
   const today = new Date();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -10,7 +11,6 @@ const AttendanceReports = () => {
   const URL = import.meta.env.VITE_BACKEND_URL;
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const teacherId = {
     id: 1,
@@ -27,10 +27,7 @@ const AttendanceReports = () => {
       const response = await mockFetch(`${URL}/api/getAllStudentInfo`);
       const data = await response.json();
 
-
-
       if (response.ok) {
-        // Filter students by selected class
         const classStudents = data.data.filter(student => student.class === selectedClass);
         setStudents(classStudents);
       }
@@ -38,7 +35,6 @@ const AttendanceReports = () => {
       console.error('Error fetching students:', error);
     }
   };
-
 
   const getAttendanceRecords = async () => {
     try {
@@ -67,26 +63,21 @@ const AttendanceReports = () => {
     }
   };
 
-
   useEffect(() => {
-    // Fetch any required data on component mount
     fetchStudents();
     getAttendanceRecords();
   }, [selectedClass, dateRange.start, dateRange.end]);
 
   const classes = ['JEE', 'NEET', 'CET (PCM)', 'CET (PCB)'];
 
-  // Calculate attendance statistics dynamically
   const calculateAttendanceStats = (className) => {
     const classRecords = attendanceRecords?.filter(record => record.class === className) || [];
     const totalPresent = classRecords.filter(record => record.status === 'present').length;
     const totalAbsent = classRecords.filter(record => record.status === 'absent').length;
     const totalRecords = totalPresent + totalAbsent;
 
-    // Calculate average attendance percentage
     const averageAttendance = totalRecords > 0 ? Math.round((totalPresent / totalRecords) * 100) : 0;
 
-    // Calculate trend based on recent vs older records
     const trend = calculateTrend(classRecords);
 
     return {
@@ -98,19 +89,15 @@ const AttendanceReports = () => {
     };
   };
 
-  // Calculate attendance trend
   const calculateTrend = (records) => {
     if (!records || records.length === 0) return 'stable';
 
-    // Sort records by date
     const sortedRecords = records.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Split into two halves (recent vs older)
     const midPoint = Math.floor(sortedRecords.length / 2);
     const recentRecords = sortedRecords.slice(midPoint);
     const olderRecords = sortedRecords.slice(0, midPoint);
 
-    // Calculate attendance percentages for each period
     const recentPresent = recentRecords.filter(r => r.status === 'present').length;
     const recentTotal = recentRecords.length;
     const recentPercentage = recentTotal > 0 ? (recentPresent / recentTotal) * 100 : 0;
@@ -126,16 +113,10 @@ const AttendanceReports = () => {
     return 'stable';
   };
 
-  // Calculate weekly attendance trends for the chart
   const calculateWeeklyTrends = () => {
-    // if (!attendanceRecords || attendanceRecords.length === 0) {
-    //   return [65, 70, 75, 80, 78, 82, 85]; // Default mock data
-    // }
-
     const classRecords = attendanceRecords.filter(record => record.class === selectedClass);
     const sortedRecords = classRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Group by weeks (last 7 weeks)
     const weeks = [];
     const now = new Date();
 
@@ -153,12 +134,10 @@ const AttendanceReports = () => {
       const present = weekRecords.filter(r => r.status === 'present').length;
       const total = weekRecords.length;
 
-      // If around 7 days and attendance is zero, show 0
       let percentage;
       if (total === 0) {
-        // Check if this week should have around 7 days of potential attendance
         const daysInWeek = Math.ceil((weekEnd - weekStart) / (1000 * 60 * 60 * 24));
-        percentage = daysInWeek >= 5 ? 0 : 50; // If week has 5+ days, assume should have attendance, show 0
+        percentage = daysInWeek >= 5 ? 0 : 50;
       } else {
         percentage = Math.round((present / total) * 100);
       }
@@ -169,7 +148,6 @@ const AttendanceReports = () => {
     return weeks;
   };
 
-  // Mock attendance data - now using dynamic calculations
   const attendanceData = {
     'JEE': { summary: calculateAttendanceStats('JEE') },
     'NEET': { summary: calculateAttendanceStats('NEET') },
@@ -179,27 +157,18 @@ const AttendanceReports = () => {
 
   const currentClassData = attendanceData[selectedClass] || attendanceData['JEE'];
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'present': return 'bg-green-100 text-green-800';
-      case 'absent': return 'bg-red-100 text-red-800';
-      case 'late': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 section-fade-in">
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Attendance Reports</h3>
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
+        <h3 className="text-lg font-semibold text-on-surface mb-4">{t('attendanceReports.title')}</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Class</label>
+            <label className="block text-sm font-medium text-on-surface-variant mb-2">{t('attendanceReports.class')}</label>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               {classes.map(cls => (
                 <option key={cls} value={cls}>{cls}</option>
@@ -207,21 +176,21 @@ const AttendanceReports = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+            <label className="block text-sm font-medium text-on-surface-variant mb-2">{t('attendanceReports.startDate')}</label>
             <input
               type="date"
               value={dateRange.start}
               onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+            <label className="block text-sm font-medium text-on-surface-variant mb-2">{t('attendanceReports.endDate')}</label>
             <input
               type="date"
               value={dateRange.end}
               onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-surface-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
         </div>
@@ -229,89 +198,88 @@ const AttendanceReports = () => {
 
       {/* Class Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Students</p>
-              <p className="text-2xl font-bold text-gray-900">{currentClassData.summary.totalStudents}</p>
+              <p className="text-sm font-medium text-on-surface-variant">{t('attendanceReports.totalStudents')}</p>
+              <p className="text-2xl font-bold text-on-surface">{currentClassData.summary.totalStudents}</p>
             </div>
-            <Users className="w-8 h-8 text-blue-600" />
+            <span className="material-symbols-outlined w-8 h-8 text-primary">group</span>
           </div>
         </div>
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Average Attendance</p>
-              <p className="text-2xl font-bold text-gray-900">{currentClassData.summary.averageAttendance}%</p>
+              <p className="text-sm font-medium text-on-surface-variant">{t('attendanceReports.averageAttendance')}</p>
+              <p className="text-2xl font-bold text-on-surface">{currentClassData.summary.averageAttendance}%</p>
             </div>
-            <BarChart3 className="w-8 h-8 text-green-600" />
+            <span className="material-symbols-outlined w-8 h-8 text-primary">bar_chart</span>
           </div>
           <div className="flex items-center mt-2">
-            {currentClassData.summary.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-600 mr-1" />}
-            {currentClassData.summary.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-600 mr-1" />}
-            <span className={`text-xs ${currentClassData.summary.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {currentClassData.summary.trend === 'up' ? '+2%' : '-1%'} from last month
+            {currentClassData.summary.trend === 'up' && <span className="material-symbols-outlined w-4 h-4 text-primary mr-1">trending_up</span>}
+            {currentClassData.summary.trend === 'down' && <span className="material-symbols-outlined w-4 h-4 text-error mr-1">trending_down</span>}
+            <span className={`text-xs ${currentClassData.summary.trend === 'up' ? 'text-primary' : 'text-error'}`}>
+              {currentClassData.summary.trend === 'up' ? '+2%' : '-1%'} {t('attendanceReports.fromLastMonth')}
             </span>
           </div>
         </div>
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Present Today</p>
-              <p className="text-2xl font-bold text-green-600">{currentClassData.summary.totalPresent}</p>
+              <p className="text-sm font-medium text-on-surface-variant">{t('attendanceReports.presentToday')}</p>
+              <p className="text-2xl font-bold text-primary">{currentClassData.summary.totalPresent}</p>
             </div>
-            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 bg-green-600 rounded-full"></div>
+            <div className="w-8 h-8 bg-primary-container rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 bg-primary rounded-full"></div>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+        <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Absent Today</p>
-              <p className="text-2xl font-bold text-red-600">{currentClassData.summary.totalAbsent}</p>
+              <p className="text-sm font-medium text-on-surface-variant">{t('attendanceReports.absentToday')}</p>
+              <p className="text-2xl font-bold text-error">{currentClassData.summary.totalAbsent}</p>
             </div>
-            <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-              <div className="w-4 h-4 bg-red-600 rounded-full"></div>
+            <div className="w-8 h-8 bg-error-container rounded-full flex items-center justify-center">
+              <div className="w-4 h-4 bg-error rounded-full"></div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Student Attendance Table */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <h4 className="font-semibold text-gray-900">Individual Student Records</h4>
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom border border-surface-variant">
+        <div className="p-6 border-b border-surface-variant">
+          <h4 className="font-semibold text-on-surface">{t('attendanceReports.individualRecords')}</h4>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-surface-container-low">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roll No</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Attendance %</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recent Records</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('attendanceReports.student')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('attendanceReports.rollNo')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('attendanceReports.attendancePercent')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">{t('attendanceReports.recentRecords')}</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-surface-container-lowest divide-y divide-surface-variant">
               {students.length > 0 ? students.map((student) => (
-                <tr key={student.student_id || student.id} className="hover:bg-gray-50">
+                <tr key={student.student_id || student.id} className="hover:bg-surface-container-low">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{student.name}</div>
+                    <div className="text-sm font-medium text-on-surface">{student.name}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{student.rollNo || student.id}</div>
+                    <div className="text-sm text-on-surface-variant">{student.rollNo || student.id}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">85%</div>
+                    <div className="text-sm text-on-surface">85%</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex gap-1">
-                      {/* Mock recent records - replace with actual data */}
                       {['present', 'present', 'absent', 'present', 'present'].slice(-5).map((status, index) => (
                         <span
                           key={index}
-                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${status === 'present' ? 'bg-green-500' : 'bg-red-500'
+                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${status === 'present' ? 'bg-primary' : 'bg-error'
                             }`}
                           title={`Day ${index + 1}: ${status}`}
                         >
@@ -323,8 +291,8 @@ const AttendanceReports = () => {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
-                    No students found for {selectedClass}
+                  <td colSpan="4" className="px-6 py-4 text-center text-on-surface-variant">
+                    {t('attendanceReports.noStudents', { class: selectedClass })}
                   </td>
                 </tr>
               )}
@@ -334,21 +302,21 @@ const AttendanceReports = () => {
       </div>
 
       {/* Attendance Trends Chart */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-        <h4 className="font-semibold text-gray-900 mb-4">Attendance Trends</h4>
+      <div className="bg-surface-container-lowest rounded-xl soft-bloom p-6 border border-surface-variant">
+        <h4 className="font-semibold text-on-surface mb-4">{t('attendanceReports.attendanceTrends')}</h4>
         <div className="h-64 flex items-end justify-between gap-2">
           {calculateWeeklyTrends().map((value, index) => (
             <div key={index} className="flex-1 flex flex-col items-center">
               <div
-                className="w-full bg-blue-500 rounded-t transition-all duration-300 hover:bg-blue-600"
+                className="w-full bg-primary rounded-t transition-all duration-300 hover:bg-primary/80"
                 style={{ height: `${value * 2}px` }}
               ></div>
-              <span className="text-xs text-gray-600 mt-2">Week {index + 1}</span>
+              <span className="text-xs text-on-surface-variant mt-2">{t('attendanceReports.week')} {index + 1}</span>
             </div>
           ))}
         </div>
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">Weekly attendance percentage over the last 7 weeks for {selectedClass}</p>
+          <p className="text-sm text-on-surface-variant">{t('attendanceReports.weeklyDescription', { class: selectedClass })}</p>
         </div>
       </div>
     </div>

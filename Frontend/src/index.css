@@ -84,6 +84,137 @@ body {
   --color-surface-variant: #e0e3e5;
   --color-surface-container-low: #f2f4f6;
   --color-surface-bright: #f7f9fb;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+}
+
+/* Dark mode overrides — Material Design 3 dark tokens */
+html.dark {
+  --color-primary: #b0c4ff;
+  --color-primary-foreground: #002f65;
+  --color-secondary: #c4c0ff;
+  --color-secondary-foreground: #1e00a8;
+  --color-destructive: #ffb4ab;
+  --color-destructive-foreground: #690005;
+  --color-accent: #004ac6;
+  --color-accent-foreground: #dbe1ff;
+  --color-ring: #b0c4ff;
+  --color-input: #434655;
+  --color-outline: #8d909f;
+  --color-on-surface: #e1e3e5;
+  --color-foreground: #e1e3e5;
+  --color-on-surface-variant: #c3c6d7;
+  --color-surface: #111318;
+  --color-surface-container-lowest: #0b0e14;
+  --color-surface-container-low: #191c1e;
+  --color-surface-container-high: #242629;
+  --color-surface-container-highest: #2f3134;
+  --color-outline-variant: #434655;
+  --color-tertiary-container: #ffb86c;
+  --color-background: #111318;
+  --color-on-background: #e1e3e5;
+  --color-primary-container: #1a4fbf;
+  --color-on-primary-container: #dbe1ff;
+  --color-secondary-fixed: #3b3591;
+  --color-on-secondary-fixed: #e2dfff;
+  --color-primary-fixed: #1a3080;
+  --color-on-primary-fixed: #dbe1ff;
+  --color-tertiary-fixed: #803000;
+  --color-on-tertiary-fixed: #ffdbd0;
+  --color-surface-variant: #434655;
+  --color-surface-bright: #383a3d;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* EduFlow Card Utilities */
+.card-base {
+  background: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-base:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.card-hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Progress bar animation */
+.progress-fill {
+  transition: width 0.7s ease-out;
+}
+
+/* Focus visible ring */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Section fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Filter pill transition */
+.filter-pill {
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Skeleton loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-surface-container-low) 25%, var(--color-surface-container-highest) 50%, var(--color-surface-container-low) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .card-base:hover,
+  .card-hover-lift:hover,
+  .filter-pill,
+  .progress-fill,
+  .section-fade-in,
+  .skeleton {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+
+  .card-hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* Mobile bottom nav safe area */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Extra bottom padding on mobile for bottom nav */
+@media (max-width: 767px) {
+  .pb-mobile-nav {
+    padding-bottom: 5rem;
+  }
 }
 
 .material-symbols-outlined {

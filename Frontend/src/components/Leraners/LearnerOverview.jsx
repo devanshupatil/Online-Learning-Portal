@@ -17,9 +17,9 @@ const LearnerOverview = ({ courses, profileName, streak = 5 }) => {
   ];
 
   const schedule = [
-    { title: 'Mathematics Practice', time: '3:00 PM', duration: '1 hour' },
-    { title: 'Physics Reading', time: '10:00 AM', duration: '2 hours' },
-    { title: 'Chemistry Lab Prep', time: '2:00 PM', duration: '1.5 hours' },
+    { titleKey: 'learnerScheduleMath', timeKey: 'learnerScheduleMathTime', durationKey: 'learnerScheduleMathDuration' },
+    { titleKey: 'learnerSchedulePhysics', timeKey: 'learnerSchedulePhysicsTime', durationKey: 'learnerSchedulePhysicsDuration' },
+    { titleKey: 'learnerScheduleChemistry', timeKey: 'learnerScheduleChemistryTime', durationKey: 'learnerScheduleChemistryDuration' },
   ];
 
   return (
@@ -102,14 +102,14 @@ const LearnerOverview = ({ courses, profileName, streak = 5 }) => {
               {schedule.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-surface-container-low rounded-lg"
+                  className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl"
                 >
                   <div>
-                    <p className="font-medium text-on-surface">{item.title}</p>
-                    <p className="text-sm text-on-surface-variant">{item.time}</p>
+                    <p className="font-medium text-on-surface">{t(item.titleKey)}</p>
+                    <p className="text-sm text-on-surface-variant">{t(item.timeKey)}</p>
                   </div>
-                  <span className="text-xs px-2 py-1 bg-surface-container-highest text-on-surface rounded-full">
-                    {item.duration}
+                  <span className="text-xs px-2.5 py-1 bg-surface-container-highest text-on-surface-variant rounded-full font-medium">
+                    {t(item.durationKey)}
                   </span>
                 </div>
               ))}
