@@ -120,9 +120,9 @@ const TeacherDashboard = () => {
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold font-display text-on-surface">Teacher Dashboard</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold font-display text-on-surface">{t('teacherDashboardTitle')}</h2>
                   <p className="text-sm font-medium text-on-surface-variant mt-0.5">
-                    Welcome back, Dr. Sarah Jenkins! Here is today's teaching summary.
+                    {t('teacherDashboardWelcome')}
                   </p>
                 </div>
                 <div className="flex items-center gap-2.5">
@@ -130,13 +130,13 @@ const TeacherDashboard = () => {
                     onClick={() => setActiveSection('syllabus')}
                     className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                   >
-                    View Syllabus
+                    {t('teacherDashboardViewSyllabus')}
                   </button>
                   <button
                     onClick={() => setActiveSection('materials')}
                     className="px-4 py-2 border border-outline-variant bg-surface rounded-xl text-sm font-bold text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
                   >
-                    Upload Notes
+                    {t('teacherDashboardUploadNotes')}
                   </button>
                 </div>
               </div>
@@ -171,10 +171,10 @@ const TeacherDashboard = () => {
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold font-display text-on-surface flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-[22px]">calendar_today</span>
-                      Today's Class Schedule
+                      {t('teacherDashboardTodayTitle')}
                     </h3>
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary-container text-on-primary">
-                      {TODAY_SCHEDULE.length} Sessions
+                      {t('teacherDashboardSessions', { count: TODAY_SCHEDULE.length })}
                     </span>
                   </div>
                   <div className="space-y-3">
@@ -194,7 +194,9 @@ const TeacherDashboard = () => {
                             item.status === 'In Progress' ? 'bg-amber-500/15 text-amber-600' :
                             'bg-surface-container text-on-surface-variant'
                           }`}>
-                            {item.status}
+                            {item.status === 'Completed' ? t('teacherDashboardStatusCompleted') :
+                             item.status === 'In Progress' ? t('teacherDashboardStatusInProgress') :
+                             t('teacherDashboardStatusUpcoming')}
                           </span>
                         </div>
                       </div>
@@ -207,7 +209,7 @@ const TeacherDashboard = () => {
                   <div>
                     <h3 className="text-lg font-bold font-display text-on-surface mb-4 flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-[22px]">bolt</span>
-                      Quick Actions
+                      {t('teacherDashboardQuickTitle')}
                     </h3>
                     <div className="space-y-3">
                       <button
@@ -218,8 +220,8 @@ const TeacherDashboard = () => {
                           <span className="material-symbols-outlined text-[20px]">event_available</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-on-surface">Mark Attendance</p>
-                          <p className="text-xs text-on-surface-variant">Update today's student presence</p>
+                          <p className="text-sm font-bold text-on-surface">{t('teacherDashboardQuickAttendance')}</p>
+                          <p className="text-xs text-on-surface-variant">{t('teacherDashboardQuickAttendanceSub')}</p>
                         </div>
                       </button>
 
@@ -231,8 +233,8 @@ const TeacherDashboard = () => {
                           <span className="material-symbols-outlined text-[20px]">quiz</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-on-surface">Create New Test</p>
-                          <p className="text-xs text-on-surface-variant">Schedule chapter or mock test</p>
+                          <p className="text-sm font-bold text-on-surface">{t('teacherDashboardQuickTests')}</p>
+                          <p className="text-xs text-on-surface-variant">{t('teacherDashboardQuickTestsSub')}</p>
                         </div>
                       </button>
 
@@ -244,15 +246,15 @@ const TeacherDashboard = () => {
                           <span className="material-symbols-outlined text-[20px]">group</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-on-surface">Student Directory</p>
-                          <p className="text-xs text-on-surface-variant">Manage 128 enrolled students</p>
+                          <p className="text-sm font-bold text-on-surface">{t('teacherDashboardQuickStudents')}</p>
+                          <p className="text-xs text-on-surface-variant">{t('teacherDashboardQuickStudentsSub', { count: overviewData.totalStudents })}</p>
                         </div>
                       </button>
                     </div>
                   </div>
 
                   <div className="mt-6 pt-4 border-t border-surface-variant text-center">
-                    <p className="text-xs text-on-surface-variant">EduLearning Coaching Portal • 2026</p>
+                    <p className="text-xs text-on-surface-variant">{t('teacherDashboardFooter')}</p>
                   </div>
                 </div>
               </div>
