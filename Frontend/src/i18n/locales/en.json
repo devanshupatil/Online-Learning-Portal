@@ -498,7 +498,6 @@
   "learnerToggleDarkMode": "Toggle dark mode",
   "learnerThemeDark": "Dark",
   "learnerThemeLight": "Light",
-
   "teacherNavBrand": "EduAdmin",
   "teacherNavPortal": "Teacher Portal",
   "teacherNavSearch": "Search students, classes...",
@@ -510,14 +509,30 @@
   "teacherNavStudents": "Students",
   "teacherNavProgress": "Progress",
   "teacherNavProfile": "Profile",
+  "teacherNavProfileSub": "Faculty - Mathematics",
+  "teacherNavProfileSettings": "Profile Settings",
   "teacherNavLogout": "Logout",
   "teacherNavToggleMenu": "Toggle menu",
   "teacherNavCloseMenu": "Close menu",
   "teacherNavNotifications": "Notifications",
   "teacherNavHelp": "Help",
-
   "teacherDashboardTitle": "Dashboard",
   "teacherDashboardWelcome": "Welcome back! Manage your classes and students effectively.",
+  "teacherDashboardViewSyllabus": "View Syllabus",
+  "teacherDashboardUploadNotes": "Upload Notes",
+  "teacherDashboardTodayTitle": "Today's Class Schedule",
+  "teacherDashboardSessions": "{{count}} Sessions",
+  "teacherDashboardStatusCompleted": "Completed",
+  "teacherDashboardStatusInProgress": "In Progress",
+  "teacherDashboardStatusUpcoming": "Upcoming",
+  "teacherDashboardQuickTitle": "Quick Actions",
+  "teacherDashboardQuickAttendance": "Mark Attendance",
+  "teacherDashboardQuickAttendanceSub": "Update today's student presence",
+  "teacherDashboardQuickTests": "Create New Test",
+  "teacherDashboardQuickTestsSub": "Schedule chapter or mock test",
+  "teacherDashboardQuickStudents": "Student Directory",
+  "teacherDashboardQuickStudentsSub": "Manage {{count}} enrolled students",
+  "teacherDashboardFooter": "EduLearning Coaching Portal • 2026",
   "teacherOverviewTotalStudents": "Total Students",
   "teacherOverviewActiveClasses": "Active Classes",
   "teacherOverviewUploadedMaterials": "Uploaded Materials",
@@ -530,7 +545,6 @@
   "teacherActivityTestTime": "1 day ago",
   "teacherActivityAttendance": "Attendance marked for all classes",
   "teacherActivityAttendanceTime": "2 days ago",
-
   "teacherMaterialsTitle": "Study Materials",
   "teacherMaterialsTabUpload": "Upload",
   "teacherMaterialsTabManage": "Manage",
@@ -574,7 +588,6 @@
   "teacherCategoriesResources": "Resources",
   "teacherCategoriesExams": "Exams",
   "teacherCategoriesProjects": "Projects",
-
   "teacherTestsTitle": "Test Management",
   "teacherTestsTabUpload": "Upload",
   "teacherTestsTabManage": "Manage",
@@ -619,7 +632,6 @@
   "teacherTestsAnalysisSaveSuccess": "Analysis data saved successfully!",
   "teacherTestsAnalysisSaveError": "Failed to save analysis: {{message}}",
   "teacherTestsAnalysisNoQuestions": "No questions and answers found in the analysis data.",
-
   "teacherAttendanceTitle": "Attendance Management",
   "teacherAttendanceTabTracker": "Mark Attendance",
   "teacherAttendanceTabReports": "Reports",
@@ -657,7 +669,6 @@
   "teacherAttendanceClassNEET": "NEET",
   "teacherAttendanceClassCETPCM": "CET (PCM)",
   "teacherAttendanceClassCETPCB": "CET (PCB)",
-
   "teacherReportsTitle": "Attendance Reports",
   "teacherReportsClass": "Class",
   "teacherReportsStartDate": "Start Date",
@@ -676,7 +687,6 @@
   "teacherReportsTrendsTitle": "Attendance Trends",
   "teacherReportsTrendsSubtitle": "Weekly attendance percentage over the last 7 weeks for {{class}}",
   "teacherReportsWeek": "Week {{number}}",
-
   "teacherStudentsTitle": "My Students",
   "teacherStudentsSubtitle": "{{count}} students enrolled in {{context}}",
   "teacherStudentsExport": "Export",
@@ -714,7 +724,6 @@
   "teacherStudentsClass12B": "Class 12-B",
   "teacherStudentsClass11A": "Class 11-A",
   "teacherStudentsClass11B": "Class 11-B",
-
   "teacherProfileTitle": "Student Profile",
   "teacherProfileBasicInfo": "Basic Information",
   "teacherProfileEmail": "Email",
@@ -735,7 +744,6 @@
   "teacherProfileTestName": "Test",
   "teacherProfileScore": "Score",
   "teacherProfileDate": "Date",
-
   "teacherMaterialUploadTooLarge": "{{name}} is too large. Maximum size is 50MB.",
   "teacherMaterialUploadUnsupported": "{{name}} is not a supported file type.",
   "teacherMaterialUploadFillAll": "Please select files, category, and course.",
@@ -763,7 +771,6 @@
   "teacherMaterialCourseEnglish": "English",
   "teacherMaterialCourseHistory": "History",
   "teacherMaterialCourseCS": "Computer Science",
-
   "materials": {
     "title": "Uploaded Materials",
     "searchPlaceholder": "Search materials...",
@@ -778,7 +785,6 @@
     "downloadComplete": "Download complete!",
     "downloadFailed": "Download failed. Please try again."
   },
-
   "tests": {
     "selectFilesAndCourse": "Please select files and course.",
     "uploadSuccess": "Files uploaded successfully!",
@@ -807,7 +813,6 @@
       "computer": "Computer"
     }
   },
-
   "testManager": {
     "title": "Test Materials",
     "loading": "Loading test materials...",
@@ -849,7 +854,6 @@
     "saveSuccess": "Analysis data saved successfully!",
     "saveFailed": "Failed to save analysis data"
   },
-
   "attendanceTracker": {
     "markAttendance": "Mark Attendance",
     "teacher": "Teacher",
@@ -875,7 +879,6 @@
     "loadingRecords": "Loading attendance records...",
     "noRecords": "No attendance records found for"
   },
-
   "attendanceReports": {
     "title": "Attendance Reports",
     "class": "Class",
@@ -896,7 +899,6 @@
     "week": "Week",
     "weeklyDescription": "Weekly attendance percentage over the last 7 weeks for"
   },
-
   "studentProfile": {
     "basicInfo": "Basic Information",
     "email": "Email:",
@@ -921,7 +923,6 @@
     "late": "late",
     "complete": "% Complete"
   },
-
   "commonRetry": "Retry",
   "commonLoading": "Loading..."
 }

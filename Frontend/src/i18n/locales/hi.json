@@ -498,7 +498,6 @@
   "learnerToggleDarkMode": "डार्क मोड टॉगल करें",
   "learnerThemeDark": "डार्क",
   "learnerThemeLight": "लाइट",
-
   "teacherNavBrand": "एड्यूएडमिन",
   "teacherNavPortal": "शिक्षक पोर्टल",
   "teacherNavSearch": "छात्रों, कक्षाओं की खोज करें...",
@@ -510,14 +509,30 @@
   "teacherNavStudents": "छात्र",
   "teacherNavProgress": "प्रगति",
   "teacherNavProfile": "प्रोफ़ाइल",
+  "teacherNavProfileSub": "संकाय - गणित",
+  "teacherNavProfileSettings": "प्रोफ़ाइल सेटिंग्स",
   "teacherNavLogout": "लॉगआउट",
   "teacherNavToggleMenu": "मेनू टॉगल करें",
   "teacherNavCloseMenu": "मेनू बंद करें",
   "teacherNavNotifications": "सूचनाएं",
   "teacherNavHelp": "सहायता",
-
   "teacherDashboardTitle": "डैशबोर्ड",
   "teacherDashboardWelcome": "वापसी पर स्वागत है! अपनी कक्षाओं और छात्रों को प्रभावी ढंग से प्रबंधित करें।",
+  "teacherDashboardViewSyllabus": "पाठ्यक्रम देखें",
+  "teacherDashboardUploadNotes": "नोट्स अपलोड करें",
+  "teacherDashboardTodayTitle": "आज की कक्षा अनुसूची",
+  "teacherDashboardSessions": "{{count}} सत्र",
+  "teacherDashboardStatusCompleted": "पूर्ण",
+  "teacherDashboardStatusInProgress": "प्रगति पर",
+  "teacherDashboardStatusUpcoming": "आगामी",
+  "teacherDashboardQuickTitle": "त्वरित कार्रवाई",
+  "teacherDashboardQuickAttendance": "उपस्थिति दर्ज करें",
+  "teacherDashboardQuickAttendanceSub": "आज की छात्र उपस्थिति अपडेट करें",
+  "teacherDashboardQuickTests": "नया टेस्ट बनाएं",
+  "teacherDashboardQuickTestsSub": "अध्याय या मॉक टेस्ट शेड्यूल करें",
+  "teacherDashboardQuickStudents": "छात्र निर्देशिका",
+  "teacherDashboardQuickStudentsSub": "{{count}} नामांकित छात्रों को प्रबंधित करें",
+  "teacherDashboardFooter": "एड्यूलर्निंग कोचिंग पोर्टल • 2026",
   "teacherOverviewTotalStudents": "कुल छात्र",
   "teacherOverviewActiveClasses": "सक्रिय कक्षाएं",
   "teacherOverviewUploadedMaterials": "अपलोड की गई सामग्री",
@@ -530,7 +545,6 @@
   "teacherActivityTestTime": "1 दिन पहले",
   "teacherActivityAttendance": "सभी कक्षाओं की उपस्थिति दर्ज की गई",
   "teacherActivityAttendanceTime": "2 दिन पहले",
-
   "teacherMaterialsTitle": "अध्ययन सामग्री",
   "teacherMaterialsTabUpload": "अपलोड",
   "teacherMaterialsTabManage": "प्रबंधन",
@@ -574,7 +588,6 @@
   "teacherCategoriesResources": "संसाधन",
   "teacherCategoriesExams": "परीक्षाएं",
   "teacherCategoriesProjects": "परियोजनाएं",
-
   "teacherTestsTitle": "परीक्षण प्रबंधन",
   "teacherTestsTabUpload": "अपलोड",
   "teacherTestsTabManage": "प्रबंधन",
@@ -619,7 +632,6 @@
   "teacherTestsAnalysisSaveSuccess": "विश्लेषण डेटा सफलतापूर्वक सहेजा गया!",
   "teacherTestsAnalysisSaveError": "विश्लेषण सहेजने में विफल: {{message}}",
   "teacherTestsAnalysisNoQuestions": "विश्लेषण डेटा में कोई प्रश्न और उत्तर नहीं मिले।",
-
   "teacherAttendanceTitle": "उपस्थिति प्रबंधन",
   "teacherAttendanceTabTracker": "उपस्थिति दर्ज करें",
   "teacherAttendanceTabReports": "रिपोर्ट",
@@ -657,7 +669,6 @@
   "teacherAttendanceClassNEET": "NEET",
   "teacherAttendanceClassCETPCM": "CET (PCM)",
   "teacherAttendanceClassCETPCB": "CET (PCB)",
-
   "teacherReportsTitle": "उपस्थिति रिपोर्ट",
   "teacherReportsClass": "कक्षा",
   "teacherReportsStartDate": "शुरू की तारीख",
@@ -676,7 +687,6 @@
   "teacherReportsTrendsTitle": "उपस्थिति रुझान",
   "teacherReportsTrendsSubtitle": "{{class}} के लिए पिछले 7 सप्ताह की साप्ताहिक उपस्थिति प्रतिशत",
   "teacherReportsWeek": "सप्ताह {{number}}",
-
   "teacherStudentsTitle": "मेरे छात्र",
   "teacherStudentsSubtitle": "{{context}} में {{count}} छात्र नामांकित",
   "teacherStudentsExport": "निर्यात",
@@ -714,7 +724,6 @@
   "teacherStudentsClass12B": "कक्षा 12-B",
   "teacherStudentsClass11A": "कक्षा 11-A",
   "teacherStudentsClass11B": "कक्षा 11-B",
-
   "teacherProfileTitle": "छात्र प्रोफ़ाइल",
   "teacherProfileBasicInfo": "मूल जानकारी",
   "teacherProfileEmail": "ईमेल",
@@ -735,7 +744,6 @@
   "teacherProfileTestName": "परीक्षण",
   "teacherProfileScore": "स्कोर",
   "teacherProfileDate": "तारीख",
-
   "teacherMaterialUploadTooLarge": "{{name}} बहुत बड़ी है। अधिकतम आकार 50MB है।",
   "teacherMaterialUploadUnsupported": "{{name}} एक समर्थित फ़ाइल प्रकार नहीं है।",
   "teacherMaterialUploadFillAll": "कृपया फ़ाइलें, श्रेणी और पाठ्यक्रम चुनें।",
@@ -763,7 +771,6 @@
   "teacherMaterialCourseEnglish": "अंग्रेज़ी",
   "teacherMaterialCourseHistory": "इतिहास",
   "teacherMaterialCourseCS": "कंप्यूटर विज्ञान",
-
   "materials": {
     "title": "अपलोड की गई सामग्री",
     "searchPlaceholder": "सामग्री खोजें...",
@@ -778,7 +785,6 @@
     "downloadComplete": "डाउनलोड पूर्ण!",
     "downloadFailed": "डाउनलोड विफल। कृपया पुनः प्रयास करें।"
   },
-
   "tests": {
     "selectFilesAndCourse": "कृपया फ़ाइलें और पाठ्यक्रम चुनें।",
     "uploadSuccess": "फ़ाइलें सफलतापूर्वक अपलोड हो गईं!",
@@ -807,7 +813,6 @@
       "computer": "कंप्यूटर"
     }
   },
-
   "testManager": {
     "title": "परीक्षण सामग्री",
     "loading": "परीक्षण सामग्री लोड हो रही है...",
@@ -849,7 +854,6 @@
     "saveSuccess": "विश्लेषण डेटा सफलतापूर्वक सहेजा गया!",
     "saveFailed": "विश्लेषण डेटा सहेजने में विफल"
   },
-
   "attendanceTracker": {
     "markAttendance": "उपस्थिति दर्ज करें",
     "teacher": "शिक्षक",
@@ -875,7 +879,6 @@
     "loadingRecords": "उपस्थिति रिकॉर्ड लोड हो रहे हैं...",
     "noRecords": "के लिए कोई उपस्थिति रिकॉर्ड नहीं मिला"
   },
-
   "attendanceReports": {
     "title": "उपस्थिति रिपोर्ट",
     "class": "कक्षा",
@@ -896,7 +899,6 @@
     "week": "सप्ताह",
     "weeklyDescription": "के लिए पिछले 7 सप्ताह की साप्ताहिक उपस्थिति प्रतिशत"
   },
-
   "studentProfile": {
     "basicInfo": "मूल जानकारी",
     "email": "ईमेल:",
@@ -921,7 +923,6 @@
     "late": "विलंब",
     "complete": "% पूर्ण"
   },
-
   "commonRetry": "पुनः प्रयास करें",
   "commonLoading": "लोड हो रहा है..."
 }

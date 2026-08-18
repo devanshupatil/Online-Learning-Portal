@@ -207,7 +207,7 @@
   "resultsFinalCtaTitle": "आमचे नेक्स्ट स्टार अचिव्हर व्हायचे आहे?",
   "resultsFinalCtaSubtitle": "आजच EduLearning Platform सह तुमचा प्रवास सुरू करा.",
   "resultsFinalCtaExploreCoursesBtn": "अभ्यासक्रम एक्सप्लोर करा",
-"authWelcomeBackTitle": "परत स्वागत आहे",
+  "authWelcomeBackTitle": "परत स्वागत आहे",
   "authJoinTitle": "आमच्या लर्निंग समुदायात सामील व्हा",
   "authWelcomeBackSubtitle": "तुमचा शिकण्याचा प्रवास सुरू ठेवण्यासाठी साइन इन करा",
   "authJoinSubtitle": "आजच शिकणे सुरू करण्यासाठी तुमचे खाते तयार करा",
@@ -498,7 +498,6 @@
   "learnerToggleDarkMode": "डार्क मोड टॉगल करा",
   "learnerThemeDark": "डार्क",
   "learnerThemeLight": "लाइट",
-
   "teacherNavBrand": "एड्यूएडमिन",
   "teacherNavPortal": "शिक्षक पोर्टल",
   "teacherNavSearch": "विद्यार्थी, वर्ग शोधा...",
@@ -511,14 +510,30 @@
   "teacherNavStudents": "विद्यार्थी",
   "teacherNavProgress": "प्रगती",
   "teacherNavProfile": "प्रोफाइल",
+  "teacherNavProfileSub": "प्राध्यापक - गणित",
+  "teacherNavProfileSettings": "प्रोफाइल सेटिंग्ज",
   "teacherNavLogout": "लॉगआउट",
   "teacherNavToggleMenu": "मेनू टॉगल करा",
   "teacherNavCloseMenu": "मेनू बंद करा",
   "teacherNavNotifications": "सूचना",
   "teacherNavHelp": "मदत",
-
   "teacherDashboardTitle": "डॅशबोर्ड",
   "teacherDashboardWelcome": "परत स्वागत आहे! तुमच्या वर्गांचे आणि विद्यार्थ्यांचे प्रभावीपणे व्यवस्थापन करा.",
+  "teacherDashboardViewSyllabus": "अभ्यासक्रम पहा",
+  "teacherDashboardUploadNotes": "नोट्स अपलोड करा",
+  "teacherDashboardTodayTitle": "आजचे वर्ग वेळापत्रक",
+  "teacherDashboardSessions": "{{count}} सत्रे",
+  "teacherDashboardStatusCompleted": "पूर्ण",
+  "teacherDashboardStatusInProgress": "प्रगतीत",
+  "teacherDashboardStatusUpcoming": "आगामी",
+  "teacherDashboardQuickTitle": "त्वरित कृती",
+  "teacherDashboardQuickAttendance": "उपस्थिती नोंदवा",
+  "teacherDashboardQuickAttendanceSub": "आजची विद्यार्थी उपस्थिती अद्ययावत करा",
+  "teacherDashboardQuickTests": "नवीन चाचणी तयार करा",
+  "teacherDashboardQuickTestsSub": "प्रकरण किंवा सराव चाचणी वेळापत्रक करा",
+  "teacherDashboardQuickStudents": "विद्यार्थी निर्देशिका",
+  "teacherDashboardQuickStudentsSub": "{{count}} नोंदणीकृत विद्यार्थ्यांचे व्यवस्थापन करा",
+  "teacherDashboardFooter": "एड्यूलर्निंग कोचिंग पोर्टल • 2026",
   "teacherOverviewTotalStudents": "एकूण विद्यार्थी",
   "teacherOverviewActiveClasses": "सक्रिय वर्ग",
   "teacherOverviewUploadedMaterials": "अपलोड केलेले साहित्य",
@@ -531,7 +546,6 @@
   "teacherActivityTestTime": "1 दिवस पूर्वी",
   "teacherActivityAttendance": "सर्व वर्गांची हजेरी नोंदवली",
   "teacherActivityAttendanceTime": "2 दिवस पूर्वी",
-
   "teacherMaterialsTitle": "अभ्यास साहित्य",
   "teacherMaterialsTabUpload": "अपलोड",
   "teacherMaterialsTabManage": "व्यवस्थापन",
@@ -575,7 +589,6 @@
   "teacherCategoriesResources": "संसाधने",
   "teacherCategoriesExams": "परीक्षा",
   "teacherCategoriesProjects": "प्रकल्प",
-
   "teacherTestsTitle": "चाचणी व्यवस्थापन",
   "teacherTestsTabManage": "व्यवस्थापन",
   "teacherTestsDragDrop": "फाइल्स येथे ओढा आणि सोडा",
@@ -619,7 +632,6 @@
   "teacherTestsAnalysisSaveSuccess": "विश्लेषण डेटा यशस्वीपणे जतन झाला!",
   "teacherTestsAnalysisSaveError": "विश्लेषण जतन करण्यात अयशस्वी: {{message}}",
   "teacherTestsAnalysisNoQuestions": "विश्लेषण डेटामध्ये कोणतेही प्रश्न आणि उत्तर सापडले नाही.",
-
   "teacherAttendanceTitle": "हजेरी व्यवस्थापन",
   "teacherAttendanceTabTracker": "हजेरी नोंदवा",
   "teacherAttendanceTabReports": "अहवाल",
@@ -657,7 +669,6 @@
   "teacherAttendanceClassNEET": "NEET",
   "teacherAttendanceClassCETPCM": "CET (PCM)",
   "teacherAttendanceClassCETPCB": "CET (PCB)",
-
   "teacherReportsTitle": "हजेरी अहवाल",
   "teacherReportsClass": "वर्ग",
   "teacherReportsStartDate": "सुरू होण्याची तारीख",
@@ -676,7 +687,6 @@
   "teacherReportsTrendsTitle": "हजेरी ट्रेंड",
   "teacherReportsTrendsSubtitle": "{{class}} साठी मागील 7 आठड्यांची साप्ताहिक हजेरी टक्केवारी",
   "teacherReportsWeek": "आठडा {{number}}",
-
   "teacherStudentsTitle": "माझे विद्यार्थी",
   "teacherStudentsSubtitle": "{{context}} मध्ये {{count}} विद्यार्थी नोंदणीकृत",
   "teacherStudentsExport": "निर्यात",
@@ -714,7 +724,6 @@
   "teacherStudentsClass12B": "वर्ग 12-B",
   "teacherStudentsClass11A": "वर्ग 11-A",
   "teacherStudentsClass11B": "वर्ग 11-B",
-
   "teacherProfileTitle": "विद्यार्थी प्रोफाइल",
   "teacherProfileBasicInfo": "मूलभूत माहिती",
   "teacherProfileEmail": "ईमेल",
@@ -735,7 +744,6 @@
   "teacherProfileTestName": "चाचणी",
   "teacherProfileScore": "गुण",
   "teacherProfileDate": "तारीख",
-
   "teacherMaterialUploadTooLarge": "{{name}} खूप मोठी आहे. कमाल आकार 50MB आहे.",
   "teacherMaterialUploadUnsupported": "{{name}} हे समर्थित फाइल प्रकार नाही.",
   "teacherMaterialUploadFillAll": "कृपया फाइल्स, श्रेणी आणि अभ्यासक्रम निवडा.",
@@ -763,7 +771,6 @@
   "teacherMaterialCourseEnglish": "इंग्रजी",
   "teacherMaterialCourseHistory": "इतिहास",
   "teacherMaterialCourseCS": "संगणक विज्ञान",
-
   "materials": {
     "title": "अपलोड केलेले साहित्य",
     "searchPlaceholder": "साहित्य शोधा...",
@@ -778,7 +785,6 @@
     "downloadComplete": "डाउनलोड पूर्ण!",
     "downloadFailed": "डाउनलोड अयशस्वी. कृपया पुन्हा प्रयत्न करा."
   },
-
   "tests": {
     "selectFilesAndCourse": "कृपया फाइल्स आणि अभ्यासक्रम निवडा.",
     "uploadSuccess": "फाइल्स यशस्वीपणे अपलोड झाल्या!",
@@ -807,7 +813,6 @@
       "computer": "संगणक"
     }
   },
-
   "testManager": {
     "title": "चाचणी साहित्य",
     "loading": "चाचणी साहित्य लोड होत आहे...",
@@ -849,7 +854,6 @@
     "saveSuccess": "विश्लेषण डेटा यशस्वीपणे जतन झाला!",
     "saveFailed": "विश्लेषण डेटा जतन करण्यात अयशस्वी"
   },
-
   "attendanceTracker": {
     "markAttendance": "हजेरी नोंदवा",
     "teacher": "शिक्षक",
@@ -875,7 +879,6 @@
     "loadingRecords": "हजेरी नोंदी लोड होत आहेत...",
     "noRecords": "साठी कोणतेही हजेरी नोंदी सापडल्या नाही"
   },
-
   "attendanceReports": {
     "title": "हजेरी अहवाल",
     "class": "वर्ग",
@@ -896,7 +899,6 @@
     "week": "आठडा",
     "weeklyDescription": "साठी मागील 7 आठड्यांची साप्ताहिक हजेरी टक्केवारी"
   },
-
   "studentProfile": {
     "basicInfo": "मूलभूत माहिती",
     "email": "ईमेल:",
@@ -921,7 +923,6 @@
     "late": "उशीर",
     "complete": "% पूर्ण"
   },
-
   "commonRetry": "पुन्हा प्रयत्न करा",
   "commonLoading": "लोड होत आहे..."
 }
