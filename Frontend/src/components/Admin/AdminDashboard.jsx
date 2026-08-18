@@ -24,8 +24,33 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedModel, setSelectedModel] = useState('openAI');
   const [searchQuery, setSearchQuery] = useState('');
+  const [showClassModal, setShowClassModal] = useState(false);
+  const [classForm, setClassForm] = useState({ course: '', teacher: '', date: '', time: '', duration: '60' });
   const { logout, admin } = useAdminAuth();
   const URL = import.meta.env.VITE_BACKEND_URL;
+
+  const STORAGE_KEY = 'adminScheduledClasses';
+
+  const seedClasses = [
+    { id: 1, course: 'Mathematics 101', teacher: 'Dr. Alice Wilson', date: new Date().toISOString().slice(0, 10), time: '09:00', duration: '60' },
+    { id: 2, course: 'Physics Fundamentals', teacher: 'Prof. Michael Brown', date: new Date(Date.now() + 86400000).toISOString().slice(0, 10), time: '11:30', duration: '90' },
+    { id: 3, course: 'Chemistry Basics', teacher: 'Ms. Sarah Davis', date: new Date(Date.now() - 86400000).toISOString().slice(0, 10), time: '14:00', duration: '45' },
+  ];
+
+  const loadClasses = () => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return stored && stored.length ? stored : seedClasses;
+    } catch (error) {
+      return seedClasses;
+    }
+  };
+
+  const [scheduledClasses, setScheduledClasses] = useState(loadClasses);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduledClasses));
+  }, [scheduledClasses]);
 
   // Mock data for admin overview
   const [overviewData, setOverviewData] = useState({
@@ -44,6 +69,35 @@ const AdminDashboard = () => {
   const handleCloseUserModal = () => {
     setSelectedUser(null);
     setShowUserModal(false);
+  };
+
+  const formatTime = (time) => {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':').map(Number);
+    const suffix = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 === 0 ? 12 : hours % 12;
+    return `${displayHours}:${String(minutes).padStart(2, '0')} ${suffix}`;
+  };
+
+  const getClassStatus = (cls) => {
+    const end = new Date(`${cls.date}T${cls.time}`);
+    end.setMinutes(end.getMinutes() + Number(cls.duration || 60));
+    return end < new Date() ? 'Completed' : 'Upcoming';
+  };
+
+  const isClassActive = (cls) => getClassStatus(cls) === 'Upcoming';
+
+  const handleScheduleClass = (e) => {
+    e.preventDefault();
+    if (!classForm.course || !classForm.teacher || !classForm.date || !classForm.time) return;
+    const newClass = { id: Date.now(), ...classForm };
+    setScheduledClasses((prev) => [...prev, newClass]);
+    setClassForm({ course: '', teacher: '', date: '', time: '', duration: '60' });
+    setShowClassModal(false);
+  };
+
+  const handleDeleteClass = (id) => {
+    setScheduledClasses((prev) => prev.filter((cls) => cls.id !== id));
   };
 
   const recentActivity = [
@@ -599,7 +653,107 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* 5. Analytics Tab */}
+          {/* 5. Class Scheduling Tab */}
+          {activeSection === 'classes' && (
+            <div className="space-y-4 sm:space-y-5 mt-4 sm:mt-5">
+              <div className="bg-surface-container-lowest rounded-2xl border border-surface-variant soft-bloom p-6 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-surface-variant">
+                  <div>
+                    <h2 className="text-2xl font-bold font-display text-on-surface">Class Scheduling</h2>
+                    <p className="text-sm text-on-surface-variant font-medium mt-0.5">Schedule classes and track upcoming session timings</p>
+                  </div>
+                  <button
+                    onClick={() => setShowClassModal(true)}
+                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">add</span>
+                    Schedule Class
+                  </button>
+                </div>
+
+                <div className="pt-6 space-y-6">
+                  {/* Class Stats Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-surface-container-low rounded-xl p-4 border border-surface-variant/40">
+                      <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Total Classes</p>
+                      <p className="text-2xl font-bold text-primary mt-1">{scheduledClasses.length}</p>
+                    </div>
+                    <div className="bg-surface-container-low rounded-xl p-4 border border-surface-variant/40">
+                      <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Active Classes</p>
+                      <p className="text-2xl font-bold text-[#10B981] mt-1">{scheduledClasses.filter(isClassActive).length}</p>
+                    </div>
+                    <div className="bg-surface-container-low rounded-xl p-4 border border-surface-variant/40">
+                      <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Classes Today</p>
+                      <p className="text-2xl font-bold text-tertiary mt-1">
+                        {scheduledClasses.filter((cls) => cls.date === new Date().toISOString().slice(0, 10)).length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Classes Table */}
+                  <div className="overflow-x-auto rounded-xl border border-surface-variant/50">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-surface-container-low border-b border-surface-variant text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                          <th className="py-3.5 px-4">Course</th>
+                          <th className="py-3.5 px-4">Teacher</th>
+                          <th className="py-3.5 px-4">Date</th>
+                          <th className="py-3.5 px-4">Timing</th>
+                          <th className="py-3.5 px-4">Duration</th>
+                          <th className="py-3.5 px-4">Status</th>
+                          <th className="py-3.5 px-4">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-surface-variant/30 text-sm font-medium text-on-surface">
+                        {scheduledClasses
+                          .slice()
+                          .sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`))
+                          .map((cls) => {
+                            const status = getClassStatus(cls);
+                            const endTime = new Date(`${cls.date}T${cls.time}`);
+                            endTime.setMinutes(endTime.getMinutes() + Number(cls.duration || 60));
+                            return (
+                              <tr key={cls.id} className="hover:bg-surface-container-low/50 transition-colors">
+                                <td className="py-3.5 px-4 font-bold">{cls.course}</td>
+                                <td className="py-3.5 px-4 text-on-surface-variant">{cls.teacher}</td>
+                                <td className="py-3.5 px-4">{cls.date}</td>
+                                <td className="py-3.5 px-4">
+                                  <span className="inline-flex items-center gap-1.5 text-primary">
+                                    <span className="material-symbols-outlined text-[16px]">schedule</span>
+                                    {formatTime(cls.time)} - {formatTime(`${endTime.getHours()}:${endTime.getMinutes()}`)}
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4 text-on-surface-variant">{cls.duration} min</td>
+                                <td className="py-3.5 px-4">
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                                    status === 'Upcoming'
+                                      ? 'bg-[#10B981]/15 text-[#10B981]'
+                                      : 'bg-error-container text-on-error-container'
+                                  }`}>
+                                    {status}
+                                  </span>
+                                </td>
+                                <td className="py-3.5 px-4">
+                                  <button
+                                    onClick={() => handleDeleteClass(cls.id)}
+                                    className="p-1.5 text-error hover:bg-error-container/30 rounded-lg transition-colors cursor-pointer"
+                                    title="Delete"
+                                  >
+                                    <span className="material-symbols-outlined text-[18px]">delete</span>
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 6. Analytics Tab */}
           {activeSection === 'analytics' && (
             <div className="space-y-4 sm:space-y-5 mt-4 sm:mt-5">
               <div className="bg-surface-container-lowest rounded-2xl border border-surface-variant soft-bloom p-6 shadow-xs">
@@ -643,7 +797,7 @@ const AdminDashboard = () => {
             </div>
           )}
 
-          {/* 6. Settings Tab */}
+          {/* 7. Settings Tab */}
           {activeSection === 'settings' && (
             <div className="space-y-4 sm:space-y-5 mt-4 sm:mt-5">
               <div className="bg-surface-container-lowest rounded-2xl border border-surface-variant soft-bloom p-6 shadow-xs">
@@ -698,6 +852,104 @@ const AdminDashboard = () => {
       </main>
 
       <SiteFooter />
+
+      {/* Schedule Class Modal */}
+      {showClassModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-2xl p-6 max-w-md w-full border border-surface-variant shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold font-display text-on-surface">Schedule Class</h3>
+              <button
+                onClick={() => setShowClassModal(false)}
+                className="p-1.5 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer"
+                aria-label="Close"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <form onSubmit={handleScheduleClass} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">Course</label>
+                <select
+                  required
+                  value={classForm.course}
+                  onChange={(e) => setClassForm({ ...classForm, course: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-surface-container-low border border-surface-variant/60 rounded-xl text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                >
+                  <option value="">Select course</option>
+                  {mockCourses.map((course) => (
+                    <option key={course.id} value={course.name}>{course.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">Teacher</label>
+                <select
+                  required
+                  value={classForm.teacher}
+                  onChange={(e) => setClassForm({ ...classForm, teacher: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-surface-container-low border border-surface-variant/60 rounded-xl text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                >
+                  <option value="">Select teacher</option>
+                  {mockTeachers.map((teacher) => (
+                    <option key={teacher.id} value={teacher.name}>{teacher.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">Date</label>
+                  <input
+                    required
+                    type="date"
+                    value={classForm.date}
+                    onChange={(e) => setClassForm({ ...classForm, date: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-surface-container-low border border-surface-variant/60 rounded-xl text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">Time</label>
+                  <input
+                    required
+                    type="time"
+                    value={classForm.time}
+                    onChange={(e) => setClassForm({ ...classForm, time: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-surface-container-low border border-surface-variant/60 rounded-xl text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">Duration (minutes)</label>
+                <select
+                  value={classForm.duration}
+                  onChange={(e) => setClassForm({ ...classForm, duration: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-surface-container-low border border-surface-variant/60 rounded-xl text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                >
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min</option>
+                  <option value="120">120 min</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowClassModal(false)}
+                  className="px-4 py-2 border border-outline-variant bg-surface rounded-xl text-sm font-bold text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 bg-primary text-white font-bold rounded-xl text-sm shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  Schedule
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* User Profile Modal */}
       {showUserModal && selectedUser && (

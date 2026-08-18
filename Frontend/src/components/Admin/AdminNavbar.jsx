@@ -10,6 +10,7 @@ const adminNavItems = [
   { id: "users", label: "Users", icon: "manage_accounts" },
   { id: "courses", label: "Courses", icon: "menu_book" },
   { id: "content", label: "Content", icon: "folder_open" },
+  { id: "classes", label: "Classes", icon: "event" },
   { id: "analytics", label: "Analytics", icon: "bar_chart" },
   { id: "settings", label: "Settings", icon: "settings" },
 ];
@@ -34,7 +35,7 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
   };
 
   // Derive initials from admin name/email
-  const adminName = admin?.name || admin?.email || "Admin";
+  const adminName = (admin?.name || admin?.email || "Admin").charAt(0).toUpperCase() + (admin?.name || admin?.email || "Admin").slice(1);
   const initials = adminName
     .split(/\s+/)
     .map((w) => w[0]?.toUpperCase())
@@ -43,21 +44,21 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
 
   const renderTab = (item, isMobile = false) => {
     const isActive = activeSection === item.id;
+    const label = (t(item.id) || item.label).charAt(0).toUpperCase() + (t(item.id) || item.label).slice(1);
     if (isMobile) {
       return (
         <button
           key={item.id}
           onClick={() => handleSelect(item.id)}
-          className={`inline-flex items-center gap-2 py-3 font-bold cursor-pointer transition-colors ${
-            isActive
+          className={`inline-flex items-center gap-2 py-3 font-bold cursor-pointer transition-colors ${isActive
               ? "text-primary border-b-2 border-primary"
               : "text-on-surface-variant hover:text-primary link-hover"
-          }`}
+            }`}
         >
           <span className={`material-symbols-outlined text-[20px] ${isActive ? "[font-variation-settings:'FILL'_1]" : ""}`}>
             {item.icon}
           </span>
-          {t(item.id) || item.label}
+          {label}
         </button>
       );
     }
@@ -65,16 +66,15 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
       <button
         key={item.id}
         onClick={() => handleSelect(item.id)}
-        className={`flex items-center gap-2 pb-1 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
-          isActive
+        className={`flex items-center gap-2 pb-1 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${isActive
             ? "text-primary border-b-2 border-primary"
             : "text-on-surface-variant hover:text-primary"
-        }`}
+          }`}
       >
         <span className={`material-symbols-outlined text-[20px] ${isActive ? "[font-variation-settings:'FILL'_1]" : "group-hover:scale-110 transition-transform duration-150"}`}>
           {item.icon}
         </span>
-        {t(item.id) || item.label}
+        {label}
       </button>
     );
   };
