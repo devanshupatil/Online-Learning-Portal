@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { AnimatedThemeToggle } from "../ui/animated-theme-toggle";
 
 const learnerNavItems = [
   { id: "dashboard", labelKey: "learnerNavDashboard", icon: "dashboard" },
@@ -112,15 +113,12 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
             <div className="hidden lg:flex items-center gap-2">
               <LanguageSwitcher />
             </div>
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-on-surface-variant hover:text-primary rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
               aria-label={t("learnerToggleDarkMode")}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {theme === "dark" ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
+              className="h-10 w-10 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-low hover:text-primary"
+            />
             <button
               onClick={handleLogout}
               className="hidden lg:inline-flex items-center gap-1 px-4 py-2 border border-outline-variant text-on-surface text-sm font-bold rounded-lg hover:bg-surface-container-low active:scale-95 transition-all cursor-pointer"
