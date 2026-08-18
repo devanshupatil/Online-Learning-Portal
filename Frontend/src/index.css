@@ -69,6 +69,8 @@ body {
   --color-surface-container-high: #e7e7f2;
   --color-surface-container-highest: #e0e3e5;
   --color-outline-variant: #c3c6d7;
+  --color-tertiary: #996100;
+  --color-on-tertiary: #ffffff;
   --color-tertiary-container: #996100;
   --color-background: #f7f9fb;
   --color-on-background: #191c1e;
@@ -110,6 +112,8 @@ html.dark {
   --color-surface-container-high: #242629;
   --color-surface-container-highest: #2f3134;
   --color-outline-variant: #434655;
+  --color-tertiary: #ffb86c;
+  --color-on-tertiary: #4a2800;
   --color-tertiary-container: #ffb86c;
   --color-background: #111318;
   --color-on-background: #e1e3e5;
