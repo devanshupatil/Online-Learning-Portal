@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { AnimatedThemeToggle } from "../ui/animated-theme-toggle";
 import { PARENT_CHILD } from "../../mockData/data";
 
 const parentNavItems = [
@@ -41,11 +42,10 @@ const ParentNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCha
         <button
           key={item.id}
           onClick={() => handleSelect(item.id)}
-          className={`inline-flex items-center gap-2 py-3 font-bold cursor-pointer transition-colors ${
-            isActive
-              ? "text-primary border-b-2 border-primary"
-              : "text-on-surface-variant hover:text-primary link-hover"
-          }`}
+          className={`inline-flex items-center gap-2 py-3 font-bold cursor-pointer transition-colors ${isActive
+            ? "text-primary border-b-2 border-primary"
+            : "text-on-surface-variant hover:text-primary link-hover"
+            }`}
         >
           <span className={`material-symbols-outlined text-[20px] ${isActive ? "[font-variation-settings:'FILL'_1]" : ""}`}>
             {item.icon}
@@ -58,11 +58,10 @@ const ParentNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCha
       <button
         key={item.id}
         onClick={() => handleSelect(item.id)}
-        className={`flex items-center gap-2 pb-1 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${
-          isActive
-            ? "text-primary border-b-2 border-primary"
-            : "text-on-surface-variant hover:text-primary"
-        }`}
+        className={`flex items-center gap-2 pb-1 font-bold text-sm transition-colors whitespace-nowrap cursor-pointer ${isActive
+          ? "text-primary border-b-2 border-primary"
+          : "text-on-surface-variant hover:text-primary"
+          }`}
       >
         <span className={`material-symbols-outlined text-[20px] ${isActive ? "[font-variation-settings:'FILL'_1]" : "group-hover:scale-110 transition-transform duration-150"}`}>
           {item.icon}
@@ -79,11 +78,11 @@ const ParentNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCha
         <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
           {/* Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-tertiary flex items-center justify-center text-on-tertiary shadow-sm flex-shrink-0">
-              <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>family_restroom</span>
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-tertiary shadow-sm flex-shrink-0">
+              <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
             </div>
             <div className="flex flex-col text-left">
-              <h1 className="text-xl font-bold font-display tracking-tight text-tertiary dark:text-gray-100 leading-tight">
+              <h1 className="text-xl font-bold font-display tracking-tight text-primary leading-tight">
                 {t("parentNavBrand") || "EduLearning"}
               </h1>
               <p className="text-xs font-semibold text-on-surface-variant dark:text-gray-400 leading-tight">
@@ -129,15 +128,12 @@ const ParentNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCha
             </div>
 
             {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-on-surface-variant hover:text-primary rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer"
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
               aria-label={t("learnerToggleDarkMode")}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {theme === "dark" ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
+              className="h-10 w-10 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+            />
 
             {/* Parent Profile Avatar & Dropdown */}
             <div className="relative">
