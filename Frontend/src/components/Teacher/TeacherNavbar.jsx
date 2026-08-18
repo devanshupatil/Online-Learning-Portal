@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../context/ThemeContext";
 import LanguageSwitcher from "../LanguageSwitcher";
+import { AnimatedThemeToggle } from "../ui/animated-theme-toggle";
 
 const teacherNavItems = [
   { id: "dashboard", labelKey: "teacherNavDashboard", icon: "dashboard" },
@@ -100,7 +101,7 @@ const TeacherNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCh
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
               <input
                 className="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-transparent rounded-full text-sm text-on-surface focus:bg-surface focus:border-primary/50 focus:ring-2 focus:ring-primary/20 outline-none transition-all placeholder:text-on-surface-variant/70"
-                placeholder="Search students, classes, materials..."
+                placeholder={t("teacherNavSearch")}
                 type="text"
                 value={searchQuery || ''}
                 onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
@@ -112,14 +113,14 @@ const TeacherNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCh
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors cursor-pointer relative"
-              aria-label="Notifications"
+              aria-label={t("teacherNavNotifications")}
             >
               <span className="material-symbols-outlined text-[22px]">notifications</span>
               <span className="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
             </button>
             <button
               className="hidden sm:flex w-10 h-10 rounded-full items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors cursor-pointer"
-              aria-label="Help"
+              aria-label={t("teacherNavHelp")}
             >
               <span className="material-symbols-outlined text-[22px]">help_outline</span>
             </button>
@@ -131,15 +132,12 @@ const TeacherNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCh
             </div>
 
             {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-on-surface-variant hover:text-primary rounded-lg hover:bg-surface-container-high transition-colors cursor-pointer"
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
               aria-label={t("learnerToggleDarkMode")}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {theme === "dark" ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
+              className="h-10 w-10 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+            />
 
             {/* Teacher Profile Avatar & Dropdown */}
             <div className="relative">
@@ -147,11 +145,9 @@ const TeacherNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCh
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                 className="flex items-center gap-2.5 focus:ring-2 focus:ring-primary/20 outline-none rounded-full p-1 pr-2 hover:bg-surface-container-low transition-colors cursor-pointer"
               >
-                <img
-                  className="w-8 h-8 rounded-full object-cover border border-outline-variant"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEpWPudJj0as1r3eKQDPVq132BVEQ2Jj5s7jJmglyJ8dX6O_CvgMlU-xcHQGM2aHGvkvBgjGWj_0350gGuT744JeyqcOaF-pPtOP_5sXqIkxhdmIQjf2ds56qEP7RB9MkVemzebm-GPZctOEirRHzpmkyXccwF9fQT1p9obNab-WbooxiG_uqbBD2E3QoNQIXJN4vMg-DBNQCuNBz_muDqezCQNRBXwIs8NCFg4EBkzsd3Tf4AYe5o"
-                  alt="Dr. Sarah Jenkins"
-                />
+                <span className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center text-xs font-bold border border-outline-variant">
+                  SJ
+                </span>
                 <span className="text-xs font-semibold text-on-surface hidden lg:block">Dr. Sarah Jenkins</span>
                 <span className="material-symbols-outlined text-on-surface-variant text-sm">expand_more</span>
               </button>
@@ -160,14 +156,14 @@ const TeacherNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchCh
                 <div className="absolute right-0 mt-2 w-48 bg-surface-container-lowest rounded-xl shadow-lg border border-surface-variant py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-2 border-b border-surface-variant">
                     <p className="text-sm font-bold text-on-surface">Dr. Sarah Jenkins</p>
-                    <p className="text-xs text-on-surface-variant">Faculty - Mathematics</p>
+                    <p className="text-xs text-on-surface-variant">{t("teacherNavProfileSub")}</p>
                   </div>
                   <button
                     onClick={() => { onSectionChange('profile'); setProfileDropdownOpen(false); }}
                     className="w-full px-4 py-2 text-left text-sm text-on-surface hover:bg-surface-container-low flex items-center gap-2 cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-[18px]">account_circle</span>
-                    Profile Settings
+                    {t("teacherNavProfileSettings")}
                   </button>
                   <button
                     onClick={handleLogout}
