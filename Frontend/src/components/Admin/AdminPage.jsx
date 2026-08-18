@@ -25,13 +25,8 @@ const AdminPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Main Content */}
-      <div className="bg-white">
-        {/* Admin Dashboard */}
-        <AdminDashboard />
-      </div>
-      <Footer />
+    <div className="min-h-screen bg-background text-on-background font-sans antialiased overflow-x-hidden">
+      <AdminDashboard />
     </div>
   );
 };
