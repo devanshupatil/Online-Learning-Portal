@@ -49,7 +49,7 @@ For **Admin, Teacher, and Parent** navbars, in the top row of the `<header>`:
 For **Learner** navbar, in the top row of the `<header>`:
 
 1. **Brand block**:
-   - Add `min-w-0` to the `Link` wrapper (the flex item in the top-row flex container) **and** to the inner `div className="flex flex-col text-left"`, for the same nested-truncation reason as above.
+   - The `Link` is nested one level deeper than in the other three navbars: the actual direct flex item of the top-row container is `<div className="flex items-center gap-6">`, which wraps both the `Link` and the desktop `<nav>`. Add `min-w-0` to that wrapping `div`, to the `Link` itself, **and** to the inner `div className="flex flex-col text-left"` — nested flex truncation needs `min-w-0` at every ancestor level between the top-row container and the truncated text, not just the innermost node.
    - Add `truncate` to the two `<span>` elements holding the title and subtitle.
 
 2. **Right-side actions container** (`flex items-center gap-2 sm:gap-4`):
