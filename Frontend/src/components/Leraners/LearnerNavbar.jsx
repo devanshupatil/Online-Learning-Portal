@@ -88,19 +88,19 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
     <>
       <header className="bg-surface text-primary w-full fixed top-0 left-0 border-b border-outline-variant z-50 h-20 flex items-center justify-center">
         <div className="w-full px-6 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 min-w-0">
             <Link
-              className="flex items-center gap-3 group"
+              className="flex items-center gap-3 group min-w-0"
               to="/learners"
             >
               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform">
                 <span className="material-symbols-outlined text-[24px]">school</span>
               </div>
-              <div className="flex flex-col text-left">
-                <span className="font-display text-xl font-bold text-primary leading-tight tracking-tight">
+              <div className="flex flex-col text-left min-w-0">
+                <span className="font-display text-xl font-bold text-primary leading-tight tracking-tight truncate">
                   {t("coachingName") || "EduLearning"}
                 </span>
-                <span className="text-xs font-semibold text-on-surface-variant dark:text-gray-400 leading-tight">
+                <span className="text-xs font-semibold text-on-surface-variant dark:text-gray-400 leading-tight truncate">
                   {t("footerStudentPortal") || "Student Portal"}
                 </span>
               </div>
@@ -109,7 +109,7 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
               {learnerNavItems.map((item) => renderTab(item))}
             </nav>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <div className="hidden lg:flex items-center gap-2">
               <LanguageSwitcher />
             </div>
@@ -127,7 +127,7 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
               {t("learnerNavLogout")}
             </button>
             <button
-              className="lg:hidden text-on-surface p-1.5 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="lg:hidden flex-shrink-0 text-on-surface p-1.5 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={t("learnerNavToggleMenu")}
             >
