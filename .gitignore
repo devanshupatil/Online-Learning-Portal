@@ -54,3 +54,4 @@ jest_rs/
 *.sln
 *.sw?
 *.local
+.superpowers/
