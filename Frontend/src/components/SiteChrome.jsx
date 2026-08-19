@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ButtonWithIcon from "./ui/button-witn-icon";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTheme } from "../context/ThemeContext";
+import { AnimatedThemeToggle } from "./ui/animated-theme-toggle";
 
 // `label` here is a stable English id used for route-active comparisons
 // (e.g. <SiteNav active="About" />) — it is NOT displayed directly.
@@ -36,6 +38,7 @@ export const SiteNav = ({ active = "Home" }) => {
   const [overHero, setOverHero] = useState(active === "Home");
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const heroEl = document.getElementById("home");
@@ -92,6 +95,16 @@ export const SiteNav = ({ active = "Home" }) => {
           </div>
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher />
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
+              aria-label={t("navToggleDarkMode")}
+              className={
+                overHero
+                  ? "h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-white hover:bg-white/10"
+                  : "h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+              }
+            />
             <a
               className={
                 overHero
@@ -135,7 +148,15 @@ export const SiteNav = ({ active = "Home" }) => {
         }
       >
         <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
+              aria-label={t("navToggleDarkMode")}
+              className="h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+            />
+          </div>
           <button
             className="text-on-surface p-2"
             onClick={() => setMenuOpen(false)}
