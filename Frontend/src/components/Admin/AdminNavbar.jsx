@@ -85,15 +85,15 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
         {/* Top Row: Brand, Search, Actions */}
         <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
           {/* Brand */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0">
               <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>admin_panel_settings</span>
             </div>
-            <div className="flex flex-col text-left">
-              <h1 className="text-xl font-bold font-display tracking-tight text-primary leading-tight">
+            <div className="flex flex-col text-left min-w-0">
+              <h1 className="text-xl font-bold font-display tracking-tight text-primary leading-tight truncate">
                 {t("coachingName") || "EduLearning"}
               </h1>
-              <p className="text-xs font-semibold text-on-surface-variant dark:text-gray-400 leading-tight">
+              <p className="text-xs font-semibold text-on-surface-variant dark:text-gray-400 leading-tight truncate">
                 Admin Portal
               </p>
             </div>
@@ -114,9 +114,9 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
           </div>
 
           {/* Right Side Actions */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <button
-              className="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors cursor-pointer relative"
+              className="hidden sm:flex w-10 h-10 rounded-full items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-primary transition-colors cursor-pointer relative"
               aria-label="Notifications"
             >
               <span className="material-symbols-outlined text-[22px]">notifications</span>
@@ -182,7 +182,7 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
 
             {/* Mobile Hamburger Toggle */}
             <button
-              className="lg:hidden text-on-surface p-1.5 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
+              className="lg:hidden flex-shrink-0 text-on-surface p-1.5 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
