@@ -46,18 +46,18 @@ const Home = () => {
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,14,26,0.92)_0%,rgba(10,14,26,0.7)_35%,rgba(10,14,26,0.15)_60%,transparent_80%)]" />
           <div className="absolute inset-x-0 bottom-0 h-24 md:h-32 bg-gradient-to-b from-transparent to-surface" />
         </div>
-        <div className="relative z-10 max-w-[1280px] mx-auto px-6 text-left flex flex-col items-start">
+        <div className="relative z-10 w-full max-w-[1280px] px-6 text-left flex flex-col items-start">
           <span className="glass-panel px-4 py-1.5 rounded-full text-xs font-bold tracking-wider text-primary mb-6 flex items-center gap-2">
             <span className="material-symbols-outlined text-[16px]">school</span>
             {t("homeHeroBadge")}
           </span>
-          <h1 className="font-display text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] text-white mb-6 max-w-4xl tracking-tight">
+          <h1 className="font-display text-[28px] leading-[34px] md:text-[40px] md:leading-[48px] text-white mb-6 max-w-md md:max-w-lg tracking-tight">
             {t("homeHeroTitle")}{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
               {t("homeHeroTitleHighlight")}
             </span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
+          <p className="text-base md:text-lg text-white/80 max-w-md mb-10">
             {t("homeHeroSubtitle")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
