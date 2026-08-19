@@ -19,7 +19,7 @@ export const RESULTS_BY_YEAR = [
 ];
 
 export const TOP_ACHIEVERS = [
-  { name: 'Rahul Patil', percentage: 98.4, classKey: 'resultsClass10SscLabel', year: '2025–26', featured: true },
+  { name: 'Shweta Supe', percentage: 98.4, classKey: 'resultsClass10SscLabel', year: '2025–26', featured: true },
   { name: 'Sneha Kulkarni', percentage: 98.1, classKey: 'resultsClass12HscScienceLabel', year: '2025–26' },
   { name: 'Aarav Sharma', percentage: 97.9, classKey: 'resultsClass10SscLabel', year: '2025–26' },
   { name: 'Ananya Iyer', percentage: 97.6, classKey: 'resultsClass12HscScienceLabel', year: '2025–26' },
@@ -67,7 +67,7 @@ export const ACHIEVERS_80_PLUS = [
 ];
 
 export const SUBJECT_TOPPERS = [
-  { subjectKey: 'resultsSubjectMathematics', studentName: 'Rahul Patil', marks: 99, totalMarks: 100 },
+  { subjectKey: 'resultsSubjectMathematics', studentName: 'Shweta Supe', marks: 99, totalMarks: 100 },
   { subjectKey: 'resultsSubjectScience', studentName: 'Sneha Kulkarni', marks: 98, totalMarks: 100 },
   { subjectKey: 'resultsSubjectEnglish', studentName: 'Ananya Iyer', marks: 96, totalMarks: 100 },
   { subjectKey: 'resultsSubjectPhysics', studentName: 'Aarav Sharma', marks: 97, totalMarks: 100 },
@@ -105,7 +105,7 @@ export const SUCCESS_STORIES = [
 ];
 
 export const RESULT_TESTIMONIALS = [
-  { quoteKey: 'testimonial1QuoteText', name: 'Rahul Patil', role: 'Class 10 SSC, 2025–26' },
+  { quoteKey: 'testimonial1QuoteText', name: 'Shweta Supe', role: 'Class 10 SSC, 2025–26' },
   { quoteKey: 'testimonial2QuoteText', name: 'Rakesh Sharma', role: 'Parent of Aarav Sharma' },
   { quoteKey: 'testimonial3QuoteText', name: 'Sneha Kulkarni', role: 'Class 12 HSC Science, 2025–26' },
   { quoteKey: 'testimonial4QuoteText', name: 'Suresh Mehta', role: 'Parent of Vivaan Mehta' },
