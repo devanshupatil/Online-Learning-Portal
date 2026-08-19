@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ButtonWithIcon from "./ui/button-witn-icon";
@@ -33,14 +33,42 @@ const NavItem = ({ path, className, children, onClick }) => {
 
 export const SiteNav = ({ active = "Home" }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [overHero, setOverHero] = useState(active === "Home");
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  useEffect(() => {
+    const heroEl = document.getElementById("home");
+    if (!heroEl) {
+      setOverHero(false);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => setOverHero(entry.isIntersecting),
+      { rootMargin: "-80px 0px 0px 0px", threshold: 0 }
+    );
+    observer.observe(heroEl);
+    return () => observer.disconnect();
+  }, [active]);
+
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-white/20 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.08)]">
+      <nav
+        className={
+          overHero
+            ? "fixed top-0 w-full z-50 bg-transparent border-b border-transparent transition-colors duration-300"
+            : "fixed top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-white/20 shadow-[0_10px_30px_-5px_rgba(37,99,235,0.08)] transition-colors duration-300"
+        }
+      >
         <div className="w-full pl-6 pr-6 flex justify-between items-center h-20">
-          <Link className="font-display text-2xl font-bold text-primary" to="/">
+          <Link
+            className={
+              overHero
+                ? "font-display text-2xl font-bold text-white transition-colors duration-300"
+                : "font-display text-2xl font-bold text-primary transition-colors duration-300"
+            }
+            to="/"
+          >
             EduLearning Platform
           </Link>
           <div className="hidden md:flex items-center space-x-8 text-lg">
@@ -50,8 +78,12 @@ export const SiteNav = ({ active = "Home" }) => {
                 path={link.path}
                 className={
                   link.label === active
-                    ? "font-bold text-primary border-b-2 border-primary pb-1"
-                    : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover"
+                    ? overHero
+                      ? "font-bold text-white border-b-2 border-white pb-1 transition-colors duration-300"
+                      : "font-bold text-primary border-b-2 border-primary pb-1 transition-colors duration-300"
+                    : overHero
+                      ? "relative inline-block font-bold text-white/85 hover:text-white transition-all duration-300 link-hover"
+                      : "relative inline-block font-bold text-on-surface-variant hover:text-primary transition-all duration-300 link-hover"
                 }
               >
                 {t(link.navLabelKey)}
@@ -61,7 +93,11 @@ export const SiteNav = ({ active = "Home" }) => {
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher />
             <a
-              className="inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
+              className={
+                overHero
+                  ? "inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-white text-white font-semibold hover:bg-white/10 transition-all h-9"
+                  : "inline-flex items-center justify-center px-6 py-[6px] rounded-full border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition-all h-9"
+              }
               href="/#enroll"
             >
               {t("navEnrollNow")}
@@ -69,7 +105,11 @@ export const SiteNav = ({ active = "Home" }) => {
             <ButtonWithIcon label={t("navLogin")} onClick={() => navigate("/login")} />
           </div>
           <button
-            className="md:hidden text-on-surface p-2"
+            className={
+              overHero
+                ? "md:hidden text-white p-2 transition-colors duration-300"
+                : "md:hidden text-on-surface p-2 transition-colors duration-300"
+            }
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
