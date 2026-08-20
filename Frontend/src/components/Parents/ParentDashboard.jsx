@@ -95,7 +95,7 @@ const ParentDashboard = () => {
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setActiveSection('schedule')}
-                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     {t('parentDashboardViewSchedule')}
                   </button>
