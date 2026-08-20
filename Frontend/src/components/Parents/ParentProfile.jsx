@@ -48,7 +48,7 @@ const ParentProfile = () => {
                 className={`px-5 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs ${
                   isEditing
                     ? 'border border-outline-variant bg-surface text-on-surface'
-                    : 'bg-primary text-white hover:opacity-90'
+                    : 'bg-primary text-primary-foreground hover:opacity-90'
                 }`}
               >
                 <span className="material-symbols-outlined text-[18px]">
@@ -187,7 +187,7 @@ const ParentProfile = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-primary text-white font-semibold text-sm rounded-xl hover:opacity-90 cursor-pointer shadow-sm"
+              className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-xl hover:opacity-90 cursor-pointer shadow-sm"
             >
               {t('parentProfileSave')}
             </button>
