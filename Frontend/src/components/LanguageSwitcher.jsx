@@ -25,7 +25,7 @@ const LanguageSwitcher = ({ className = "" }) => {
           aria-label={`Switch to ${label}`}
           className={
             current === code
-              ? "px-3 py-1 rounded-full text-sm font-semibold bg-primary text-white transition-colors"
+              ? "px-3 py-1 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors"
               : "px-3 py-1 rounded-full text-sm font-semibold text-on-surface-variant hover:text-primary transition-colors"
           }
         >
