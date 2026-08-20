@@ -25,7 +25,7 @@ const ResultsHero = () => {
         </span>
         <h1 className="font-display text-[40px] leading-[48px] md:text-[64px] md:leading-[72px] text-on-surface mb-6 max-w-4xl mx-auto tracking-tight">
           {t("resultsHeroTitle")}{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary dark:from-tertiary dark:to-tertiary">
             {t("resultsHeroTitleHighlight")}
           </span>
         </h1>
