@@ -93,7 +93,7 @@ const LearnerNavbar = ({ activeSection, onSectionChange }) => {
               className="flex items-center gap-3 group min-w-0"
               to="/learners"
             >
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-sm flex-shrink-0 group-hover:scale-105 transition-transform">
                 <span className="material-symbols-outlined text-[24px]">school</span>
               </div>
               <div className="flex flex-col text-left min-w-0">
