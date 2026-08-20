@@ -53,7 +53,7 @@ const Home = () => {
           </span>
           <h1 className="font-display text-[28px] leading-[34px] md:text-[40px] md:leading-[48px] text-white mb-6 max-w-md md:max-w-lg tracking-tight">
             {t("homeHeroTitle")}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary dark:from-tertiary dark:to-tertiary">
               {t("homeHeroTitleHighlight")}
             </span>
           </h1>
