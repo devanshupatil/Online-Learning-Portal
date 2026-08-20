@@ -81,7 +81,7 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
 
   return (
     <>
-      <header className="bg-surface dark:bg-surface-dim sticky top-0 w-full z-50 border-b border-outline-variant dark:border-outline flex flex-col shadow-sm">
+      <header className="bg-surface dark:bg-surface-dim fixed top-0 left-0 w-full z-50 border-b border-outline-variant dark:border-outline flex flex-col shadow-sm">
         {/* Top Row: Brand, Search, Actions */}
         <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
           {/* Brand */}

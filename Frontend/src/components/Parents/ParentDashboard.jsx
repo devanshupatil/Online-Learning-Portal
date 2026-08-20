@@ -79,7 +79,7 @@ const ParentDashboard = () => {
         onSearchChange={setSearchQuery}
       />
 
-      <main className="px-4 sm:px-6 lg:px-8 pb-12 pt-20 flex flex-col min-h-[calc(100vh-8rem)] w-full">
+      <main className="px-4 sm:px-6 lg:px-8 pb-12 pt-[65px] lg:pt-[114px] flex flex-col min-h-[calc(100vh-8rem)] w-full">
         <div className="section-fade-in" key={activeSection}>
           {/* 1. Dashboard Overview */}
           {activeSection === 'dashboard' && (

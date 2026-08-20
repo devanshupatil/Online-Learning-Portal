@@ -553,9 +553,11 @@ img {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-/* Reduce paint on mobile */
+/* Reduce paint on mobile — skip fixed/sticky elements and anything that
+   contains one, since a transform on any ancestor creates a new containing
+   block and breaks fixed/sticky positioning for the descendant */
 @media (max-width: 768px) {
-  * {
+  *:not(.fixed):not(.sticky):not(:has(.fixed)):not(:has(.sticky)) {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
   }

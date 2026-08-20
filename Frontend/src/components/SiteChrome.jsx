@@ -64,15 +64,25 @@ export const SiteNav = ({ active = "Home" }) => {
         }
       >
         <div className="w-full pl-6 pr-6 flex justify-between items-center h-20">
-          <Link
-            className={
-              overHero
-                ? "font-display text-2xl font-bold text-white transition-colors duration-300"
-                : "font-display text-2xl font-bold text-primary transition-colors duration-300"
-            }
-            to="/"
-          >
-            EduLearning Platform
+          <Link className="flex items-center gap-2.5" to="/">
+            <div
+              className={
+                overHero
+                  ? "w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-white shadow-sm flex-shrink-0 transition-colors duration-300"
+                  : "w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-sm flex-shrink-0 transition-colors duration-300"
+              }
+            >
+              <span className="material-symbols-outlined text-[22px]">school</span>
+            </div>
+            <span
+              className={
+                overHero
+                  ? "font-display text-2xl font-bold text-white transition-colors duration-300"
+                  : "font-display text-2xl font-bold text-primary transition-colors duration-300"
+              }
+            >
+              EduLearning
+            </span>
           </Link>
           <div className="hidden md:flex items-center space-x-8 text-lg">
             {navLinks.map((link) => (
@@ -117,19 +127,31 @@ export const SiteNav = ({ active = "Home" }) => {
             </a>
             <ButtonWithIcon label={t("navLogin")} onClick={() => navigate("/login")} />
           </div>
-          <button
-            className={
-              overHero
-                ? "md:hidden text-white p-2 transition-colors duration-300"
-                : "md:hidden text-on-surface p-2 transition-colors duration-300"
-            }
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span className="material-symbols-outlined">
-              {menuOpen ? "close" : "menu"}
-            </span>
-          </button>
+          <div className="flex md:hidden items-center gap-1">
+            <AnimatedThemeToggle
+              isDark={theme === "dark"}
+              onToggle={toggleTheme}
+              aria-label={t("navToggleDarkMode")}
+              className={
+                overHero
+                  ? "h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-white hover:bg-white/10"
+                  : "h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+              }
+            />
+            <button
+              className={
+                overHero
+                  ? "text-white p-2 transition-colors duration-300"
+                  : "text-on-surface p-2 transition-colors duration-300"
+              }
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Toggle menu"
+            >
+              <span className="material-symbols-outlined">
+                {menuOpen ? "close" : "menu"}
+              </span>
+            </button>
+          </div>
         </div>
       </nav>
       <div
@@ -143,19 +165,13 @@ export const SiteNav = ({ active = "Home" }) => {
       <div
         className={
           menuOpen
-            ? "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-0 transition-transform duration-300 ease-in-out"
-            : "fixed top-0 right-0 h-full w-1/2 z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-full transition-transform duration-300 ease-in-out"
+            ? "fixed top-0 right-0 h-full w-4/5 max-w-sm z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-0 transition-transform duration-300 ease-in-out"
+            : "fixed top-0 right-0 h-full w-4/5 max-w-sm z-50 bg-surface-container-lowest shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] md:hidden flex flex-col translate-x-full transition-transform duration-300 ease-in-out"
         }
       >
         <div className="flex justify-between items-center h-20 px-6 border-b border-outline-variant">
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <AnimatedThemeToggle
-              isDark={theme === "dark"}
-              onToggle={toggleTheme}
-              aria-label={t("navToggleDarkMode")}
-              className="h-9 w-9 rounded-full border-0 bg-transparent shadow-none text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
-            />
           </div>
           <button
             className="text-on-surface p-2"
