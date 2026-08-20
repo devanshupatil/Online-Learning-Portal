@@ -183,7 +183,7 @@ const AdminDashboard = () => {
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setActiveSection('users')}
-                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5"
                   >
                     <span className="material-symbols-outlined text-[18px]">manage_accounts</span>
                     Manage Users
@@ -307,7 +307,7 @@ const AdminDashboard = () => {
                     <button
                       onClick={() => setUserTab('students')}
                       className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                        userTab === 'students' ? 'bg-primary text-white shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
+                        userTab === 'students' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px] mr-1.5">group</span>
@@ -316,7 +316,7 @@ const AdminDashboard = () => {
                     <button
                       onClick={() => setUserTab('teachers')}
                       className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                        userTab === 'teachers' ? 'bg-primary text-white shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
+                        userTab === 'teachers' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px] mr-1.5">school</span>
@@ -427,7 +427,7 @@ const AdminDashboard = () => {
                     <h2 className="text-2xl font-bold font-display text-on-surface">Course Management</h2>
                     <p className="text-sm text-on-surface-variant font-medium mt-0.5">Manage active learning modules and assigned instructors</p>
                   </div>
-                  <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto">
+                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto">
                     <span className="material-symbols-outlined text-[18px]">add</span>
                     Add Course
                   </button>
@@ -544,7 +544,7 @@ const AdminDashboard = () => {
                     <button
                       onClick={() => setContentTab('materials')}
                       className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                        contentTab === 'materials' ? 'bg-primary text-white shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
+                        contentTab === 'materials' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px] mr-1.5">description</span>
@@ -553,7 +553,7 @@ const AdminDashboard = () => {
                     <button
                       onClick={() => setContentTab('tests')}
                       className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                        contentTab === 'tests' ? 'bg-primary text-white shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
+                        contentTab === 'tests' ? 'bg-primary text-primary-foreground shadow-xs' : 'text-on-surface-variant hover:bg-surface-container-high'
                       }`}
                     >
                       <span className="material-symbols-outlined text-[18px] mr-1.5">quiz</span>
@@ -664,7 +664,7 @@ const AdminDashboard = () => {
                   </div>
                   <button
                     onClick={() => setShowClassModal(true)}
-                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
                   >
                     <span className="material-symbols-outlined text-[18px]">add</span>
                     Schedule Class
@@ -762,7 +762,7 @@ const AdminDashboard = () => {
                     <h2 className="text-2xl font-bold font-display text-on-surface">Analytics & Reports</h2>
                     <p className="text-sm text-on-surface-variant font-medium mt-0.5">Platform growth, test metrics and user statistics</p>
                   </div>
-                  <button className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto">
+                  <button className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 self-start sm:self-auto">
                     <span className="material-symbols-outlined text-[18px]">download</span>
                     Export Report
                   </button>
@@ -839,7 +839,7 @@ const AdminDashboard = () => {
                           alert('Error saving settings.');
                         }
                       }}
-                      className="px-5 py-2.5 bg-primary text-white font-bold rounded-xl text-sm shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                      className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl text-sm shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                     >
                       Save Settings
                     </button>
@@ -941,7 +941,7 @@ const AdminDashboard = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary text-white font-bold rounded-xl text-sm shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                  className="px-5 py-2 bg-primary text-primary-foreground font-bold rounded-xl text-sm shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   Schedule
                 </button>
