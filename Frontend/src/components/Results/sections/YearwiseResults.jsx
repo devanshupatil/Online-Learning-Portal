@@ -31,7 +31,7 @@ const YearwiseResults = () => {
               onClick={() => setActiveYear(r.year)}
               className={
                 r.year === activeYear
-                  ? "px-5 py-2 rounded-full bg-primary text-white font-semibold soft-shadow transition-all"
+                  ? "px-5 py-2 rounded-full bg-primary text-primary-foreground font-semibold soft-shadow transition-all"
                   : "px-5 py-2 rounded-full bg-surface-container-lowest text-on-surface-variant font-semibold border border-outline-variant/30 hover:border-primary/40 transition-all"
               }
             >
