@@ -5,7 +5,7 @@ const FinalCTA = () => {
   const { t } = useTranslation();
   return (
     <section
-      className="py-16 md:py-[120px] bg-primary text-white relative overflow-hidden"
+      className="py-16 md:py-[120px] bg-primary text-primary-foreground relative overflow-hidden"
       id="final-cta"
     >
       <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
@@ -13,12 +13,12 @@ const FinalCTA = () => {
         <h2 className="font-display text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] tracking-tight mb-4">
           {t("resultsFinalCtaTitle")}
         </h2>
-        <p className="text-lg text-white/90 max-w-2xl mx-auto mb-10">
+        <p className="text-lg text-primary-foreground/90 max-w-2xl mx-auto mb-10">
           {t("resultsFinalCtaSubtitle")}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            className="inline-flex items-center justify-center px-6 py-[6px] rounded-full bg-white text-primary font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
+            className="inline-flex items-center justify-center px-6 py-[6px] rounded-full bg-white text-primary dark:text-black font-semibold soft-shadow hover:opacity-90 transition-all hover:-translate-y-1 text-center h-9"
             href="/#courses"
           >
             {t("resultsFinalCtaExploreCoursesBtn")}
