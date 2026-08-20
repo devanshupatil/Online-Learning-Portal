@@ -243,6 +243,11 @@ html.dark {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+html.dark .glass-panel {
+  background: rgba(17, 17, 17, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .soft-shadow {
   box-shadow: 0 10px 30px -5px rgba(37, 99, 235, 0.08);
 }
@@ -536,6 +541,14 @@ html.dark .gradient-btn {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Images deliberately sized to fill a container (avatars, thumbnails) opt
+   out of the auto-height reset above, since object-fit needs the element's
+   own box to match its container rather than its natural aspect ratio */
+img.object-cover,
+img.object-contain {
+  height: 100%;
 }
 
 /* Optimize scrolling on mobile */
