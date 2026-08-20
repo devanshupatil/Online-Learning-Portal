@@ -128,7 +128,7 @@ const TeacherDashboard = () => {
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={() => setActiveSection('syllabus')}
-                    className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-bold shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
                   >
                     {t('teacherDashboardViewSyllabus')}
                   </button>
@@ -280,7 +280,7 @@ const TeacherDashboard = () => {
                         onClick={() => setMaterialTab(tab)}
                         className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                           materialTab === tab
-                            ? 'bg-primary text-white shadow-xs'
+                            ? 'bg-primary text-primary-foreground shadow-xs'
                             : 'text-on-surface-variant hover:bg-surface-container-high'
                         }`}
                       >
@@ -316,7 +316,7 @@ const TeacherDashboard = () => {
                         onClick={() => setTestTab(tab)}
                         className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                           testTab === tab
-                            ? 'bg-primary text-white shadow-xs'
+                            ? 'bg-primary text-primary-foreground shadow-xs'
                             : 'text-on-surface-variant hover:bg-surface-container-high'
                         }`}
                       >
@@ -355,7 +355,7 @@ const TeacherDashboard = () => {
                         onClick={() => setAttendanceTab(tab.id)}
                         className={`cursor-pointer flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                           attendanceTab === tab.id
-                            ? 'bg-primary text-white shadow-xs'
+                            ? 'bg-primary text-primary-foreground shadow-xs'
                             : 'text-on-surface-variant hover:bg-surface-container-high'
                         }`}
                       >
