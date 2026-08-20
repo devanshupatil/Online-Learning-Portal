@@ -279,7 +279,7 @@ const AttendanceReports = () => {
                       {['present', 'present', 'absent', 'present', 'present'].slice(-5).map((status, index) => (
                         <span
                           key={index}
-                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center text-white ${status === 'present' ? 'bg-primary' : 'bg-error'
+                          className={`inline-block w-6 h-6 rounded-full text-xs flex items-center justify-center ${status === 'present' ? 'bg-primary text-primary-foreground' : 'bg-error text-white'
                             }`}
                           title={`Day ${index + 1}: ${status}`}
                         >
