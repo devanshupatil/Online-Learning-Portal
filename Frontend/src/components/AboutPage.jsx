@@ -130,16 +130,16 @@ const AboutPage = () => {
               </p>
             </div>
           </div>
-          <div className="bg-primary text-white p-10 rounded-2xl soft-shadow flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
+          <div className="bg-primary text-primary-foreground p-10 rounded-2xl soft-shadow flex flex-col justify-between relative overflow-hidden hover:-translate-y-1 transition-transform duration-300">
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
             <div className="space-y-6 relative z-10">
-              <div className="w-14 h-14 rounded-xl bg-white/20 text-white flex items-center justify-center backdrop-blur-sm">
+              <div className="w-14 h-14 rounded-xl bg-white/20 text-primary-foreground flex items-center justify-center backdrop-blur-sm">
                 <span className="material-symbols-outlined text-3xl">visibility</span>
               </div>
               <h2 className="text-[30px] leading-[38px] md:text-[42px] md:leading-[52px] font-bold tracking-tight">
                 {t("aboutVisionTitle")}
               </h2>
-              <p className="text-lg text-white/90 leading-relaxed">
+              <p className="text-lg text-primary-foreground/90 leading-relaxed">
                 {t("aboutVisionText")}
               </p>
             </div>
@@ -171,7 +171,7 @@ const AboutPage = () => {
                 <div
                   className={
                     item.highlight
-                      ? "w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold"
+                      ? "w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold"
                       : "w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-bold"
                   }
                 >
