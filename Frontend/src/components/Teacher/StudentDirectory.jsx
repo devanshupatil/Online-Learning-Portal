@@ -219,7 +219,7 @@ const StudentDirectory = ({ onViewProfile, externalSearch = '' }) => {
           </button>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer active:scale-95 shadow-sm"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity cursor-pointer active:scale-95 shadow-sm"
           >
             <span className="material-symbols-outlined text-[20px]">person_add</span>
             {t('teacherStudentsAdd')}
@@ -312,7 +312,7 @@ const StudentDirectory = ({ onViewProfile, externalSearch = '' }) => {
                             alt={student.name}
                           />
                         ) : (
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0 ${student.initialsBg || 'bg-primary text-white'}`}>
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0 ${student.initialsBg || 'bg-primary text-primary-foreground'}`}>
                             {student.initials || 'ST'}
                           </div>
                         )}
@@ -400,7 +400,7 @@ const StudentDirectory = ({ onViewProfile, externalSearch = '' }) => {
                 onClick={() => setCurrentPage(page)}
                 className={`w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center transition-colors cursor-pointer ${
                   currentPage === page
-                    ? 'bg-primary text-white shadow-xs'
+                    ? 'bg-primary text-primary-foreground shadow-xs'
                     : 'hover:bg-surface-container-low text-on-surface'
                 }`}
               >
@@ -503,7 +503,7 @@ const StudentDirectory = ({ onViewProfile, externalSearch = '' }) => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 bg-primary text-white font-semibold text-sm rounded-xl hover:opacity-90 cursor-pointer shadow-sm"
+                  className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold text-sm rounded-xl hover:opacity-90 cursor-pointer shadow-sm"
                 >
                   {t('teacherStudentsModalSaveBtn')}
                 </button>
