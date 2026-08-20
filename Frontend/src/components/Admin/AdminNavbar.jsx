@@ -86,7 +86,7 @@ const AdminNavbar = ({ activeSection, onSectionChange, searchQuery, onSearchChan
         <div className="flex justify-between items-center h-16 px-4 sm:px-6 lg:px-8 gap-4">
           {/* Brand */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-sm flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-sm flex-shrink-0">
               <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>admin_panel_settings</span>
             </div>
             <div className="flex flex-col text-left min-w-0">
