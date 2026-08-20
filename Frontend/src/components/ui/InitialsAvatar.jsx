@@ -1,9 +1,9 @@
 import React from "react";
 
 const PALETTE = [
-  "bg-primary text-white",
-  "bg-secondary text-white",
-  "bg-tertiary-container text-white",
+  "bg-primary text-primary-foreground",
+  "bg-secondary text-secondary-foreground",
+  "bg-tertiary-container text-on-tertiary",
   "bg-primary-container text-on-primary-container",
   "bg-secondary-fixed text-on-secondary-fixed",
   "bg-primary-fixed text-on-primary-fixed",
