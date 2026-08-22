@@ -41,9 +41,23 @@ navigation change.
   contained (an admin browses by class, as requested; a "search my whole
   institute for one student" feature wasn't asked for).
 - **The linked self-student** (Aarav Sharma, `DIR001` — the one the Learner
-  Fees tab reads via `STUDENT_SELF_ID`) moves into `Class 12` and keeps his
-  exact existing payment history (Term 1 paid ₹30,000 on 2026-06-10 via UPI),
-  so the already-verified student-side receipt flow is untouched.
+  Fees tab reads via `STUDENT_SELF_ID`) moves into **`JEE`**, not a numbered
+  class. This app already has this exact identity established elsewhere as a
+  JEE-stream student — `data.js`'s `STUDENTS_BY_STREAM` has
+  `{ student_id: 'STU101', name: 'Aarav Sharma', class: 'JEE' }` and
+  `PARENT_CHILD` (the same person, explicitly commented as shared with the
+  Teacher/Learner mock data) has `stream: 'JEE'`, both rendered on-screen in
+  `ParentDashboard.jsx`/`ParentProfile.jsx`. Placing him in `Class 12` for
+  fees would contradict that and produce a visibly incoherent demo (Parent
+  Dashboard says "Stream: JEE", Fees tab says "Class 12" for the same
+  student) — exactly what the self-student link exists to avoid. His payment
+  history is adjusted to fit the JEE tier rather than left as-is: Term 1 paid
+  **in full** — ₹40,000 (JEE's per-installment amount, not the old ₹30,000)
+  — on 2026-06-10 via UPI, `receiptNo: 'RCPT-DIR001-T1'` unchanged, Term 2/3
+  pending. This keeps the already-verified "Term 1 Paid → View Receipt"
+  student-side behavior working (a partial ₹30,000 against a ₹40,000
+  installment would instead leave Term 1 showing as not-yet-paid, hiding the
+  receipt button — a needless behavior regression for no benefit).
 - **No changes to `mockFetch.js`** — its 3 routes operate generically on
   `feeRecords` regardless of array size or which `class` values appear, so
   nothing there needs to change.
@@ -90,7 +104,7 @@ const CLASS_TOTAL_FEE = (className) => {
   is `C1`...`C12` for grade classes and `JEE`/`NEET`/`CET` for the streams
   (e.g. `C1-01`, `C12-20`, `JEE-05`).
 - **Payment pattern by `s % 5`** (so each class gets 4 students in each of
-  the 5 shapes — the same shapes the original 12-student set used):
+  the 5 shapes — shapes similar to those in the original 12-student set):
   - `0`: fully paid (T1, T2, T3 all paid in full).
   - `1`: fully unpaid (T1 is now overdue since its due date has passed; T2/T3
     pending).
@@ -105,12 +119,12 @@ const CLASS_TOTAL_FEE = (className) => {
     `RCPT-${installment.id}` (same rule `POST /api/fees/:id/pay` already
     uses for a first payment, so seed-time and runtime receipt numbers stay
     consistent).
-- **Self-student override**: after generating `Class 12`'s 20 students, index
-  0 is overwritten with an explicit record: `student_id: 'DIR001'`,
-  `name: 'Aarav Sharma'`, `class: 'Class 12'`, Term 1 paid ₹30,000 on
-  2026-06-10 via UPI (`receiptNo: 'RCPT-DIR001-T1'`), Term 2/3 pending —
-  identical to his current record, just relabeled from `'Class A'` to
-  `'Class 12'`. `STUDENT_SELF_ID` stays `'DIR001'`.
+- **Self-student override**: after generating `JEE`'s 20 students, index 0
+  is overwritten with an explicit record: `student_id: 'DIR001'`,
+  `name: 'Aarav Sharma'`, `class: 'JEE'`, `totalFee: 120000`, Term 1 paid in
+  full — ₹40,000 — on 2026-06-10 via UPI (`receiptNo: 'RCPT-DIR001-T1'`),
+  Term 2/3 pending (see §2 for why `JEE` and ₹40,000, not `Class 12` and the
+  old ₹30,000). `STUDENT_SELF_ID` stays `'DIR001'`.
 
 `seedFeeRecords()` returns the flattened 300-record array (15 classes × 20
 students, with the one override applied).
@@ -127,8 +141,10 @@ students, with the one override applied).
   summary bar (total students across all classes, total collected, total
   outstanding) above a 15-card grid (same stat-card visual pattern already
   used elsewhere in the admin dashboard). Each card shows the class name,
-  student count, and a compact paid/pending/overdue breakdown for that class
-  only. Clicking a card calls `onSelectClass(className)`.
+  student count, and the paid/pending/overdue counts for that class as three
+  small labeled numbers (matching the existing stat-card number+label format
+  used elsewhere in this feature, not a progress bar or chart — no new
+  visual pattern). Clicking a card calls `onSelectClass(className)`.
 - `Frontend/src/components/Admin/sections/ClassFeeTable.jsx` (new): today's
   stat cards + search input + status filter + student table + row-click →
   `FeeDetailModal`, unchanged in behavior, but its input is pre-filtered to
@@ -157,15 +173,23 @@ Untouched:
 - `Frontend/src/components/Admin/sections/FeeDetailModal.jsx`
 - Everything on the Learner/student side (`FeesSection.jsx`, `FeeReceipt.jsx`,
   `LearnerNavbar.jsx`, `NewLearnerDashboard.jsx`, i18n keys) — the self-student
-  record shape is unchanged, only its `class` label changes from `'Class A'`
-  to `'Class 12'`, which those components already render generically.
+  record shape is unchanged; `class` becomes `'JEE'` and `totalFee`/Term 1's
+  `amount` become 120000/40000, all rendered generically already.
+- `Frontend/src/mockData/data.js` — **not modified**. `STUDENTS_DIRECTORY`
+  still has its own DIR001 entry with `class: 'Class A'` (used by
+  `Teacher/StudentDirectory.jsx`), which already didn't match `STUDENTS_BY_STREAM`'s
+  `class: 'JEE'` for the same person before this feature existed — a
+  pre-existing divergence in the app's mock data, not something introduced or
+  worsened here. Only the Fees feature's own copy of this student's `class`
+  is in scope for this spec.
 
 ## 6. Verification plan
 
 Same approach as the original feature: `bun run lint`, `bun run build`, then
 a real headless-browser pass — load the admin Fees tab, confirm the Classes
 grid renders all 15 cards with correct counts/totals, click into a couple of
-classes (including Class 12, to re-verify Aarav Sharma's record survived the
-move), record a payment in a class other than Class 12 and confirm that
-class's card updates on the way back out, and re-check the Learner Fees tab
-still shows Aarav Sharma's Class 12 record correctly (no regression).
+classes (including JEE, to re-verify Aarav Sharma's record survived the
+move), record a payment in a class other than JEE and confirm that class's
+card updates on the way back out, and re-check the Learner Fees tab still
+shows Aarav Sharma's JEE record correctly (₹1,20,000 total, ₹40,000 paid,
+Term 1 receipt available) — no regression from the original feature.
