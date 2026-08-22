@@ -57,10 +57,10 @@ state lives in a new in-memory mock store, following the existing
   dueDate: '2025-06-15',
   amount: 30000,
   status: 'paid' | 'pending' | 'overdue',
-  paidAmount: 30000,       // 0 until paid
-  paidDate: '2025-06-10',  // null until paid
-  method: 'UPI',           // null until paid
-  receiptNo: 'RCPT-DIR001-T1', // null until paid
+  paidAmount: 30000,       // 0 until first payment; accumulates across partial payments
+  paidDate: '2025-06-10',  // date of the most recent payment; null until first payment
+  method: 'UPI',           // method of the most recent payment; null until first payment
+  receiptNo: 'RCPT-DIR001-T1', // assigned on first payment, stays fixed across top-ups
 }
 
 // One student's fee record
@@ -85,7 +85,10 @@ paid, several partially paid (Term 1 paid, Term 2/3 pending or overdue based
 on today's date), a couple fully unpaid/overdue. Deterministic (no `Math.random`
 for status assignment) so the demo looks the same on every load — matches
 `resultsData.js`'s style of hand-authored realistic mock rows rather than
-`seedAttendanceHistory()`'s randomized approach.
+`seedAttendanceHistory()`'s randomized approach. Every seeded installment
+with `paidAmount > 0` must also set `paidDate`, `method`, and `receiptNo` (not
+just `paidAmount`) so seeded "View Receipt" buttons aren't blank on first
+load.
 
 `STUDENT_SELF_ID = 'DIR001'` exported from `feesData.js` — the constant the
 Learner Fees tab uses to look up "my" record.
@@ -101,10 +104,15 @@ New routes, following the existing regex-route-table pattern:
 - `GET /api/fees/:studentId` → `{ data: <single record> }` (detail — used by
   both the admin drill-down modal and the Learner Fees tab).
 - `POST /api/fees/:studentId/pay` → body `{ installmentId, amount, method,
-  date }`. Finds the installment, sets `paidAmount`, `paidDate`, `method`,
-  generates `receiptNo` if not already set, recomputes status. Returns the
-  updated record. Mutates `feeRecords` in place (same pattern as the
-  `attendance` POST handler).
+  date }`. Finds the installment and **adds** `amount` to its existing
+  `paidAmount` (partial payments accumulate — a second payment on the same
+  installment tops it up, it does not overwrite the running total). Sets
+  `paidDate`/`method` to this call's values (reflecting the most recent
+  payment), generates `receiptNo` only if this is the first payment on the
+  installment (stays fixed across subsequent top-ups). Recomputes status:
+  `paid` once cumulative `paidAmount >= amount`, else `pending`/`overdue` per
+  the rule in §3. Returns the updated record. Mutates `feeRecords` in place
+  (same pattern as the `attendance` POST handler).
 
 No DELETE/edit-payment route — out of scope (matches "record payments"
 approval, not "manage a payment ledger").
@@ -128,12 +136,15 @@ approval, not "manage a payment ledger").
   - Table: Name, Class, Total Fee, Paid, Remaining, Status badge. Row click
     opens the detail view.
 - `Frontend/src/components/Admin/sections/FeeDetailModal.jsx` (new) — shown on
-  row click. Lists the 3 installments (due date, amount, status). Each
-  unpaid/overdue installment has a "Record Payment" button opening an inline
-  form (amount pre-filled to the installment's remaining amount, method
-  select: Cash/UPI/Card/Bank Transfer, date defaulting to today). Submitting
-  calls `POST /api/fees/:studentId/pay`, updates local state with the
-  response, closes the form.
+  row click. Lists the 3 installments (due date, amount, status, and — for a
+  partially-paid installment specifically — "₹X of ₹Y paid" instead of just
+  the flat amount). Each not-fully-paid installment (`pending`, `overdue`, or
+  partially paid) has a "Record Payment" button opening an inline form
+  (amount pre-filled to the installment's *remaining* amount, i.e.
+  `amount - paidAmount`, but editable so the admin can enter a smaller partial
+  amount; method select: Cash/UPI/Card/Bank Transfer; date defaulting to
+  today). Submitting calls `POST /api/fees/:studentId/pay`, updates local
+  state with the response, closes the form.
 
 ## 6. Student UI
 
@@ -146,16 +157,23 @@ approval, not "manage a payment ledger").
   `GET /api/fees/DIR001` (`STUDENT_SELF_ID`) on mount.
   - Summary card: total fee, paid, remaining, overall status badge — same
     card treatment as other Learner summary cards (e.g. `WeeklyStreakIndicator`).
-  - List of 3 installments: label, due date, amount, status badge. Paid
-    installments show a "View Receipt" button; unpaid ones show "Due on
-    <date>" (or "Overdue" styling if past due) with no action (payment
-    initiation from the student side is out of scope — matches the brainstorm
-    answer that this is a *status + receipt* view, not a payment gateway).
+  - List of 3 installments: label, due date, amount, status badge. Fully paid
+    installments show a "View Receipt" button. Partially-paid installments
+    show "₹X of ₹Y paid" plus the same overdue/pending due-date styling as
+    unpaid ones, but no receipt button (a receipt only exists once an
+    installment is fully settled — matches `receiptNo` only being meaningful
+    at that point per §4). No installment offers a payment action from the
+    student side (payment initiation is out of scope — matches the
+    brainstorm answer that this is a *status + receipt* view, not a payment
+    gateway).
 - `Frontend/src/components/Leraners/sections/FeeReceipt.jsx` (new) — modal
   opened by "View Receipt". Shows receipt no., student name, class,
   installment label, amount, paid date, method, and institute name/branding
   (reuse whatever the app already uses elsewhere, e.g. footer branding in
-  `SiteChrome.jsx`). "Download" button calls `window.print()`; the modal has a
+  `SiteChrome.jsx`). Date/method shown are always the *most recent* payment on
+  that installment (per §3/§4's accumulation model) even if it was settled
+  across multiple partial payments — an accepted simplification, not a bug.
+  "Download" button calls `window.print()`; the modal has a
   `print:` Tailwind-styled layout (hide navbar/overlay chrome, show only the
   receipt block) via a dedicated print stylesheet class, same technique as
   browsers' standard print-CSS approach — no new dependency.
