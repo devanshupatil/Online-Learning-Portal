@@ -13,6 +13,7 @@ import {
   IMAGE_ANALYSIS_SAMPLE,
   seedAttendanceHistory,
 } from './data';
+import { seedFeeRecords, deriveInstallmentStatus } from './feesData';
 
 // In-memory stores so actions taken during the demo (marking attendance,
 // deleting a material, etc.) are reflected immediately in the UI.
@@ -20,6 +21,7 @@ let attendanceStore = seedAttendanceHistory();
 let studyMaterials = [...STUDY_MATERIALS_SEED];
 let testMaterials = [...TEST_MATERIALS_SEED];
 let nextTestMaterialId = testMaterials.length + 1;
+let feeRecords = seedFeeRecords();
 
 const NETWORK_DELAY_MS = 300;
 
@@ -223,6 +225,42 @@ const routes = [
     method: 'POST',
     pattern: /^\/admin\/settings$/,
     handler: () => jsonResponse(200, { message: 'Settings saved' }),
+  },
+  {
+    method: 'GET',
+    pattern: /^\/api\/fees$/,
+    handler: () => jsonResponse(200, { data: feeRecords }),
+  },
+  {
+    method: 'GET',
+    pattern: /^\/api\/fees\/([^/]+)$/,
+    handler: (match) => {
+      const record = feeRecords.find((r) => r.student_id === match[1]);
+      if (!record) return jsonResponse(404, { message: 'Fee record not found' });
+      return jsonResponse(200, { data: record });
+    },
+  },
+  {
+    method: 'POST',
+    pattern: /^\/api\/fees\/([^/]+)\/pay$/,
+    handler: (match, _query, body) => {
+      const record = feeRecords.find((r) => r.student_id === match[1]);
+      if (!record) return jsonResponse(404, { message: 'Fee record not found' });
+
+      const { installmentId, amount, method, date } = JSON.parse(body || '{}');
+      const installment = record.installments.find((i) => i.id === installmentId);
+      if (!installment) return jsonResponse(404, { message: 'Installment not found' });
+
+      installment.paidAmount += Number(amount) || 0;
+      installment.paidDate = date;
+      installment.method = method;
+      if (!installment.receiptNo) {
+        installment.receiptNo = `RCPT-${installment.id}`;
+      }
+      installment.status = deriveInstallmentStatus(installment);
+
+      return jsonResponse(200, { data: record });
+    },
   },
 ];
 
