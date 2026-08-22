@@ -11,6 +11,7 @@ const learnerNavItems = [
   { id: "material", labelKey: "learnerNavMaterial", icon: "folder_open" },
   { id: "test", labelKey: "learnerNavTest", icon: "quiz", hasBadge: true },
   { id: "progress", labelKey: "learnerNavProgress", icon: "trending_up" },
+  { id: "fees", labelKey: "learnerNavFees", icon: "payments" },
   { id: "profile", labelKey: "learnerNavProfile", icon: "person" },
 ];
 

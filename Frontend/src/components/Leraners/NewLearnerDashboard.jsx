@@ -13,6 +13,7 @@ import WeeklyStreakIndicator from './WeeklyStreakIndicator';
 import Test from './Tests';
 import TestResults from './TestResults';
 import ProgressTracking from './ProgressTracking';
+import FeesSection from './sections/FeesSection';
 
 const initialCourses = [
   {
@@ -142,6 +143,12 @@ const NewLearnerDashboard = () => {
           {activeSection === 'progress' && (
             <div className="space-y-6">
               <ProgressTracking onViewAllResults={handleViewAllResults} />
+            </div>
+          )}
+
+          {activeSection === 'fees' && (
+            <div className="space-y-6">
+              <FeesSection />
             </div>
           )}
 
