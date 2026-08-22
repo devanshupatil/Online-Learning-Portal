@@ -8,6 +8,7 @@ import { AnimatedThemeToggle } from "../ui/animated-theme-toggle";
 const adminNavItems = [
   { id: "dashboard", label: "Dashboard", icon: "dashboard" },
   { id: "users", label: "Users", icon: "manage_accounts" },
+  { id: "fees", label: "Fees", icon: "payments" },
   { id: "courses", label: "Courses", icon: "menu_book" },
   { id: "content", label: "Content", icon: "folder_open" },
   { id: "classes", label: "Classes", icon: "event" },

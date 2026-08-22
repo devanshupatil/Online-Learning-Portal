@@ -4,6 +4,7 @@ import AdminNavbar from './AdminNavbar';
 import { SiteFooter } from '../SiteChrome';
 import { useAdminAuth } from '../Auth/AdminAuthContext';
 import { mockFetch } from '../../mockData/mockFetch';
+import FeesManager from './sections/FeesManager';
 
 const OVERVIEW_CARDS = [
   { title: 'Total Users', key: 'totalUsers', icon: 'group', colorClass: 'bg-primary-fixed text-on-primary-fixed' },
@@ -416,6 +417,11 @@ const AdminDashboard = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Fee Management Tab */}
+          {activeSection === 'fees' && (
+            <FeesManager />
           )}
 
           {/* 3. Course Management Tab */}
