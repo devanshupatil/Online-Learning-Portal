@@ -1,10 +1,15 @@
-// Mock fee data for the Student Fee Payment Manager. Hand-authored (not
-// randomized) so the demo looks the same on every load, following the same
-// style as resultsData.js. Consumed by mockFetch.js (the shared in-memory
-// store) and directly by the Admin/Learner fee components (for the pure
-// helpers below).
+// Mock fee data for the Student Fee Payment Manager, covering the whole
+// coaching institute (Class 1-12 + JEE/NEET/CET). Generated deterministically
+// (not Math.random) so the demo looks the same on every load — see
+// seedFeeRecords() below for how the 300 records are built.
 
 export const STUDENT_SELF_ID = 'DIR001';
+
+export const CLASS_LIST = [
+  'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5', 'Class 6',
+  'Class 7', 'Class 8', 'Class 9', 'Class 10', 'Class 11', 'Class 12',
+  'JEE', 'NEET', 'CET',
+];
 
 const TERM_DUE_DATES = {
   T1: '2026-06-15',
@@ -12,8 +17,24 @@ const TERM_DUE_DATES = {
   T3: '2027-02-15',
 };
 
-const INSTALLMENT_AMOUNT = 30000;
-const TOTAL_FEE = INSTALLMENT_AMOUNT * 3;
+// Fixed early-payment dates for whichever installments a pattern pays —
+// safely in the past regardless of which installment, so a "fully paid"
+// record never shows a payment date that looks like it hasn't happened yet.
+const EARLY_PAID_DATES = { T1: '2026-06-10', T2: '2026-07-10', T3: '2026-08-10' };
+
+const classTotalFee = (className) => {
+  if (className.startsWith('Class')) {
+    const n = Number(className.slice('Class '.length));
+    if (n <= 5) return 36000;
+    if (n <= 8) return 54000;
+    if (n <= 10) return 72000;
+    return 90000; // Class 11-12
+  }
+  return 120000; // JEE / NEET / CET
+};
+
+const classPrefix = (className) =>
+  className.startsWith('Class') ? `C${className.slice('Class '.length)}` : className;
 
 export const formatCurrency = (amount) => `₹${Number(amount || 0).toLocaleString('en-IN')}`;
 
@@ -32,12 +53,26 @@ export const deriveOverallStatus = (record) => {
 export const getPaidTotal = (record) =>
   record.installments.reduce((sum, i) => sum + i.paidAmount, 0);
 
-const makeInstallment = (studentId, term, overrides = {}) => {
+const FIRST_NAMES = [
+  'Aarav', 'Vivaan', 'Aditya', 'Ananya', 'Diya', 'Ishaan', 'Kabir', 'Myra',
+  'Kiara', 'Aadhya', 'Arjun', 'Sai', 'Sneha', 'Pooja', 'Riya', 'Neha',
+  'Rohan', 'Priya', 'Rahul', 'Isha',
+];
+
+const LAST_NAMES = [
+  'Sharma', 'Mehta', 'Kapoor', 'Gupta', 'Verma', 'Malhotra', 'Iyer', 'Nair',
+  'Reddy', 'Joshi', 'Menon', 'Pillai', 'Deshmukh', 'Kulkarni', 'Patil',
+  'Shinde', 'Jadhav', 'Pawar', 'Bhosale', 'Chavan',
+];
+
+const PAYMENT_METHODS = ['UPI', 'Cash', 'Card', 'Bank Transfer'];
+
+const makeInstallment = (studentId, term, amount, overrides = {}) => {
   const base = {
     id: `${studentId}-${term}`,
     label: `Term ${term.slice(1)}`,
     dueDate: TERM_DUE_DATES[term],
-    amount: INSTALLMENT_AMOUNT,
+    amount,
     paidAmount: 0,
     paidDate: null,
     method: null,
@@ -47,58 +82,73 @@ const makeInstallment = (studentId, term, overrides = {}) => {
   return { ...base, status: deriveInstallmentStatus(base) };
 };
 
-const makeRecord = (studentId, name, className, installmentOverrides) => ({
-  student_id: studentId,
-  name,
-  class: className,
-  totalFee: TOTAL_FEE,
-  installments: ['T1', 'T2', 'T3'].map((term) =>
-    makeInstallment(studentId, term, installmentOverrides[term] || {})
-  ),
-});
+const makeRecord = (studentId, name, className, installmentOverrides) => {
+  const amount = classTotalFee(className) / 3;
+  return {
+    student_id: studentId,
+    name,
+    class: className,
+    totalFee: amount * 3,
+    installments: ['T1', 'T2', 'T3'].map((term) =>
+      makeInstallment(studentId, term, amount, installmentOverrides[term] || {})
+    ),
+  };
+};
 
-// Mixed spread across the 12 STUDENTS_DIRECTORY entries: 4 fully paid,
-// 4 overdue (some fully unpaid, one partially paid past its due date),
-// 4 pending (not-yet-due partial or first-installment-only paid).
-export const seedFeeRecords = () => [
-  makeRecord('DIR001', 'Aarav Sharma', 'Class A', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-10', method: 'UPI', receiptNo: 'RCPT-DIR001-T1' },
-  }),
-  makeRecord('DIR002', 'Vivaan Mehta', 'Class A', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-05', method: 'Bank Transfer', receiptNo: 'RCPT-DIR002-T1' },
-    T2: { paidAmount: 30000, paidDate: '2026-08-01', method: 'UPI', receiptNo: 'RCPT-DIR002-T2' },
-    T3: { paidAmount: 30000, paidDate: '2026-08-15', method: 'Card', receiptNo: 'RCPT-DIR002-T3' },
-  }),
-  makeRecord('DIR003', 'Ananya Iyer', 'Class B', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-12', method: 'Cash', receiptNo: 'RCPT-DIR003-T1' },
-    T2: { paidAmount: 15000, paidDate: '2026-08-10', method: 'UPI', receiptNo: 'RCPT-DIR003-T2' },
-  }),
-  makeRecord('DIR004', 'Diya Nair', 'Class B', {}),
-  makeRecord('DIR005', 'Arjun Deshmukh', 'Class C', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-01', method: 'Bank Transfer', receiptNo: 'RCPT-DIR005-T1' },
-    T2: { paidAmount: 30000, paidDate: '2026-08-05', method: 'UPI', receiptNo: 'RCPT-DIR005-T2' },
-    T3: { paidAmount: 30000, paidDate: '2026-08-18', method: 'Card', receiptNo: 'RCPT-DIR005-T3' },
-  }),
-  makeRecord('DIR006', 'Sai Kulkarni', 'Class C', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-14', method: 'Cash', receiptNo: 'RCPT-DIR006-T1' },
-    T2: { paidAmount: 30000, paidDate: '2026-08-12', method: 'UPI', receiptNo: 'RCPT-DIR006-T2' },
-  }),
-  makeRecord('DIR007', 'Sneha Kulkarni', 'Class D', {}),
-  makeRecord('DIR008', 'Pooja Jadhav', 'Class D', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-08', method: 'UPI', receiptNo: 'RCPT-DIR008-T1' },
-    T2: { paidAmount: 30000, paidDate: '2026-08-02', method: 'Bank Transfer', receiptNo: 'RCPT-DIR008-T2' },
-    T3: { paidAmount: 30000, paidDate: '2026-08-20', method: 'Cash', receiptNo: 'RCPT-DIR008-T3' },
-  }),
-  makeRecord('DIR009', 'Kabir Malhotra', 'Class A', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-13', method: 'Card', receiptNo: 'RCPT-DIR009-T1' },
-  }),
-  makeRecord('DIR010', 'Kiara Menon', 'Class B', {
-    T1: { paidAmount: 10000, paidDate: '2026-06-16', method: 'Cash', receiptNo: 'RCPT-DIR010-T1' },
-  }),
-  makeRecord('DIR011', 'Yash Patil', 'Class C', {
-    T1: { paidAmount: 30000, paidDate: '2026-06-09', method: 'UPI', receiptNo: 'RCPT-DIR011-T1' },
-    T2: { paidAmount: 30000, paidDate: '2026-08-03', method: 'UPI', receiptNo: 'RCPT-DIR011-T2' },
-    T3: { paidAmount: 30000, paidDate: '2026-08-16', method: 'Bank Transfer', receiptNo: 'RCPT-DIR011-T3' },
-  }),
-  makeRecord('DIR012', 'Riya Chavan', 'Class D', {}),
-];
+// 5 fixed payment patterns, cycled by student index within a class, so
+// every class gets an even, varied mix (paid / overdue / partial / etc.)
+// without any randomness — same shapes as the original 12-student set.
+const paymentOverridesForPattern = (pattern, studentId, amount, method) => {
+  const paidLeg = (term, fraction = 1) => ({
+    paidAmount: Math.round(amount * fraction),
+    paidDate: EARLY_PAID_DATES[term],
+    method,
+    receiptNo: `RCPT-${studentId}-${term}`,
+  });
+  switch (pattern) {
+    case 0: // fully paid
+      return { T1: paidLeg('T1'), T2: paidLeg('T2'), T3: paidLeg('T3') };
+    case 1: // fully unpaid (T1 now overdue)
+      return {};
+    case 2: // T1 paid, T2 partial
+      return { T1: paidLeg('T1'), T2: paidLeg('T2', 0.5) };
+    case 3: // T1 paid only
+      return { T1: paidLeg('T1') };
+    case 4: // T1 partial (overdue, since its due date has passed)
+    default:
+      return { T1: paidLeg('T1', 1 / 3) };
+  }
+};
+
+const generateClassRoster = (className, classIndex) => {
+  const prefix = classPrefix(className);
+  const amount = classTotalFee(className) / 3;
+  return Array.from({ length: 20 }, (_, s) => {
+    const firstName = FIRST_NAMES[s];
+    const lastName = LAST_NAMES[(s + classIndex * 7) % 20];
+    const studentId = `${prefix}-${String(s + 1).padStart(2, '0')}`;
+    const method = PAYMENT_METHODS[(classIndex + s) % PAYMENT_METHODS.length];
+    const overrides = paymentOverridesForPattern(s % 5, studentId, amount, method);
+    return makeRecord(studentId, `${firstName} ${lastName}`, className, overrides);
+  });
+};
+
+export const seedFeeRecords = () => {
+  const records = CLASS_LIST.flatMap((className, classIndex) =>
+    generateClassRoster(className, classIndex)
+  );
+
+  // Self-student override: DIR001 / Aarav Sharma is the identity the
+  // Learner Fees tab reads via STUDENT_SELF_ID. He's already established
+  // elsewhere in this app's mock data (STUDENTS_BY_STREAM, PARENT_CHILD) as
+  // a JEE-stream student, so he's placed in JEE here too (replacing
+  // generated slot JEE-01) rather than a numbered class. Term 1 paid in
+  // full — ₹40,000, JEE's per-installment amount — so the "paid → view
+  // receipt" flow keeps working exactly as already verified.
+  const jeeIndex = records.findIndex((r) => r.student_id === 'JEE-01');
+  records[jeeIndex] = makeRecord('DIR001', 'Aarav Sharma', 'JEE', {
+    T1: { paidAmount: 40000, paidDate: '2026-06-10', method: 'UPI', receiptNo: 'RCPT-DIR001-T1' },
+  });
+
+  return records;
+};
